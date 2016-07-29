@@ -1,0 +1,4 @@
+*.pyc
+data-dev.sqlite
+venv_srcpm/*
+
