@@ -1,0 +1,43 @@
+{% extends 'admin/admin_base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block title %} 部门查看 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>部门查看</h1>
+</div>
+
+<form role="form" method='POST'>
+<div class="form-group">
+   <label for="name"></label>
+   <input type="text" class="form-control" name="opt" placeholder="请输入查询关键字">
+   <button type="submit" class="btn btn-default">提交</button>
+</div>
+</form>
+
+<div>
+<table class="table table-hover">
+   <thead>
+      <tr>
+      	<th>部门ID</th>
+         <th>部门名称</th>
+         <th>部门经理</th>
+         <th>经理邮箱</th>
+      </tr>
+   </thead>
+   <tbody>
+   	{% for depart in depart_result %}
+      <tr>
+      	<td>{{ depart.id }}</td>
+         <td><a href="{{ url_for('admin.depart_modify', id=depart.id) }}">{{ depart.department }}</a></td>
+         <td>{{ depart.leader }}</td>
+         <td>{{ depart.email }}</td>
+      </tr>
+    {% endfor %}
+   </tbody>
+</table
+</div>
+{% endblock %}
+

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='Markdown.Converter.min.js') }}"></script>
+<script src="{{ url_for('static', filename='Markdown.Sanitizer.min.js') }}"></script>
+<!-- {{ pagedown.include_pagedown() }} -->
+{% endblock %}
+
+{% block title %} 漏洞增加 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>漏洞增加</h1>
+</div>
+
+<div class="col-md-4">
+
+	<form action="" method="post" class="form" role="form">
+  	
+  	<div style="display:none;">
+  		{{ form.csrf_token(type="hidden") }}
+  	</div>
+
+	<div class=form-group>
+		{{ form.title.label(class="control-label") }}{{ form.title(class="form-control") }}
+	</div>
+	<div class=form-group>
+		{{ form.related_asset.label(class="control-label") }}{{ form.related_asset(class="form-control") }}
+	</div>
+	<div class=form-group>
+		{{ form.related_vul_type.label(class="control-label") }}{{ form.related_vul_type(class="form-control") }}
+	</div>
+	<div class=form-group>
+		{{ form.vul_self_rank.label(class="control-label") }}{{ form.vul_self_rank(class="form-control") }}
+	</div>
+	<div class=form-group>
+		{{ form.vul_self_level.label(class="control-label") }}{{ form.vul_self_level(class="form-control") }}
+	</div>
+	<div class=form-group>
+		{{ form.vul_source.label(class="control-label") }}{{ form.vul_source(class="form-control") }}
+	</div>
+	<div class=form-group>
+		{{ form.vul_poc.label(class="control-label") }}{{ form.vul_poc(rows = 10, cols = 100) }}
+	</div>
+	<div class=form-group>
+		{{ form.vul_solution.label(class="control-label") }}{{ form.vul_solution(rows = 10, cols = 100) }}
+	</div>
+	<div class=form-group>
+		{{ form.submit(class="btn btn-default") }}
+	</div>
+
+	</form>
+</div>
+{% endblock %}

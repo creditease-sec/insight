@@ -1,0 +1,39 @@
+{% extends 'admin/admin_base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block title %} 漏洞类型查看 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>漏洞类型查看</h1>
+</div>
+
+<form role="form" method='POST'>
+<div class="form-group">
+   <label for="name"></label>
+   <input type="text" class="form-control" name="opt" placeholder="请输入查询关键字">
+   <button type="submit" class="btn btn-default">提交</button>
+</div>
+</form>
+
+<div>
+<table class="table table-hover">
+   <thead>
+      <tr>
+      	<th>漏洞类型ID</th>
+         <th>漏洞类型</th>
+      </tr>
+   </thead>
+   <tbody>
+   	{% for vul_type in vul_type_result %}
+      <tr>
+      	<td>{{ vul_type.id }}</td>
+         <td><a href="{{ url_for('admin.vul_type_modify', id=vul_type.id) }}">{{ vul_type.vul_type }}</a></td>
+      </tr>
+    {% endfor %}
+   </tbody>
+</table
+</div>
+{% endblock %}
+

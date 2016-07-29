@@ -1,0 +1,111 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+{% endblock %}
+
+{% block title %}
+	SRC Admin
+{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+	<div class="container">
+
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="{{ url_for('admin.index') }}">管理后台</a>
+		</div>
+
+		<div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+				<li><a href="{{ url_for('main.index') }}">主页</a></li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-left">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        	认证和授权 <b class="caret"></b>
+                    	</a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="{{ url_for('admin.role_add') }}">角色增加</a></li>
+                        	<li><a href="{{ url_for('admin.role_read') }}">角色查看</a></li>
+                        	<li><a href="{{ url_for('admin.login_user_read') }}">用户查看</a></li>
+                    	</ul>
+					</li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-left">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        	人员管理 <b class="caret"></b>
+                    	</a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="{{ url_for('admin.depart_add') }}">部门增加</a></li>
+                        	<li><a href="{{ url_for('admin.depart_read') }}">部门查看</a></li>
+                        	<li><a href="{{ url_for('admin.user_add') }}">人员增加</a></li>
+                        	<li><a href="{{ url_for('admin.user_read') }}">人员查看</a></li>
+                    	</ul>
+					</li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-left">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        	资产管理 <b class="caret"></b>
+                    	</a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="{{ url_for('admin.assets_add') }}">资产增加</a></li>
+                        	<li><a href="{{ url_for('admin.assets_read') }}">资产查看</a></li>
+                        	<li><a href="{{ url_for('admin.vul_type_add') }}">漏洞类型增加</a></li>
+                        	<li><a href="{{ url_for('admin.vul_type_read') }}">漏洞类型查看</a></li>
+                    	</ul>
+					</li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+				{% if current_user.is_authenticated %}
+					<li><a href="#">欢迎您！{{ current_user.username }}</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        	帐户 <b class="caret"></b>
+                    	</a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="{{ url_for('auth.change_password') }}">修改密码</a></li>
+                        	<li><a href="{{ url_for('auth.logout') }}">退出登录</a></li>
+                    	</ul>
+					</li>
+				{% else %}
+					<li><a href="{{ url_for('auth.login') }}">登录</a></li>
+				{% endif %}
+			</ul>
+
+		</div>
+
+
+	</div>
+</div>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+	{% for message in get_flashed_messages() %}
+	<div class="alert alert-warning">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		{{ message }}
+	</div>
+	{% endfor %}
+	{% block page_content %} {% endblock %}
+</div>
+{% endblock %}

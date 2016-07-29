@@ -1,0 +1,81 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+{% endblock %}
+
+{% block title%} SrcPM {% endblock%}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+	<div class="container">
+
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="{{ url_for('main.index') }}">漏洞管理平台</a>
+		</div>
+
+		<div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+				<li><a href="{{ url_for('main.index') }}">主页</a></li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-left">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        	漏洞管理 <b class="caret"></b>
+                    	</a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="{{ url_for('src.vul_rank_add') }}">漏洞Rank增加</a></li>
+                        	<li><a href="{{ url_for('src.vul_rank_read') }}">漏洞Rank查看</a></li>
+                        	<li><a href="{{ url_for('src.vul_report_add') }}">漏洞报告提交</a></li>
+                        	<li><a href="{{ url_for('src.vul_report_list_read') }}">漏洞报告查看</a></li>
+                    	</ul>
+					</li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+				{% if current_user.is_authenticated %}
+					<li><a href="#">欢迎您！{{ current_user.username }}</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        	帐户 <b class="caret"></b>
+                    	</a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="{{ url_for('auth.change_password') }}">修改密码</a></li>
+                        	<li><a href="{{ url_for('auth.logout') }}">退出</a></li>
+                    	</ul>
+					</li>
+				{% else %}
+					<li><a href="{{ url_for('auth.login') }}">登录</a></li>
+				{% endif %}
+			</ul>
+
+		</div>
+
+
+	</div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	{% for message in get_flashed_messages() %}
+	<div class="alert alert-warning">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		{{ message }}
+	</div>
+	{% endfor %}
+	{% block page_content %} {% endblock %}
+</div>
+{% endblock %}
