@@ -9,6 +9,7 @@ class Config:
 	SRCPM_MAIL_SUBJECT_PREFIX = '[SrcPM]'
 	SRCPM_MAIL_SENDER = 'SrcPM Admin <sec_creditease@sina.com>'
 	SRCPM_ADMIN = os.environ.get('MYBLOG_ADMIN') or '75065472@qq.com'
+	UPLOAD_IMG_FOLDER = os.path.join(basedir, 'app/static/upload/img/')
 
 	@staticmethod
 	def init_app(app):

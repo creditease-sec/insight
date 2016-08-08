@@ -1,9 +1,10 @@
 #coding:utf-8
 
-from flask import render_template, redirect, flash, url_for, request
+from flask import render_template, redirect, flash, url_for, request, jsonify
 from .forms import LoginForm, RoleForm, PermissionForm, UserForm, DepartForm, UserRoleForm, AssetForm, VulTypeForm
 from .models import Role, Permission, User, Depart, Asset, VulType
 from ..auth.models import LoginUser
+from ..src.models import VulReport
 from .. import db
 from . import admin
 from ..decorators import permission_required
@@ -230,6 +231,7 @@ def user_add():
 					email=form.email.data,
 					department=form.department.data)
 		db.session.add(u)
+		user_to_login_user(u)
 		flash('User %s add success!' %form.name.data)
 		return redirect(url_for('admin.user_add'))
 	return render_template('admin/user_add.html', form=form)
@@ -247,6 +249,11 @@ def user_read():
 											)
 	return render_template('admin/user_read.html', user_result=user_result)
 
+#设置人员到员工的关联
+def user_to_login_user(user):
+	lg_user = LoginUser.query.filter_by(email=user.email).first()
+	if lg_user:
+		lg_user.related_name = user.name
 
 @admin.route('/user_modify/<id>', methods=['GET', 'POST'])
 def user_modify(id):
@@ -255,6 +262,9 @@ def user_modify(id):
 	if form.validate_on_submit():
 		#user_get.email = form.email.data
 		user_get.name = form.name.data
+		#设置人员到员工的关联
+		user_to_login_user(user_get)
+
 		user_get.department = form.department.data
 		flash('The user has been updated. ')
 		return redirect(url_for('admin.user_read'))
@@ -279,7 +289,7 @@ def assets_add():
 	if form.validate_on_submit():
 		a = Asset(sysname=form.sysname.data, 
 					domain=form.domain.data, 
-					root_dir=form.root_dir.data, 
+					#root_dir=form.root_dir.data, 
 					back_domain=form.back_domain.data, 
 					web_or_int=form.web_or_int.data, 
 					is_http=form.is_http.data, 
@@ -322,8 +332,16 @@ def assets_modify(id):
 	asset_get = Asset.query.get_or_404(id)
 	if form.validate_on_submit():
 		asset_get.sysname = form.sysname.data
-		#asset_get.domain = form.domain.data
-		asset_get.root_dir = form.root_dir.data
+
+		vul_report_list = VulReport.query.filter_by(related_asset=asset_get.domain)
+		#更改资产的域名
+		asset_get.domain = form.domain.data
+		#更改关联漏洞报告的域名
+		if vul_report_list.first():
+			for vul_report in vul_report_list:
+				vul_report.related_asset = form.domain.data
+
+		#asset_get.root_dir = form.root_dir.data
 		asset_get.back_domain = form.back_domain.data
 		asset_get.web_or_int = form.web_or_int.data
 		asset_get.is_http = form.is_http.data
@@ -339,7 +357,7 @@ def assets_modify(id):
 		return redirect(url_for('admin.assets_read'))
 	form.sysname.data = asset_get.sysname
 	form.domain.data = asset_get.domain
-	form.root_dir.data = asset_get.root_dir
+	#form.root_dir.data = asset_get.root_dir
 	form.back_domain.data = asset_get.back_domain
 	form.web_or_int.data = asset_get.web_or_int
 	form.is_http.data = asset_get.is_http
@@ -403,3 +421,10 @@ def vul_type_delete(id):
 	db.session.delete(vul_type_del)
 	flash('Delete vul_type success.')
 	return redirect(url_for('admin.vul_type_read'))
+
+
+
+
+
+
+

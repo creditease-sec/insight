@@ -6,6 +6,62 @@
 <script src="{{ url_for('static', filename='Markdown.Converter.min.js') }}"></script>
 <script src="{{ url_for('static', filename='Markdown.Sanitizer.min.js') }}"></script>
 <!-- {{ pagedown.include_pagedown() }} -->
+
+<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+
+<script type=text/javascript>
+	$(function() {
+		$('#upload').bind('change', function() {
+
+			$.ajax({
+				url: '/src/upload_img',
+				type: 'POST',
+				cache: false,
+				data: new FormData($('#img_form')[0]),
+				processData: false,
+				contentType: false
+			}).done(function(data) {
+				$("#label_result").text('上传图片成功!');
+				$("#result").text(data.result);
+			}).fail(function(data) {
+				$("#label_result").text('上传图片失败!');
+			});
+
+		});
+
+
+		$('#vul_self_rank').bind('change', function(){
+			var rank=0;
+			rank = $('#vul_self_rank option:selected').val();
+			if(rank>15){
+				$('#vul_self_level').text('严重');
+				$('#vul_self_level').css('color','orange');	
+			}
+			else if(rank>10 && rank<=15){
+				$('#vul_self_level').text('高危');
+				$('#vul_self_level').css('color','red');	
+			}
+			else if(rank>5 && rank<=10){
+				$('#vul_self_level').text('中危');
+				$('#vul_self_level').css('color','blue');	
+			}
+			else if(rank>=1 && rank<=5){
+				$('#vul_self_level').text('低危');
+				$('#vul_self_level').css('color','green');	
+			}
+			else{
+				$('#vul_self_level').text(rank);
+				$('#vul_self_level').css('color','black');	
+			}
+
+
+		});		
+
+
+	});
+
+</script>
+
 {% endblock %}
 
 {% block title %} 漏洞增加 {% endblock%}
@@ -15,7 +71,20 @@
 	<h1>漏洞增加</h1>
 </div>
 
+
+
+
+
 <div class="col-md-4">
+
+	<form id="img_form" action="" method="post" class="form" enctype="multipart/form-data" role="form">
+    	<div style="display:none;"><input id="csrf_token" name="csrf_token" type="hidden" value=""></div>
+    	<div class="form-group  required">
+    		<label class="control-label" for="upload" id="label_result">上传图片</label><p id="result"></p>
+    		<input id="upload" name="upload" required type="file">
+    	</div>
+    </form>
+
 
 	<form action="" method="post" class="form" role="form">
   	
@@ -36,8 +105,10 @@
 		{{ form.vul_self_rank.label(class="control-label") }}{{ form.vul_self_rank(class="form-control") }}
 	</div>
 	<div class=form-group>
-		{{ form.vul_self_level.label(class="control-label") }}{{ form.vul_self_level(class="form-control") }}
+		<label>漏洞等级</label>
+		<label id='vul_self_level' color='red'>?</label>
 	</div>
+
 	<div class=form-group>
 		{{ form.vul_source.label(class="control-label") }}{{ form.vul_source(class="form-control") }}
 	</div>
