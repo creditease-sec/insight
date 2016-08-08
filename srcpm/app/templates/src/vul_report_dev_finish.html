@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block scripts %}
+	{{ super() }}
+
+<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+
+
+{% endblock %}
+
+{% block title %} 提交申请复测 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>提交申请复测</h1>
+</div>
+
+<div class="col-md-4">
+	<div class=form-group>
+		<label class="control-label">漏洞标题</label>
+		<label class="form-control">{{ vul_report_df.title }}</label>
+	</div>
+
+
+	{{ wtf.quick_form(form) }}
+	
+</div>
+
+{% endblock %}
+

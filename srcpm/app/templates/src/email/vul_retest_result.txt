@@ -1,0 +1,18 @@
+Dear {{ p[0] }},
+
+Welcome to 漏洞管理平台!
+
+人员: {{ vul_log.related_user_email }}
+操作: {{ vul_log.action }}
+说明: {{ vul_log.content }}
+漏洞状态: {{ vul_report.vul_status }}
+
+漏洞链接:
+
+{{ url_for('src.vul_report_read', id=vul_report.id, _external=True) }}
+
+Sincerely,
+
+The SrcPM Team
+
+Note: replies to this email address are not monitored.

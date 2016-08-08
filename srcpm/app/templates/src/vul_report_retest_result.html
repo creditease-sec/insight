@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block scripts %}
+	{{ super() }}
+
+<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+
+
+<script type=text/javascript>
+	$(function() {
+		$('#done_rank').bind('change', function() {
+
+			$.ajax({
+
+				type:"POST",
+				url:"{{ url_for('src.vul_report_retest_ajax', id=vul_report_retest.id) }}",
+				data:{done_rank:$('#done_rank option:selected').val()},
+				datatype:"json",
+				success:function(data){
+					$('#residual_risk_score').text(data.residual_risk_score);
+					$('#residual_risk_score').css('color','red');
+
+					$('#rank').text($('#done_rank option:selected').val());
+
+					$('#end_date').val(data.end_date);
+
+				}
+
+			});
+
+
+		});
+
+
+	});
+
+</script>
+
+
+
+{% endblock %}
+
+{% block title %} 复测结果提交 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>复测结果提交</h1>
+</div>
+
+<div class="col-md-4">
+	<div class=form-group>
+		<label class="control-label">漏洞标题</label>
+		<label class="form-control">{{ vul_report_retest.title }}</label>
+	</div>
+
+
+	<form action="" method="post" class="form" role="form">
+  	
+  	<div style="display:none;">
+  		{{ form.csrf_token(type="hidden") }}
+  	</div>
+
+	<div class=form-group>
+		{{ form.done_solution.label(class="control-label") }}{{ form.done_solution(class="form-control") }}
+	</div>
+	<div class=form-group>
+		{{ form.done_rank.label(class="control-label") }}{{ form.done_rank(class="form-control") }}
+	</div>
+
+	<div class=form-group>
+		<label>剩余风险值: </label>
+
+		<label id="rank">{{ vul_report_retest.done_rank }}</label>
+
+		<label> * </label>
+
+		{% if asset_get.level=='一级' %}
+		<label id="asset_level">1</label>
+		{% elif asset_get.level=='二级' %}
+		<label id="asset_level">0.9</label>
+		{% elif asset_get.level=='三级' %}
+		<label id="asset_level">0.8</label>
+		{% else %}
+		<label id="asset_level">0.7</label>
+		{% endif %}
+
+		<label> * 5</label>
+
+		<label> * </label>
+
+		{% if asset_get.in_or_out=='外网' %}
+		<label id="asset_inout">1 = </label>
+		{% elif asset_get.in_or_out=='内网' %}
+		<label id="asset_inout">0.8 = </label>
+		{% else %}
+		<label id="asset_inout">0 = </label>
+		{% endif %}
+
+		<label id='residual_risk_score' color='red'>{{ vul_report_retest.residual_risk_score }}</label>
+	</div>
+
+	<div class=form-group>
+		<label class="control-label">通告日期</label>
+		<label class="form-control">{{ vul_report_retest.start_date }}</label>
+	</div>
+
+	<div class=form-group>
+		{{ form.end_date.label(class="control-label") }}{{ form.end_date(class="form-control") }}
+	</div>
+
+
+	<div class=form-group>
+		{{ form.submit(class="btn btn-default") }}
+	</div>
+
+	</form>
+</div>
+
+{% endblock %}
+
