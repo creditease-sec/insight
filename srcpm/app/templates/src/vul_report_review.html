@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block scripts %}
+	{{ super() }}
+
+<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+
+<script type=text/javascript>
+	$(function() {
+		$('#grant_rank').bind('change', function() {
+
+			$.ajax({
+
+				type:"POST",
+				url:"{{ url_for('src.vul_report_review_ajax', id=vul_report_rv.id) }}",
+				data:{grant_rank:$('#grant_rank option:selected').val()},
+				datatype:"json",
+				success:function(data){
+					$('#vul_risk_score').text(data.risk_score);
+					$('#vul_risk_score').css('color','red');
+
+					$('#rank').text($('#grant_rank option:selected').val());
+
+					$('#end_date').val(data.end_date);
+
+				}
+
+			});
+
+
+		});
+
+
+	});
+
+</script>
+
+
+{% endblock %}
+
+{% block title %} 漏洞报告审核 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>漏洞报告审核</h1>
+</div>
+
+<div class="col-md-4">
+	<div class=form-group>
+		<label class="control-label">漏洞标题</label>
+		<label class="form-control">{{ vul_report_rv.title }}</label>
+	</div>
+
+
+	<form action="" method="post" class="form" role="form">
+  	
+  	<div style="display:none;">
+  		{{ form.csrf_token(type="hidden") }}
+  	</div>
+
+	<div class=form-group>
+		{{ form.related_vul_type.label(class="control-label") }}{{ form.related_vul_type(class="form-control") }}
+	</div>
+	<div class=form-group>
+		{{ form.grant_rank.label(class="control-label") }}{{ form.grant_rank(class="form-control") }}
+	</div>
+
+	<div class=form-group>
+		<label>风险值: </label>
+
+		<label id="rank">{{ vul_report_rv.grant_rank }}</label>
+
+		<label> * </label>
+
+		{% if asset_get.level=='一级' %}
+		<label id="asset_level">1</label>
+		{% elif asset_get.level=='二级' %}
+		<label id="asset_level">0.9</label>
+		{% elif asset_get.level=='三级' %}
+		<label id="asset_level">0.8</label>
+		{% else %}
+		<label id="asset_level">0.7</label>
+		{% endif %}
+
+		<label> * 5</label>
+
+		<label> * </label>
+
+		{% if asset_get.in_or_out=='外网' %}
+		<label id="asset_inout">1 = </label>
+		{% elif asset_get.in_or_out=='内网' %}
+		<label id="asset_inout">0.8 = </label>
+		{% else %}
+		<label id="asset_inout">0 = </label>
+		{% endif %}
+
+		<label id='vul_risk_score' color='red'>{{ risk_score }}</label>
+	</div>
+
+	<div class=form-group>
+		{{ form.start_date.label(class="control-label") }}{{ form.start_date(class="form-control") }}
+	</div>
+	<div class=form-group>
+		{{ form.end_date.label(class="control-label") }}{{ form.end_date(class="form-control") }}
+	</div>
+
+	<div class=form-group>
+		<label>邮件收件人: </label>
+		<font size="2" color="blue">
+			{% for i in email_list %}
+				{{ i[0] }}
+			{% endfor %}
+		</font>
+	</div>
+
+	<div class=form-group>
+		{{ form.submit(class="btn btn-default") }}
+	</div>
+
+	</form>
+</div>
+
+{% endblock %}
+

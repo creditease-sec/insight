@@ -6,6 +6,8 @@
 
 {% block scripts %}
 	{{ super() }}
+	{{ moment.include_moment() }}
+	{{ moment.lang("zh-CN") }}
 {% endblock %}
 
 {% block title%} SrcPM {% endblock%}
@@ -35,8 +37,6 @@
                         	漏洞管理 <b class="caret"></b>
                     	</a>
                     	<ul class="dropdown-menu">
-                        	<li><a href="{{ url_for('src.vul_rank_add') }}">漏洞Rank增加</a></li>
-                        	<li><a href="{{ url_for('src.vul_rank_read') }}">漏洞Rank查看</a></li>
                         	<li><a href="{{ url_for('src.vul_report_add') }}">漏洞报告提交</a></li>
                         	<li><a href="{{ url_for('src.vul_report_list_read') }}">漏洞报告查看</a></li>
                     	</ul>
@@ -45,7 +45,7 @@
 
 			<ul class="nav navbar-nav navbar-right">
 				{% if current_user.is_authenticated %}
-					<li><a href="#">欢迎您！{{ current_user.username }}</a></li>
+					<li><a href="#">欢迎您！{{ current_user.email }}</a></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         	帐户 <b class="caret"></b>

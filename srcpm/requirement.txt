@@ -11,3 +11,5 @@ Flask-Mail==0.9.1
 Flask-Pagedown==0.2.1
 Markdown==2.6.6
 bleach==1.4.3
+Flask-Uploads==0.2.1
+Flask-Moment==0.5.1

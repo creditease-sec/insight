@@ -1,0 +1,13 @@
+<p>Dear {{ p[0] }},</p>
+<p>Welcome to <b>漏洞管理平台</b>!</p>
+<p>人员: {{ vul_log.related_user_email }}</p>
+<p>操作: {{ vul_log.action }}</p>
+<p>说明: {{ vul_log.content }}</p>
+<p>漏洞状态: {{ vul_report.vul_status }}</p>
+
+<p>漏洞链接: <a href="{{ url_for('src.vul_report_read', id=vul_report.id, _external=True) }}">click here</a>.</p>
+<p>Alternatively, you can paste the following link in your browser's address bar:</p>
+<p>{{ url_for('src.vul_report_read', id=vul_report.id, _external=True) }}</p>
+<p>Sincerely,</p>
+<p>The SrcPM Team</p>
+<p><small>Note: replies to this email address are not monitored.</small></p>

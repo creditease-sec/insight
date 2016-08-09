@@ -6,13 +6,14 @@
 {% block page_content %}
 <div class="page-header">
 	<h1>漏洞类型修改</h1>
-	<a href="{{ url_for('admin.vul_type_delete', id=id ) }}" onClick="delcfm()">删除</a>
+	<a href="javascript:if(confirm('确实要删除该内容吗?'))location='{{ url_for('admin.vul_type_delete', id=id ) }}'" >删除</a>
 </div>
 
 <div class="col-md-4">
 	{{ wtf.quick_form(form) }}
 </div>
 
+<!--
 <script language="javascript">
     function delcfm() {
         if (!confirm("确认要删除？")) {
@@ -20,6 +21,7 @@
         }
     }
 </script>
+-->
 
 {% endblock %}
 
