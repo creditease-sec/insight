@@ -1,0 +1,79 @@
+{% extends 'bootstrap/base.html' %} {% block head %} {{ super() }}
+<style>
+    .w90 {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .w60 {
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .w35 {
+        width: 35%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+</style>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+{% endblock %}
+{% block title %} drops 管理 {% endblock %}
+{% block navbar %}
+<div class="navbar navbar-inverse ">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="navbar-brand" href="index.html">Home</a>
+            <ul class="nav navbar-nav" id="nav">
+                <li><a href="{{ url_for('drops.mgrdrops') }}">drops管理</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        	dorps分类 <b class="caret"></b>
+                    	</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('drops.newcate')}}">新建分类</a></li>
+                        <li><a href="{{ url_for('drops.readcate')}}">查看分类</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                <li><a href="#">欢迎您！{{ current_user.username }}</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            帐户 <b class="caret"></b>
+                        </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('auth.change_password') }}">修改密码</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}">退出</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">登录</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %} {% block page_content %} {% endblock %}
+</div>
+{% endblock %}

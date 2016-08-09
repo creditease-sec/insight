@@ -1,0 +1,70 @@
+{% extends 'drops/drops_base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% import "drops/_macros.html" as macros %}
+{% block title%} drops分类 {% endblock%}
+{% block page_content %}
+<div class="page-header">
+    <h1>编辑分类</h1>
+</div>
+<form role="form" method='POST'>
+<div class="form-group w90">
+   <label for="name"></label>
+   <input type="text" class="vertical-align: middle" name="opt" placeholder="请输入查询关键字">
+   <button type="submit" class="btn btn-danger">提交</button>
+</div>
+</form>
+<hr>
+<br>
+<br>
+<br>
+<div class="table-responsive w90">
+
+    <table id="main" class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+
+                <td>ID</td>
+                <td>分类名</td>
+            </tr>
+            </thread>
+            <tbody>
+            {% if not posts %}
+                <tr>
+                    <td><a href="{{ url_for('drops.newcate')}}" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>沒有文章，点此新建？</a></td>
+                </tr>
+            {% else %}
+                {% for i in posts %}
+                <tr>
+                    <td>{{i.id}}</td>
+                    <td>{{i.category_name}}</td>
+                    <td>
+
+                        <button onclick="del({{i.id}})" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span>刪除</button>
+                        <a href="{{ url_for('drops.newcate')}}" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>新建</a>
+                        <a href="{{ url_for('drops.editcate', id=i.id) }}" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span>编辑</button>
+		            </td>
+		        </tr>
+                {% endfor %}
+            {% endif%}
+
+            </tbody>
+    </table>
+</div>
+
+
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.readcate') }}
+</div>
+{% endif %}
+
+<script>
+function del(id){
+var msg="確定要刪除嗎？\n注意：刪除后將無法恢復！"
+if (confirm(msg)){
+	$.get("/drops/delcate/"+id,function(){alert("目标项目已成功刪除！");location.reload();})
+	}
+}
+</script>
+
+{% endblock %}

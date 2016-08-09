@@ -17,29 +17,33 @@ login_manager.login_view = 'auth.login'
 pagedown = PageDown()
 moment = Moment()
 
+
 def create_app(config_name):
-	app = Flask(__name__)
-	app.jinja_env.add_extension("chartkick.ext.charts")
-	app.config.from_object(config[config_name])
-	config[config_name].init_app(app)
+    app = Flask(__name__)
+    app.jinja_env.add_extension("chartkick.ext.charts")
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
 
-	bootstrap.init_app(app)
-	db.init_app(app)
-	mail.init_app(app)
-	login_manager.init_app(app)
-	pagedown.init_app(app)
-	moment.init_app(app)
+    bootstrap.init_app(app)
+    db.init_app(app)
+    mail.init_app(app)
+    login_manager.init_app(app)
+    pagedown.init_app(app)
+    moment.init_app(app)
 
-	from .main import main as main_blueprint
-	app.register_blueprint(main_blueprint)
+    from .main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
 
-	from .auth import auth as auth_blueprint
-	app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
-	from .admin import admin as admin_blueprint
-	app.register_blueprint(admin_blueprint, url_prefix='/admin')
+    from .admin import admin as admin_blueprint
+    app.register_blueprint(admin_blueprint, url_prefix='/admin')
 
-	from .src import src as src_blueprint
-	app.register_blueprint(src_blueprint, url_prefix='/src')
+    from .src import src as src_blueprint
+    app.register_blueprint(src_blueprint, url_prefix='/src')
 
-	return app
+    from .drops import drops as drops_blueprint
+    app.register_blueprint(drops_blueprint, url_prefix='/drops')
+
+    return app

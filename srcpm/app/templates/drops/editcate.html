@@ -1,0 +1,22 @@
+{% extends 'drops/drops_base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% import "drops/_macros.html" as macros %}
+{% block title%} drops分类 {% endblock%}
+{% block page_content %}
+<div class="page-header">
+	<h1>drops分类修改</h1>
+
+</div>
+
+<div class="col-md-4">
+	{{ wtf.quick_form(form) }}
+</div>
+
+<script language="javascript">
+    function delcfm() {
+        if (!confirm("确认要删除？")) {
+            window.event.returnValue = false;
+        }
+    }
+</script>
+{% endblock %}

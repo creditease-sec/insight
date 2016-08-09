@@ -26,6 +26,7 @@ perm_choices = [('admin.index', 'admin.index'),
 				('src.vul_report_retest_ajax','src.vul_report_retest_ajax'),
 				('src.vul_report_add','src.vul_report_add'),
 				('src.upload_img','src.upload_img'),
+                ('drops.manager','drops.manager'),
 				]
 
 
@@ -35,7 +36,7 @@ level_choices = [('',''), (u'一级', u'一级'), (u'二级', u'二级'), (u'三
 
 
 class LoginForm(Form):
-	email = StringField('Email', validators=[Required(), 
+	email = StringField('Email', validators=[Required(),
 											Length(1, 64), Email()])
 	password = PasswordField('Password', validators=[Required()])
 	remember_me = BooleanField('Keep me logged in')
@@ -123,5 +124,3 @@ class VulTypeForm(Form):
 		if request.endpoint[:18] != 'src.vul_type_modify':
 			if VulType.query.filter_by(domain=field.data).first():
 				raise ValidationError('Vul_type already exist.')
-
-
