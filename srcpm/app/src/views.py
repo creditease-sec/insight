@@ -41,6 +41,9 @@ def vul_report_add():
 					)
 		db.session.add(vul_rpt)
 		flash('Vul_report %s-%s add success!' %(current_user.related_name, form.title.data))
+		vul_report = VulReport.query.filter_by(title=vul_rpt.title).order_by(VulReport.id.desc()).first()
+		send_email('75065472@qq.com', u'新漏洞等待审核', 'src/email/new_vul_submit', vul_report=vul_report)
+		flash(u'等待审核的邮件已发送给管理员！')
 		return redirect(url_for('src.vul_report_list_read'))
 	return render_template('src/vul_report_add.html', form=form)
 

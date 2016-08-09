@@ -1,0 +1,21 @@
+亲爱的管理员,
+
+欢迎来到漏洞管理平台!
+
+有一个新漏洞等待您的审核：
+
+漏洞标题: {{ vul_report.title }}
+提交人: {{ vul_report.author }}
+提交时间: {{ vul_report.timestamp }}
+漏洞类型: {{ vul_report.related_vul_type }}
+自评Rank: {{ vul_report.vul_self_rank }}
+
+漏洞链接:
+
+{{ url_for('src.vul_report_read', id=vul_report.id, _external=True) }}
+
+Sincerely,
+
+The SrcPM Team
+
+Note: replies to this email address are not monitored.
