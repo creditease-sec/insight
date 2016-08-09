@@ -4,4 +4,4 @@
 data-dev.sqlite
 venv_srcpm/*
 config.txt
-
+migrations/*
