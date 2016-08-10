@@ -1,4 +1,6 @@
-{% extends 'bootstrap/base.html' %} {% block head %} {{ super() }}
+{% extends 'bootstrap/base.html' %}
+{% block head %}
+{{ super() }}
 <style>
     .w90 {
         width: 90%;
@@ -22,6 +24,8 @@
 {% endblock %}
 {% block scripts %}
 {{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang("zh-CN") }}
 {% endblock %}
 {% block title %} drops 管理 {% endblock %}
 {% block navbar %}
@@ -33,9 +37,17 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="navbar-brand" href="index.html">Home</a>
-            <ul class="nav navbar-nav" id="nav">
-                <li><a href="{{ url_for('drops.mgrdrops') }}">drops管理</a></li>
+            <a class="navbar-brand" href="{{ url_for('drops.index')}}">Home</a>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        	dorps管理 <b class="caret"></b>
+                    	</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('drops.newdrops')}}">新建drops</a></li>
+                        <li><a href="{{ url_for('drops.readdrops')}}">查看drops</a></li>
+                    </ul>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">

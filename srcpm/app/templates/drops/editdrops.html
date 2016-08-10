@@ -1,0 +1,68 @@
+{% extends 'drops/drops_base.html' %} {% block head %} {{ super() }}
+<style type="text/css">
+    #title_id {
+        font-size: 16px;
+    }
+
+    #dropname_id {
+        font-size: 16px;
+    }
+</style>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='Markdown.Converter.min.js') }}"></script>
+<script src="{{ url_for('static', filename='Markdown.Sanitizer.min.js') }}"></script>
+<script type="text/javascript">
+	function Checknull(str)
+    {
+        var strReg="";
+        var r;
+        var strText= document.getElementById(str).value;
+        if(strText=="" || strText==null)
+        {
+            alert("输入不能为空");
+            return;
+        }
+    }
+</script>
+{% endblock %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title%} drops修改 {% endblock%}
+{% block page_content %}
+<div class="page-header">
+    <h1>修改drop</h1>
+</div>
+
+
+
+        <form action="" method="post" class="form-inline" role="form">
+
+        <div style="display:none;">
+            {{ form.csrf_token(type="hidden") }}
+        </div>
+        <div class=form-group>
+            <span style="font-size:16px;font-weight:bold;">标题名：</span>{{ form.title.label(class="sr-only") }}{{ form.title(class="form-control" ) }}
+        </div>
+        <div class=form-group>
+            <span style="font-size:16px;font-weight:bold;">drop名：</span>{{ form.dropname.label(class="sr-only") }}{{ form.dropname(class="form-control" ) }}
+        </div>
+        <div class=form-group>
+            <span style="font-size:16px;font-weight:bold;">tag：</span>{{ form.tag.label(class="sr-only") }}{{ form.tag(class="form-control") }}
+        </div>
+
+        	<!-- {{ wtf.form_field(form.title) }}<br><br>
+            {{ wtf.form_field(form.dropname) }}<hr>
+            {{ wtf.form_field(form.tag) }}<hr> -->
+            <hr>{{ wtf.form_field(form.category) }}<hr>
+
+        <div class=form-group>
+    		{{ form.content.label(class="control-label") }}{{ form.content(rows = 10, cols = 100) }}
+    	</div>
+        <div class=form-group>
+            {{ form.submit(class="btn btn-default") }}
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -4,8 +4,7 @@ from datetime import datetime
 from markdown import markdown
 import bleach
 from .. import db
-
-
+from ..auth.models import LoginUser
 
 
 # drops分类表
@@ -15,6 +14,7 @@ class Category(db.Model):
     __tablename__ = 'categorys'
     id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(50), unique=True)
+    drops = db.relationship('Postdrop', backref='cate', lazy='dynamic')
 
     # 自定义数据库初始化
     def __init__(self, *args, **kwargs):
@@ -32,19 +32,19 @@ class Category(db.Model):
 #                         )
 #
 #
-# 文章标签表
-# class Tag(db.Model):
-#     __tablename__ = 'tags'
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(50))
-#
-#     # post = db.relationship('Post', secondary=article_tags)
-#
-#     def __init__(self, *args, **kwargs):
-#         super(Tag, self).__init__(*args, **kwargs)
-#
-#     def __repr__(self):
-#         return '<tag name %r>' % self.name
+#文章标签表
+class Tag(db.Model):
+    __tablename__ = 'tags'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+
+    # post = db.relationship('Post', secondary=article_tags)
+
+    def __init__(self, *args, **kwargs):
+        super(Tag, self).__init__(*args, **kwargs)
+
+    def __repr__(self):
+        return '<tag name %r>' % self.name
 
 
 '''
@@ -65,6 +65,7 @@ class Category(db.Model):
 
 '''
 
+
 class Postdrop(db.Model):
     __tablename__ = 'postdrops'
     id = db.Column(db.Integer, primary_key=True)
@@ -75,7 +76,7 @@ class Postdrop(db.Model):
     view_num = db.Column(db.Integer, default=0)
     comment_count = db.Column(db.Integer, default=0)
     status = db.Column(db.Integer, default=1)
-    author_id = db.Column(db.Integer, default=1)
+    author_id = db.Column(db.Integer, db.ForeignKey('login_users.id'))
     drop_modified_time = db.Column(db.DateTime, default=datetime.utcnow)
     category_id = db.Column(db.Integer, db.ForeignKey('categorys.id'))
     # categorys = db.relationship('Category', backref=db.backref('posts', lazy='dynamic'), lazy='select')
@@ -83,7 +84,24 @@ class Postdrop(db.Model):
     tags_name = db.Column(db.Text)
 
     def __init__(self, *args, **kwargs):
-        super(Post, self).__init__(*args, **kwargs)
+        super(Postdrop, self).__init__(*args, **kwargs)
 
     def __repr__(self):
         return '<postdrop %r>' % self.drop_title
+
+    @staticmethod
+    def on_changed_drop_content(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'img']
+        attrs = {
+            '*': ['class'],
+            'a': ['href', 'rel'],
+            'img': ['src', 'alt'],
+        }
+        target.drop_content_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, attributes=attrs, strip=True)
+        )
+
+db.event.listen(Postdrop.drop_content, 'set', Postdrop.on_changed_drop_content)
