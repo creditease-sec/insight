@@ -1,7 +1,7 @@
 {% extends 'drops/drops_base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% import "drops/_macros.html" as macros %}
-{% block title %} drops管理 {% endblock%}
+{% block title %} drops-管理 {% endblock%}
 {% block page_content %}
 <div class="page-header">
     <h1>drops编辑</h1>
@@ -37,6 +37,7 @@
                     <td>{{i.id}}</td>
                     <td>{{i.drop_title}}</td>
                     <td>{{moment(i.drop_modified_time).format('YYYY年M月D日, H:mm:ss')}}</td>
+                    <!-- <td>222</td> -->
                     <td>{{i.cate.category_name}}</td>
                     <td>
                         <button onclick="del({{i.id}})" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span>刪除</button>

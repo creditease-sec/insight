@@ -8,61 +8,89 @@
         font-size: 16px;
     }
 </style>
-{% endblock %}
-{% block scripts %}
-{{ super() }}
+{% endblock %} {% block scripts %} {{ super() }}
 <script src="{{ url_for('static', filename='Markdown.Converter.min.js') }}"></script>
 <script src="{{ url_for('static', filename='Markdown.Sanitizer.min.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
 <script type="text/javascript">
-	function Checknull(str)
-    {
-        var strReg="";
+    function Checknull(str) {
+        var strReg = "";
         var r;
-        var strText= document.getElementById(str).value;
-        if(strText=="" || strText==null)
-        {
+        var strText = document.getElementById(str).value;
+        if (strText == "" || strText == null) {
             alert("输入不能为空");
             return;
         }
     }
 </script>
-{% endblock %}
-{% import 'bootstrap/wtf.html' as wtf %}
-{% block title%} drops修改 {% endblock%}
-{% block page_content %}
+<script type=text/javascript>
+    $(function() {
+        $('#upload').bind('change', function() {
+
+            $.ajax({
+                url: '/drops/upload_img',
+                type: 'POST',
+                cache: false,
+                data: new FormData($('#img_form')[0]),
+                processData: false,
+                contentType: false
+            }).done(function(data) {
+                $("#label_result").text('上传图片成功!');
+                $("#result").text(data.result);
+            }).fail(function(data) {
+                $("#label_result").text('上传图片失败!');
+            });
+
+        });
+    });
+</script>
+{% endblock %} {% import 'bootstrap/wtf.html' as wtf %} {% block title%} drops-编辑 {% endblock%} {% block page_content %}
 <div class="page-header">
     <h1>修改drop</h1>
 </div>
 
+<form id="img_form" action="" method="post" class="form" enctype="multipart/form-data" role="form">
+    <div style="display:none;">
+        <input id="csrf_token" name="csrf_token" type="hidden" value="">
+    </div>
+    <div class="form-group  required">
+        <label class="control-label" for="upload" id="label_result">上传图片</label>
+        <p id="result"></p>
+        <input id="upload" name="upload" required type="file">
+    </div>
+</form>
 
 
-        <form action="" method="post" class="form-inline" role="form">
+<form action="" method="post" class="form-inline" role="form">
 
-        <div style="display:none;">
-            {{ form.csrf_token(type="hidden") }}
-        </div>
-        <div class=form-group>
-            <span style="font-size:16px;font-weight:bold;">标题名：</span>{{ form.title.label(class="sr-only") }}{{ form.title(class="form-control" ) }}
-        </div>
-        <div class=form-group>
-            <span style="font-size:16px;font-weight:bold;">drop名：</span>{{ form.dropname.label(class="sr-only") }}{{ form.dropname(class="form-control" ) }}
-        </div>
-        <div class=form-group>
-            <span style="font-size:16px;font-weight:bold;">tag：</span>{{ form.tag.label(class="sr-only") }}{{ form.tag(class="form-control") }}
-        </div>
-
-        	<!-- {{ wtf.form_field(form.title) }}<br><br>
-            {{ wtf.form_field(form.dropname) }}<hr>
-            {{ wtf.form_field(form.tag) }}<hr> -->
-            <hr>{{ wtf.form_field(form.category) }}<hr>
-
-        <div class=form-group>
-    		{{ form.content.label(class="control-label") }}{{ form.content(rows = 10, cols = 100) }}
-    	</div>
-        <div class=form-group>
-            {{ form.submit(class="btn btn-default") }}
-        </div>
+    <div style="display:none;">
+        {{ form.csrf_token(type="hidden") }}
+    </div>
+    <div class=form-group>
+        <span style="font-size:16px;font-weight:bold;">标题名：</span>{{ form.title.label(class="sr-only") }}{{ form.title(class="form-control" ) }}
+    </div>
+    <div class=form-group>
+        <span style="font-size:16px;font-weight:bold;">drop名：</span>{{ form.dropname.label(class="sr-only") }}{{ form.dropname(class="form-control" ) }}
+    </div>
+    <div class=form-group>
+        <span style="font-size:16px;font-weight:bold;">tag：</span>{{ form.tag.label(class="sr-only") }}{{ form.tag(class="form-control") }}
     </div>
 
+    <!-- {{ wtf.form_field(form.title) }}<br><br>
+            {{ wtf.form_field(form.dropname) }}<hr>
+            {{ wtf.form_field(form.tag) }}<hr> -->
+    <hr>{{ wtf.form_field(form.category) }}
+    <hr>
 
-{% endblock %}
+    <div class=form-group>
+        {{ form.content.label(class="control-label") }}{{ form.content(rows = 10, cols = 100) }}
+    </div>
+    <br>
+    <div class=form-group>
+        {{ form.submit(class="btn btn-default") }}
+    </div>
+    </div>
+</form>
+
+
+    {% endblock %}

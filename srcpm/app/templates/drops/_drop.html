@@ -1,0 +1,15 @@
+<ul class="posts">
+{% for post in posts %}
+<li class="post">
+...
+<div class="post-content">
+...
+<div class="post-footer">
+<a href="{{ url_for('.drop', postid=post.id) }}">
+<span class="label label-default">Permalink</span>
+</a>
+</div>
+</div>
+</li>
+{% endfor %}
+</ul>

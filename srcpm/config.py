@@ -10,6 +10,7 @@ class Config:
     SRCPM_MAIL_SENDER = 'SrcPM Admin <sec_creditease@sina.com>'
     SRCPM_ADMIN = os.environ.get('MYBLOG_ADMIN') or '75065472@qq.com'
     UPLOAD_IMG_FOLDER = os.path.join(basedir, 'app/static/upload/img/')
+    PER_PAGE = 10
 
     @staticmethod
     def init_app(app):
@@ -19,7 +20,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        ''
+        'mysql://root:@localhost/vuldb'
     MAIL_SERVER = 'smtp.sina.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True

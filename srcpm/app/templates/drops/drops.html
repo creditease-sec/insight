@@ -1,0 +1,136 @@
+
+{% extends 'drops/drops_base.html' %} {% import 'bootstrap/wtf.html' as wtf %}
+{% import "drops/_macros.html" as macros %} {% block title %} drops {% endblock%} {% block head %} {{ super() }}
+
+<head>
+    <style>
+        body {
+            font-family: "ff-tisa-web-pro-1", "ff-tisa-web-pro-2", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "Microsoft YaHei UI", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+        }
+    </style>
+    <style>
+        .w90 {
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .w60 {
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .w35 {
+            width: 35%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <style type="text/css">
+        a:link {
+            text-decoration: none;
+        }
+
+        a:visited {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        a:active {
+            text-decoration: none;
+        }
+    </style>
+</head>
+{% endblock %} {% block page_content %}
+
+<body data-spy="scroll" data-target=".bs-docs-sidebar" w90>
+    <header>
+        <span style="font-size:30px;font-weight:bold;color:#708090;">drop标题: {{post.drop_title}}</span>
+        <hr>
+    </header>
+    <div class="container ">
+        <div class="row">
+            <!-- 留空布局其他-->
+            <div class="col-md-3">
+            </div>
+            <!--/span-->
+            <div class="container col-md-12">
+                <b>
+                    <p class="title_info">&nbsp;&nbsp;
+                    作者:<span class="info_author">{{authorname.username}}</span>&nbsp;&nbsp;
+                    更新时间：<span class="info_date">{{moment(post.drop_modified_time).format('YYYY年M月D日, H:mm:ss')}}</span>&nbsp;&nbsp;
+                    阅读次数：<span class="info_times">{{post.view_num}}</span>&nbsp;&nbsp;
+                    评论：<span class="info_commments">3</span>&nbsp;&nbsp;
+                    标签:<span>{{post.tags_name}}</span>&nbsp;&nbsp;
+                    </p>
+                </b>
+                <HR /> {% if post.drop_content_html %} {{ post.drop_content_html|safe }} {% endif %}
+                <HR />
+            </div>
+        </div>
+    </div>
+    <div class="container col-md-12">
+        <ol class="commentlist">
+            {% for c in postcoments %}
+
+            <li id="li-comment-{{c.id}}" class="comment even thread-even depth-1">
+                <article id="comment-{{c.id}}" class="comment">
+                    <footer class="clearfix comment-head">
+                        昵称:<span style="font-size:16px;font-weight:bold;">&nbsp;&nbsp;{{c.author_name}}&nbsp;&nbsp;</span>
+                        <div class="comment-meta commentmetadata">
+                            <a href="#comments">
+                                <time datetime="2013-01-01T02:07:46+00:00" pubdate=""> {{moment(c.comment_create_time).format('YYYY年M月D日, H:mm:ss')}} </time>
+                            </a>
+                        </div>
+                    </footer>
+                    <div class="comment-content">
+                        <p>{{c.content_html|safe}}</p>
+                    </div>
+                    <div class="act">
+                        <!--  留空追加回复-->
+                    </div>
+                    <hr>
+
+                </article>
+            </li>
+
+            {% endfor %}
+        </ol>
+        <hr>
+        <form action="{{url_for('drops.addcomment')}}" method="post" class="form-inline" role="form">
+
+            <div style="display:none;">
+                {{ form.hidden_tag() }} {{ form.comt_id(type='hidden', value=post.id)}}
+            </div>
+            <div class=form-group>
+                <span style="font-size:16px;font-weight:bold;">Name：</span>{{ form.author_name.label(class="sr-only") }}{{ form.author_name(class="form-control" ) }}
+            </div>
+            <div class=form-group>
+                <span style="font-size:16px;font-weight:bold;">Email：</span>{{ form.author_email.label(class="sr-only") }}{{ form.author_email(class="form-control" ) }}
+            </div>
+
+            <div class=form-group>
+                {{ form.content.label(class="control-label") }}{{ form.content(rows = 3, cols = 100) }}
+            </div>
+            <br>
+            <div class=form-group>
+                {{ form.submit(class="btn btn-default") }}
+            </div>
+    </div>
+    </form>
+    </div>
+
+    <footer>
+
+    </footer>
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/highlight/styles/monokai-sublime.css') }}">
+    <script src="{{ url_for('static', filename='plugins/highlight/highlight.pack.js') }}"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+</body>
+{% endblock %}
