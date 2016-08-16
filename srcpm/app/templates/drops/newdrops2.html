@@ -1,0 +1,42 @@
+{% import 'bootstrap/wtf.html' as wtf %}
+{% include 'drops/_mdhead.html' %}
+
+
+    <div class="container" w90>
+        <div class="contentform">
+            <form method="POST" action="{{ url_for('drops.newdrops')}}" class="form-inline" role="form">
+                {{ form.csrf_token(type="hidden") }}
+                <div class="form-group required">
+                    <label class="sr-only" for="title">标题</label>
+                    <span style="font-size:16px;font-weight:bold;">标题名：</span>
+                    <input type="text" class="form-control" name="title" id="title" placeholder="请输入标题" onblur="Checknull('title','标题')" required type="string">
+                </div>
+                <div class="form-group required">
+                    <label class="sr-only" for="nadropnameme">drop名</label>
+                    <span style="font-size:16px;font-weight:bold;">文章名：</span>
+                    <input type="text" class="form-control" name="dropname" id="dropname" placeholder="请输入drop名" onblur="Checknull('dropname','drop名')" required type="string">
+                </div>
+                <div class=form-group>
+                    <span style="font-size:16px;font-weight:bold;">tag：</span>{{ form.tag.label(class="sr-only") }}{{ form.tag(class="form-control") }}
+                </div>
+                <!-- {{ wtf.form_field(form.submit) }} -->
+                <div class=form-group>
+                    <label class="sr-only" for="button">button</label>
+                    <button type="submit" class="btn btn-success btn-large btn-block" type="button">确认OK，立刻发布我的文章</button>
+                </div>
+                <hr>
+                <div class="category">
+                    <p>
+                        {% for category in categories %} {{ category.category_name }}
+                        <input type="radio" name="category" value="{{ category.id }}" />&nbsp;&nbsp; {% endfor %}
+                    </p>
+                </div>
+                <hr>
+                <div id="editormd">
+                    <textarea name="content" style="display:none;"></textarea>
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% include 'drops/_mdfoot.html' %}

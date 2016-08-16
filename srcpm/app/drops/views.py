@@ -66,8 +66,19 @@ def login():
 
 @drops.route('/upload_img', methods=['POST'])
 @permission_required('src.upload_img')
+# def upload_img():
+#     up_img_file = request.files['upload']
+#     if up_img_file and allowed_file(up_img_file.filename):
+#         img_type = up_img_file.filename.rsplit('.', 1)[1]
+#         save_filename = datetime.now().strftime('%Y%m%d%H%M%s') + '.' + img_type
+#         up_img_file.save(current_app.config[
+#                          'UPLOAD_IMG_FOLDER'] + save_filename)
+#         session['filename'] = url_for(
+#             'static', filename='upload/img/' + save_filename)
+#         return jsonify(result=session['filename'])
+
 def upload_img():
-    up_img_file = request.files['upload']
+    up_img_file = request.files['editormd-image-file']
     if up_img_file and allowed_file(up_img_file.filename):
         img_type = up_img_file.filename.rsplit('.', 1)[1]
         save_filename = datetime.now().strftime('%Y%m%d%H%M%s') + '.' + img_type
@@ -75,7 +86,8 @@ def upload_img():
                          'UPLOAD_IMG_FOLDER'] + save_filename)
         session['filename'] = url_for(
             'static', filename='upload/img/' + save_filename)
-        return jsonify(result=session['filename'])
+        s = {'success':1,'message': 'OK','url':session['filename']}
+        return jsonify(s)
 
 
 #--------前台展示模块---------
@@ -88,7 +100,7 @@ def upload_img():
 @drops.route('/index')
 @drops.route('/page/<int:pageid>')
 def index(pageid=1):
-    per_page = 5
+    per_page = 10
     categorys = Category.query.all()
     p = Postdrop.query.getdrop_perpage(pageid, per_page)
     hot = Postdrop.query.hotdrop()[:20]
@@ -125,7 +137,7 @@ def index(pageid=1):
 @drops.route('/category/<int:cateid>/page/<int:pageid>')
 
 def category(cateid=1, pageid=1):
-    per_page=5
+    per_page=10
     categorys = Category.query.all()
     hot = Postdrop.query.hotdrop()[:10]
     new = Postdrop.query.newdrop()[:10]
@@ -165,7 +177,7 @@ def category(cateid=1, pageid=1):
 @drops.route('/tag/<int:tagid>/page/<int:pageid>')
 
 def tag(tagid=1, pageid=1):
-    per_page=5
+    per_page=10
     categorys = Category.query.all()
     hot = Postdrop.query.hotdrop()[:20]
     new = Postdrop.query.newdrop()[:20]
@@ -398,7 +410,7 @@ def newdrops():
             db.session.add(post)
             flash(u'新的drop已添加!')
             return redirect(url_for('drops.readdrops'))
-    return render_template('drops/newdrops.html', categories=categories, form=form)
+    return render_template('drops/newdrops2.html', categories=categories, form=form)
 
 # 查看drop
 
@@ -446,7 +458,7 @@ def editdrops(id):
     form.tag.data = droppost.tags_name
     form.category.data = droppost.category_id
     form.content.data = droppost.drop_content
-    return render_template('drops/editdrops.html', form=form, id=droppost.id)
+    return render_template('drops/editdrops2.html', form=form, id=droppost.id)
 
 # 删除drops
 

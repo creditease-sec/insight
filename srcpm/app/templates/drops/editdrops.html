@@ -1,4 +1,6 @@
-{% extends 'drops/drops_base.html' %} {% block head %} {{ super() }}
+{% extends 'drops/drops_base.html' %}
+{% block head %}
+{{ super() }}
 <style type="text/css">
     #title_id {
         font-size: 16px;
@@ -8,7 +10,9 @@
         font-size: 16px;
     }
 </style>
-{% endblock %} {% block scripts %} {{ super() }}
+{% endblock %}
+{% block scripts %}
+{{ super() }}
 <script src="{{ url_for('static', filename='Markdown.Converter.min.js') }}"></script>
 <script src="{{ url_for('static', filename='Markdown.Sanitizer.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
@@ -44,7 +48,9 @@
         });
     });
 </script>
-{% endblock %} {% import 'bootstrap/wtf.html' as wtf %} {% block title%} drops-编辑 {% endblock%} {% block page_content %}
+{% endblock %}{% import 'bootstrap/wtf.html' as wtf %}
+{% block title%} drops-编辑 {% endblock%}
+{% block page_content %}
 <div class="page-header">
     <h1>修改drop</h1>
 </div>

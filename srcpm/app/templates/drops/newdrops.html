@@ -51,7 +51,9 @@
 </script>
 
 {% endblock %}
-{% import 'bootstrap/wtf.html' as wtf %} {% block title%} drops-新建 {% endblock%} {% block page_content %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title%} drops-新建 {% endblock%}
+{% block page_content %}
 <div class="page-header">
     <h1>新建drop</h1>
 </div>
@@ -89,7 +91,8 @@
             <input type="radio" name="category" value="{{ category.id }}" />&nbsp;&nbsp; {% endfor %}
         </p>
     </div>
-    <br> {{ form.content.label(class="control-label") }}{{ form.content(rows = 30, cols = 120) }} {{ wtf.form_field(form.submit) }}
+    <br> {{ form.content.label(class="control-label") }}{{ form.content(rows = 30, cols = 120) }}
+    {{ wtf.form_field(form.submit) }}
 </form>
 
 

@@ -1,6 +1,4 @@
-
-{% extends 'drops/drops_base.html' %} {% import 'bootstrap/wtf.html' as wtf %}
-{% import "drops/_macros.html" as macros %} {% block title %} drops {% endblock%} {% block head %} {{ super() }}
+ {% extends 'drops/drops_base.html' %} {% import 'bootstrap/wtf.html' as wtf %} {% import "drops/_macros.html" as macros %} {% block title %} drops {% endblock%} {% block head %} {{ super() }}
 
 <head>
     <style>
@@ -74,32 +72,34 @@
         </div>
     </div>
     <div class="container col-md-12">
-        <ol class="commentlist">
-            {% for c in postcoments %}
 
-            <li id="li-comment-{{c.id}}" class="comment even thread-even depth-1">
-                <article id="comment-{{c.id}}" class="comment">
-                    <footer class="clearfix comment-head">
-                        昵称:<span style="font-size:16px;font-weight:bold;">&nbsp;&nbsp;{{c.author_name}}&nbsp;&nbsp;</span>
-                        <div class="comment-meta commentmetadata">
-                            <a href="#comments">
-                                <time datetime="2013-01-01T02:07:46+00:00" pubdate=""> {{moment(c.comment_create_time).format('YYYY年M月D日, H:mm:ss')}} </time>
-                            </a>
+            <ol class="commentlist">
+                {% for c in postcoments %}
+
+                <li id="li-comment-{{c.id}}" class="comment even thread-even depth-1">
+                    <article id="comment-{{c.id}}" class="comment">
+                        <footer class="clearfix comment-head">
+                            昵称:<span style="font-size:16px;font-weight:bold;">&nbsp;&nbsp;{{c.author_name}}&nbsp;&nbsp;</span>
+                            <div class="comment-meta commentmetadata">
+                                <a href="#comments">
+                                    <time datetime="2013-01-01T02:07:46+00:00" pubdate=""> {{moment(c.comment_create_time).format('YYYY年M月D日, H:mm:ss')}} </time>
+                                </a>
+                            </div>
+                        </footer>
+                        <div class="comment-content">
+                            <p>{{c.content_html|safe}}</p>
                         </div>
-                    </footer>
-                    <div class="comment-content">
-                        <p>{{c.content_html|safe}}</p>
-                    </div>
-                    <div class="act">
-                        <!--  留空追加回复-->
-                    </div>
-                    <hr>
+                        <div class="act">
+                            <!--  留空追加回复-->
+                        </div>
+                        <hr>
 
-                </article>
-            </li>
+                    </article>
+                </li>
 
-            {% endfor %}
-        </ol>
+                {% endfor %}
+            </ol>
+
         <hr>
         <form action="{{url_for('drops.addcomment')}}" method="post" class="form-inline" role="form">
 

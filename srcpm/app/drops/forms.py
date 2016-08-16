@@ -48,7 +48,7 @@ class DropForm(Form):
         u'类型', coerce=int, id='category_id')
     tag = StringField(u'标签', validators=[Required(), Length(1.50)],
                       render_kw={"placeholder": u"多个tag用英文逗号隔开"})
-    content = PageDownField(u'drop内容', id='content_id',validators=[Required(),Length(min=200)])
+    content = PageDownField(u'drop内容', id='content_id',validators=[Required(),Length(min=10)])
     submit = SubmitField(u'提交')
 
     def __init__(self, *args, **kwargs):

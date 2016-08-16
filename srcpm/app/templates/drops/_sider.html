@@ -28,6 +28,16 @@
     </ul>
 </div>
 
+<div class="well sidebar-nav " style="width:90%">
+    <ul class="nav nav-list">
+        <li class="active">近期评论：</li>
+        {% for i in comments[:5] %}
+        <li><a href="{{ url_for('drops.drop', postid=i.comt_id) }}#comments">{{i.author_name}}:({{i.content[:5]}})</a></li>
+        {% endfor %}
+
+    </ul>
+</div>
+
 
 
 <!--/.well -->

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>drops</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/drop/bootstrap.css">
+    <link rel="stylesheet" href="/static/plugins/editormd/css/editormd.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/highlight/styles/monokai-sublime.css') }}">
+    <script src="{{ url_for('static', filename='plugins/highlight/highlight.pack.js') }}"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+    <style>
+        body {
+            font-family: "ff-tisa-web-pro-1", "ff-tisa-web-pro-2", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "Microsoft YaHei UI", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+        }
+    </style>
+    <style>
+        .w90 {
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .w60 {
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .w35 {
+            width: 35%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+<script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+    <!-- Le fav and touch icons -->
+</head>
+
+<body data-spy="scroll" data-target=".bs-docs-sidebar">
+    <div class="navbar navbar-inverse ">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                {% if current_user.is_authenticated %}
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">漏洞管理平台</a>
+                <a class="navbar-brand" href="{{ url_for('drops.index')}}">Home</a>
+
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="{{ url_for('drops.readdrops')}}" class="dropdown-toggle" data-toggle="dropdown">
+                            	dorps管理 <b class="caret"></b>
+                        	</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('drops.newdrops')}}">新建drops</a></li>
+                            <li><a href="{{ url_for('drops.readdrops')}}">查看drops</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="{{ url_for('drops.readcate')}}" class="dropdown-toggle" data-toggle="dropdown">
+                            	dorps分类 <b class="caret"></b>
+                        	</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('drops.newcate')}}">新建分类</a></li>
+                            <li><a href="{{ url_for('drops.readcate')}}">查看分类</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                    <li><a href="#">欢迎您！{{ current_user.username }}</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                帐户 <b class="caret"></b>
+                            </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('auth.change_password') }}">修改密码</a></li>
+                            <li><a href="{{ url_for('auth.logout') }}">退出</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li><a href="{{ url_for('drops.login') }}">登录</a></li>
+                    {% endif %}
+                </ul>
+                {% else %}
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">漏洞管理平台</a>
+                <a class="navbar-brand" href="{{ url_for('drops.index')}}">Home</a>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                    <li><a href="#">欢迎您！{{ current_user.username }}</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                帐户 <b class="caret"></b>
+                            </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('auth.change_password') }}">修改密码</a></li>
+                            <li><a href="{{ url_for('auth.logout') }}">退出</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li><a href="{{ url_for('drops.login') }}">登录</a></li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>

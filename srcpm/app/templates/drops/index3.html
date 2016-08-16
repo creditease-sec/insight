@@ -1,0 +1,102 @@
+{% extends 'drops/drops_base.html' %} {% import 'bootstrap/wtf.html' as wtf %} {% block title %} drops-首页 {% endblock%} {% block head %} {{super()}}
+<style>
+    .container .row .col-md-9 .content_sort>ul {
+        box-sizing: border-box;
+        width: 100%;
+        border: 1px solid #ededed
+    }
+
+    .container .row .col-md-9 .content_sort>ul .sort_item {
+        float: left;
+        position: relative
+    }
+
+    /*.container-blog .section_blog .blog_sidebarcontainer,
+    .container-blog .section_blog .blog_sidebarcontainer .mod-rss>a {
+        float: right
+    }*/
+
+    .container .row .col-md-9 .content_sort>ul .sort_item>a {
+        display: inline-block;
+        padding: 0 23px;
+        font-size: 14px;
+        line-height: 40px;
+        color: #999;
+        -webkit-transition: color .2s, background-color .2s;
+        transition: color .2s, background-color .2s
+    }
+
+    .container .row .col-md-9 .content_sort>ul .sort_item-active>a,
+    .container .row .col-md-9 .content_sort>ul .sort_item>a:hover {
+        color: #fff;
+        background-color: #007cfa
+    }
+
+    /*.container-blogdetail,
+    .container-opensourcedetail {
+        background-color: #f5f5f5
+    }*/
+
+    .container .row .col-md-9 .content_sort>ul .sort_item-active>a:after {
+        content: '';
+        position: absolute;
+        display: block;
+        left: 50%;
+        margin-left: -5px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 5px 0;
+        border-color: #007cfa transparent transparent
+    }
+</style>
+{% endblock %} {% block page_content %}
+<div class="row">
+
+    <!-- <div class="col-md-3" style="background-color: #dedef8;box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;"> -->
+    <div class="col-md-3">
+        {% include 'drops/_sider.html' %}
+
+    </div>
+
+
+
+
+    <div class="col-md-9">
+        <div class="content_sort">
+            <ul >
+
+                {% for c in categorys %}
+                <li class="sort_item "><a href="{{url_for('drops.category',cateid=c.id)}}">{{c.category_name}}</a></li>
+                {% endfor %}
+
+            </ul>
+
+        </div>
+        {% for a in drops%}
+        <hr>
+
+        <div class="art-{{a.id}}">
+
+
+            <div class="content">
+
+                {% if a.drop_content_html %} {% if (a.drop_content|length)>100 %} {{ (a.drop_content_html)[:100]|safe }}... {% else %} {{ (a.drop_content_html)|safe }} {% endif %} {% else %}
+                <b>您输入的页面字符长度太小不予显示！</b> {% endif %}
+                </code>
+                </pre>
+                <p><a href="{{ url_for('drops.drop', postid=a.id) }}" style="float:right">阅读全文 &raquo;</a></p>
+            </div>
+        </div>
+
+        {% endfor %}
+        <div id="Pagination" class="pagination">
+            <a href="/drops/page/1">首页 &raquo;</a> {% for i in pagination %} {% if i==pageid %}<span class="current">{{pageid}}</span> {% else %}<a href="/drops/page/{{i}}">{{i}}</a> {% endif %} {% endfor %}
+            <span>...</span>
+            <a href="/drops/page/{{last_page}}">末页 &raquo;</a>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
