@@ -1,0 +1,101 @@
+{% extends 'drops/drops_base.html' %}
+{% block head %}
+{{ super() }}
+<style type="text/css">
+    #title_id {
+        font-size: 16px;
+    }
+
+    #dropname_id {
+        font-size: 16px;
+    }
+</style>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='Markdown.Converter.min.js') }}"></script>
+<script src="{{ url_for('static', filename='Markdown.Sanitizer.min.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+<script type="text/javascript">
+    function Checknull(str, xx) {
+        var strReg = "";
+        var r;
+        var strText = document.getElementById(str).value;
+        if (strText == "" || strText == null) {
+            alert(xx + "输入不能为空");
+            return;
+        }
+    }
+</script>
+
+<script type=text/javascript>
+    $(function() {
+        $('#upload').bind('change', function() {
+
+            $.ajax({
+                url: '/drops/upload_img',
+                type: 'POST',
+                cache: false,
+                data: new FormData($('#img_form')[0]),
+                processData: false,
+                contentType: false
+            }).done(function(data) {
+                $("#label_result").text('上传图片成功!');
+                $("#result").text(data.result);
+            }).fail(function(data) {
+                $("#label_result").text('上传图片失败!');
+            });
+
+        });
+    });
+</script>
+
+{% endblock %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title%} drops-新建 {% endblock%}
+{% block page_content %}
+<div class="page-header">
+    <h1>新建drop</h1>
+</div>
+
+<form id="img_form" action="" method="post" class="form" enctype="multipart/form-data" role="form">
+    <div style="display:none;">
+        <input id="csrf_token" name="csrf_token" type="hidden" value="">
+    </div>
+    <div class="form-group  required">
+        <label class="control-label" for="upload" id="label_result">上传图片</label>
+        <p id="result"></p>
+        <input id="upload" name="upload" required type="file">
+    </div>
+</form>
+
+<form method="POST" action="{{ url_for('drops.newdrops')}}" class="form-inline" role="form">
+    {{ form.hidden_tag() }}
+    <div class="form-group required">
+        <label class="sr-only" for="title">标题</label>
+        <span style="font-size:16px;font-weight:bold;">标题名：</span>
+        <input type="text" class="form-control" name="title" id="title" placeholder="请输入标题" onblur="Checknull('title','标题')" required type="string">
+    </div>
+    <div class="form-group required">
+        <label class="sr-only" for="nadropnameme">drop名</label>
+        <span style="font-size:16px;font-weight:bold;">文章名：</span>
+        <input type="text" class="form-control" name="dropname" id="dropname" placeholder="请输入drop名" onblur="Checknull('dropname','drop名')" required type="string">
+    </div>
+    <div class=form-group>
+        <span style="font-size:16px;font-weight:bold;">tag：</span>{{ form.tag.label(class="sr-only") }}{{ form.tag(class="form-control") }}
+    </div>
+    <hr>
+    <div class="category">
+        <p>
+            {% for category in categories %} {{ category.category_name }}
+            <input type="radio" name="category" value="{{ category.id }}" />&nbsp;&nbsp; {% endfor %}
+        </p>
+    </div>
+    <br> {{ form.content.label(class="control-label") }}{{ form.content(rows = 30, cols = 120) }}
+    {{ wtf.form_field(form.submit) }}
+</form>
+
+
+
+
+{% endblock %}

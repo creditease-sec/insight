@@ -1,0 +1,71 @@
+<br>
+<form role="form" action="/drops/search" method='POST'>
+    <label for="name"></label>
+    <input type="text" class="vertical-align: middle" name="keys" placeholder="请输入查询关键字">
+    <button type="submit" class="btn btn-danger">提交</button>
+</form>
+<br>
+<div class="well sidebar-nav " style="width:90%">
+    <ul class="nav nav-list">
+        <li class="active">分类：</li>
+        {% for c in categorys %}
+        <li><a href="{{url_for('drops.category',cateid=c.id)}}">{{c.category_name}}({{c.postdrop.count()}})</a></li>
+        {% endfor %}
+
+    </ul>
+</div>
+
+<div class="well sidebar-nav " style="width:90%">
+    <ul class="nav nav-list">
+        <li class="active">最新：</li>
+        {% for i in newdrops[:5] %}
+        <li><a href="{{ url_for('drops.drop', postid=i.id) }}">{{i.drop_name}}</a></li>
+        {% endfor %}
+
+    </ul>
+</div>
+<div class="well sidebar-nav " style="width:90%">
+    <ul class="nav nav-list">
+        <li class="active">最热：</li>
+        {% for i in hotdrops[:5] %}
+        <li><a href="{{ url_for('drops.drop', postid=i.id) }}">{{i.drop_name}}</a></li>
+        {% endfor %}
+
+    </ul>
+</div>
+
+<div class="well sidebar-nav " style="width:90%">
+    <ul class="nav nav-list">
+        <li class="active">近期评论：</li>
+        {% for i in comments[:5] %}
+        <li><a href="{{ url_for('drops.drop', postid=i.comt_id) }}#comments">{{i.author_name}}:({{i.content[:5]}})</a></li>
+        {% endfor %}
+
+    </ul>
+</div>
+
+
+
+<!--/.well -->
+<!-- <div class="well sidebar-nav " style="width:90%">
+    <ul class="nav nav-list">
+        <li class="active">标签：</li>
+
+        {% for i in tags %}
+        <li><a href="{{ url_for('drops.tag', tagid=i.id) }}">{{i.name}}</a></li>
+        {% endfor %}
+
+    </ul>
+</div> -->
+
+<div class="well sidebar-nav " style="width:90%">
+    {% set row_class = cycler('font-size:12.656565656pt;', 'font-size:8pt;', 'font-size:21.0567465745647pt;', 'font-size:9.0567465745647pt;','font-size:7.0567465745647pt;','font-size:14.0567465745647pt;', 'font-size:17.0567465745647pt;', 'font-size:10.0567465745647pt;','font-size:18.0567465745647pt;',
+    'font-size:9.0567465745647pt;', 'font-size:16.0567465745647pt;', 'font-size:19.0567465745647pt;', 'font-size:7.0567465745647pt;', 'font-size:10.0567465745647pt;','font-size:15.0567465745647pt;', 'font-size:8.0567465745647pt;', 'font-size:20.0567465745647pt;',
+    'font-size:17.0567465745647pt;', 'font-size:14.0567465745647pt;', 'font-size:15.0567465745647pt;') %} {% set color_class = cycler('color:#ac1dfe;','color:#bcb46e;','color:#4298e7;','color:#a7bce8','color:#e6eca8;','color:#d4349a;','color:#5b48ce;','color:#b5b1ea;',
+    'color:#fe4516;','color:#a68d32;','color:#68d6e5;','color:#5c8d29;','color:#9c7da1;','color:#243f2a;','color:#6c7d99;','color:#9cade9;', 'color:#1ced29;','color:#ec3de9;','color:#367d29;','color:#cccd29;') %}
+
+    <span class="active">标签：</span>
+    <br> {% for i in tags %}
+    <a class="tag-link" style={{color_class.next()}}{{row_class.next()}} href="{{ url_for('drops.tag', tagid=i.id) }}">{{i.name}}</a> {% endfor %}
+</div>
+<!--/.well -->

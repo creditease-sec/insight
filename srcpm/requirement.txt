@@ -14,3 +14,5 @@ bleach==1.4.3
 Flask-Uploads==0.2.1
 Flask-Moment==0.5.1
 apscheduler==3.2.0
+gunicorn==19.6.0
+supervisor==3.3.1

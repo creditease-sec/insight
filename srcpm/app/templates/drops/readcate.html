@@ -1,7 +1,7 @@
 {% extends 'drops/drops_base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% import "drops/_macros.html" as macros %}
-{% block title%} drops分类 {% endblock%}
+{% block title%} drops {% endblock%}
 {% block page_content %}
 <div class="page-header">
     <h1>编辑分类</h1>
@@ -60,7 +60,7 @@
 
 <script>
 function del(id){
-var msg="確定要刪除嗎？\n注意：刪除后將無法恢復！"
+var msg="確定要刪除吗？\n注意：刪除后无法恢复！"
 if (confirm(msg)){
 	$.get("/drops/delcate/"+id,function(){alert("目标项目已成功刪除！");location.reload();})
 	}

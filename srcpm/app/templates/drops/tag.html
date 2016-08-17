@@ -1,0 +1,41 @@
+{% extends 'drops/drops_base.html' %} {% import 'bootstrap/wtf.html' as wtf %} {% block title %} drops-标签目录 {% endblock%}
+{% block page_content %}
+<div class="row">
+
+    <!-- <div class="col-md-3" style="background-color: #dedef8;box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;"> -->
+    <div class="col-md-3">
+        {% include 'drops/_sider.html' %}
+        <!--/.well -->
+    </div>
+
+
+
+
+    <div class="col-md-9">
+        {% for a in drops%}
+        <hr>
+        <div class="art-{{a.id}}">
+            {% include 'drops/_contenthd.html' %}
+            <div class="content">
+                {% if a.drop_content_html %} {% if (a.drop_content|length)>100 %} {{ (a.drop_content_html)[:100]|safe }}... {% else %} {{ (a.drop_content_html)|safe }} {% endif %} {% else %}
+                <b>您输入的页面字符长度太小不予显示！</b> {% endif %}
+                </code>
+                </pre>
+            </div>
+            <div class="link">
+                <p><a href="{{ url_for('drops.drop', postid=a.id) }}" style="float:right">阅读全文 &raquo;</a></p>
+            </div>
+            <hr style=" height:2px;border:none;border-top:2px dotted #185598;" />
+        </div>
+
+        {% endfor %}
+        <div id="Pagination" class="pagination">
+            <a href="/drops/page/1">首页 &raquo;</a> {% for i in pagination %} {% if i==pageid %}<span class="current">{{pageid}}</span> {% else %}<a href="/drops/page/{{i}}">{{i}}</a> {% endif %} {% endfor %}
+            <span>...</span>
+            <a href="/drops/page/{{last_page}}">末页 &raquo;</a>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
