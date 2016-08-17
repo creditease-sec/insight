@@ -20,7 +20,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'mysql://root:@localhost/vuldb'
+        ''
     MAIL_SERVER = 'smtp.sina.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
