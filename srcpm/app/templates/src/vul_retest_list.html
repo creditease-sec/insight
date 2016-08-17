@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block title %} 复测中漏洞列表 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>复测中漏洞列表</h1>
+</div>
+
+<form role="form" method='POST'>
+<div class="form-group">
+   <label for="name"></label>
+   <input type="text" class="form-control" name="opt" placeholder="{{ opt_label[1] }}">
+   <button type="submit" class="btn btn-default">{{ opt_label[0] }}</button>
+</div>
+</form>
+
+<div>
+<table class="table table-hover">
+   <thead>
+      <tr>
+        <th>ID</th>
+         <th>作者</th>
+      <!--   <th>时间<th> -->
+         <th>标题</th>
+         <th>关联资产</th>
+         <th>资产状态</th>
+         <th>漏洞类型</th>
+         <th>来源</th>
+         <th>Rank</th>
+         <th>剩余风险</th>
+          <th>通告时间</th>
+          <th>结束时间</th>
+         <th>漏洞状态</th>
+      </tr>
+   </thead>
+   <tbody>
+    {% for vul_report in vul_report_list %}
+      <tr>
+         <td>{{ vul_report[0].id }}</td>
+      <!--   <td>{{ vul_report.timestamp }}</td> -->
+         <td>{{ vul_report[0].author }}</td>
+         <td><a href="{{ url_for('src.vul_report_read', id=vul_report[0].id) }}">{{ vul_report[0].title }}</a></td>
+         <td>{{ vul_report[0].related_asset }}</td>
+         <td>{{ vul_report[0].related_asset_status }}</td>
+         <td>{{ vul_report[0].related_vul_type }}</td>
+         <td>{{ vul_report[0].vul_source }}</td>
+         <td>{{ vul_report[0].grant_rank }}</td>
+         <th>{{ vul_report[0].residual_risk_score }}</th>
+         <td>{{ moment(vul_report[0].start_date).format('YYYY-MM-DD') }}</td>
+         <td>{{ moment(vul_report[0].end_date).format('YYYY-MM-DD') }}</td>
+         <td>{{ vul_report[0].vul_status }}</td>
+      </tr>
+    {% endfor %}
+   </tbody>
+</table>
+</div>
+
+{% endblock %}
+

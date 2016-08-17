@@ -84,8 +84,12 @@ class VulReport(db.Model):
 
 	@staticmethod
 	def on_changed_risk_score(target, value, oldvalue, initiator):
-		target.residual_risk_score = float(value)
-		target.done_rank = target.grant_rank
+		if target.related_vul_type == u'输出文档':
+			target.residual_risk_score = float(0)
+			target.done_rank = 0
+		else:
+			target.residual_risk_score = float(value)
+			target.done_rank = target.grant_rank
 
 db.event.listen(VulReport.vul_poc, 'set', VulReport.on_changed_vul_poc)
 db.event.listen(VulReport.vul_solution, 'set', VulReport.on_changed_vul_solution)
@@ -101,3 +105,5 @@ class VulLog(db.Model):
 	related_user_email = db.Column(db.String(64))
 	action = db.Column(db.String(64))
 	content = db.Column(db.Text)
+
+

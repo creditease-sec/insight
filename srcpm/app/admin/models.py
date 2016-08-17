@@ -41,7 +41,6 @@ class Asset(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	sysname = db.Column(db.String(64))
 	domain = db.Column(db.String(64), unique = True, index=True)
-	#root_dir = db.Column(db.String(64))
 	back_domain = db.Column(db.String(100))
 	web_or_int = db.Column(db.String(64))
 	is_http = db.Column(db.Boolean, default=False)

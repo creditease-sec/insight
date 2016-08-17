@@ -3,27 +3,53 @@
 
 {% block head %}
 {{ super() }}
-<!-- <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>  -->
 <script src="{{ url_for('static', filename='highcharts.js') }}"></script>
 <script src="{{ url_for('static', filename='chartkick.js') }}"></script>
 {% endblock %}
+
 
 {% block title %} SrcPM {% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-	<h1>Hello</h1>
+	<h1>仪表盘</h1>
 </div>
 
 
-{% line_chart data with style="width:200px; height:20px;" %}
 
-{% pie_chart data with id='chart-1' height='400px' %}
 
-{% column_chart data with min=400 max=1000 %}
+    <div style="width:90%">
+    <h3>漏洞类型</h3>
+                <div>
+                    {% line_chart data_vul_type with style="width:200px; height:20px;" %}
+                </div>
+    </div>
 
-{% bar_chart data %}
 
-{% area_chart data %}
+    <legend></legend>
+
+
+
+    <div style="width:90%">
+    <h3>漏洞状态</h3>
+                <div>
+                    {% pie_chart data_vul_status with id='chart-1' height='400px' %}
+                </div>
+    </div>
+
+
+    <legend></legend>
+
+
+
+
+<!--
+
+{% column_chart data_vul_type with min=400 max=1000 %}
+
+{% bar_chart data_vul_type %}
+
+{% area_chart data_vul_type %}
+-->
 
 {% endblock %}

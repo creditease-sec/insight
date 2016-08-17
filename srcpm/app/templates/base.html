@@ -6,7 +6,7 @@
 
 {% block scripts %}
 	{{ super() }}
-	{{ moment.include_moment() }}
+    {{ moment.include_moment(local_js='/static/moment-with-locales.min.js') }}
 	{{ moment.lang("zh-CN") }}
 {% endblock %}
 
@@ -34,7 +34,7 @@
 			<ul class="nav navbar-nav navbar-left">
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        	漏洞管理 <b class="caret"></b>
+                        	漏洞提交 <b class="caret"></b>
                     	</a>
                     	<ul class="dropdown-menu">
                         	<li><a href="{{ url_for('src.vul_report_add') }}">漏洞报告提交</a></li>
@@ -42,6 +42,42 @@
                     	</ul>
 					</li>
 			</ul>
+
+            {% if current_user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            我的漏洞管理 <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if current_user.can('src.vul_review_list') %}
+                            <li><a href="{{ url_for('src.vul_review_list') }}">未审核漏洞</a></li>
+                            {% endif %}
+                            <li><a href="{{ url_for('src.vul_notify_list') }}">新通告漏洞</a></li>
+                            <li><a href="{{ url_for('src.vul_processing_list') }}">修复中漏洞</a></li>
+                            <li><a href="{{ url_for('src.vul_retest_list') }}">复测中漏洞</a></li>
+                            <li><a href="{{ url_for('src.vul_finished_list') }}">已完成漏洞</a></li>
+                        </ul>
+                    </li>
+            </ul>
+            {% endif %}
+
+            {% if current_user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            积分管理 <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('src.rank_score_list', days=0) }}">总积分</a></li>
+                            <li><a href="{{ url_for('src.rank_score_list', days=7) }}">7天积分</a></li>
+                            <li><a href="{{ url_for('src.rank_score_list', days=30) }}">30天积分</a></li>
+                            <li><a href="{{ url_for('src.rank_score_list', days=90) }}">90天积分</a></li>
+                            <li><a href="{{ url_for('src.rank_score_list', days=365) }}">一年内积分</a></li>
+                        </ul>
+                    </li>
+            </ul>
+            {% endif %}
 
 			<ul class="nav navbar-nav navbar-right">
 				{% if current_user.is_authenticated %}

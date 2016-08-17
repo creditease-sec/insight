@@ -106,11 +106,13 @@
 	</div>
 
 	<div class=form-group>
-		<label>邮件收件人: </label>
+		<label>邮件收件人: </label><br>
 		<font size="2" color="blue">
-			{% for i in email_list %}
-				{{ i[0] }}
-			{% endfor %}
+			{% for i in email_dict['owner'] %}
+				{{ i }}
+			{%endfor%}
+			{{ email_dict['department_manager'] }}
+			{{ email_dict['author'] }}
 		</font>
 	</div>
 

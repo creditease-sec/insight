@@ -1,0 +1,13 @@
+您好，欢迎来到漏洞管理平台!
+
+您还有修复中的漏洞等待复测。
+
+查看链接:
+
+{{ url_for('src.vul_processing_list', _external=True) }}
+
+Sincerely,
+
+The SrcPM Team
+
+Note: replies to this email address are not monitored.

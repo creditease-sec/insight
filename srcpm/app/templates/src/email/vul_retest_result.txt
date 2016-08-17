@@ -1,5 +1,3 @@
-Dear {{ p[0] }},
-
 Welcome to 漏洞管理平台!
 
 人员: {{ vul_log.related_user_email }}

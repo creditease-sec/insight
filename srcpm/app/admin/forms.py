@@ -21,11 +21,13 @@ perm_choices = [('admin.index', 'admin.index'),
 				('src.vul_report_delete', 'src.vul_report_delete'),
 				('src.vul_report_review','src.vul_report_review'),
 				('src.vul_report_review_ajax','src.vul_report_review_ajax'),
+				('src.vul_report_known','src.vul_report_known'),
 				('src.vul_report_dev_finish','src.vul_report_dev_finish'),
 				('src.vul_report_retest_result','src.vul_report_retest_result'),
 				('src.vul_report_retest_ajax','src.vul_report_retest_ajax'),
 				('src.vul_report_add','src.vul_report_add'),
 				('src.upload_img','src.upload_img'),
+				('src.vul_review_list','src.vul_review_list'),
                 ('drops.manager','drops.manager'),
 				]
 
@@ -92,7 +94,6 @@ class UserRoleForm(Form):
 class AssetForm(Form):
 	sysname = StringField(u'系统名称')
 	domain = StringField(u'系统域名', validators=[Required(), Length(1, 64)])
-	#root_dir = StringField(u'根目录')
 	back_domain = TextField(u'备用域名')
 	web_or_int = StringField(u'Web Or Interface')
 	is_http = BooleanField('Is HTTP?')
@@ -102,7 +103,6 @@ class AssetForm(Form):
 	department = SelectField(u'部门')
 	owner = StringField(u'负责人')
 	status = SelectField(u'状态', choices=status_choices)
-	#chkdate = DateField(u'检测日期')
 	ps = TextField(u'说明')
 	submit = SubmitField('Submit')
 
@@ -114,7 +114,7 @@ class AssetForm(Form):
 	def __init__(self, *args, **kwargs):
 		super(AssetForm, self).__init__(*args, **kwargs)
 		self.department.choices = [('', '')] + [(dpt.department, dpt.department) for dpt in Depart.query.all()]
-
+		#self.owner.choices = [('', '')] + [(user.email, user.name) for user in User.query.filter_by(department=u'信息系统安全部')]
 
 class VulTypeForm(Form):
 	vul_type = StringField(u'漏洞类型')

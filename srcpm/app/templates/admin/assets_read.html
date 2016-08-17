@@ -51,7 +51,11 @@
          <td>{{ asset.department }}</td>
          <td>{{ asset.owner }}</td>
          <td>{{ asset.status }}</td>
-         <td>{{ asset.chkdate }}</td>
+         {% if asset.chkdate %}
+         <td>{{ moment(asset.chkdate).format('YYYY-MM-DD') }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
       </tr>
     {% endfor %}
    </tbody>

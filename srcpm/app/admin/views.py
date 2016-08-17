@@ -289,7 +289,6 @@ def assets_add():
 	if form.validate_on_submit():
 		a = Asset(sysname=form.sysname.data, 
 					domain=form.domain.data, 
-					#root_dir=form.root_dir.data, 
 					back_domain=form.back_domain.data, 
 					web_or_int=form.web_or_int.data, 
 					is_http=form.is_http.data, 
@@ -299,12 +298,20 @@ def assets_add():
 					department=form.department.data,
 					owner=form.owner.data,
 					status=form.status.data,
-					#chkdate=form.chkdate.data,
 					ps=form.ps.data)
 		db.session.add(a)
 		flash('Asset %s add success!' %form.domain.data)
 		return redirect(url_for('admin.assets_add'))
 	return render_template('admin/assets_add.html', form=form)
+
+@admin.route('/assets_add_ajax', methods=['GET','POST'])
+def assets_add_ajax():
+	department = request.form.get('department')
+	user_list = User.query.filter_by(department=department).all()
+	opt_list = []
+	for user in user_list:
+		opt_list.append({'name': user.name, 'email': user.email})
+	return jsonify(opt_list)
 
 
 @admin.route('/assets_read', methods=['GET', 'POST'])

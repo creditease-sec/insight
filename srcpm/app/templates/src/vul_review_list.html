@@ -2,18 +2,18 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 
-{% block title %} 漏洞报告查看 {% endblock%}
+{% block title %} 未审核漏洞列表 {% endblock%}
 
 {% block page_content %}
 <div class="page-header">
-	<h1>漏洞报告查看</h1>
+    <h1>未审核漏洞列表</h1>
 </div>
 
 <form role="form" method='POST'>
 <div class="form-group">
    <label for="name"></label>
-   <input type="text" class="form-control" name="opt" placeholder="请输入查询关键字">
-   <button type="submit" class="btn btn-default">提交</button>
+   <input type="text" class="form-control" name="opt" placeholder="{{ opt_label[1] }}">
+   <button type="submit" class="btn btn-default">{{ opt_label[0] }}</button>
 </div>
 </form>
 
@@ -21,7 +21,7 @@
 <table class="table table-hover">
    <thead>
       <tr>
-      	<th>ID</th>
+        <th>ID</th>
          <th>作者</th>
       <!--   <th>时间<th> -->
          <th>标题</th>
@@ -37,7 +37,7 @@
       </tr>
    </thead>
    <tbody>
-   	{% for vul_report in vul_report_list_result %}
+    {% for vul_report in vul_report_list %}
       <tr>
          <td>{{ vul_report.id }}</td>
       <!--   <td>{{ vul_report.timestamp }}</td> -->
@@ -60,8 +60,7 @@
          <td>{{ moment(vul_report.end_date).format('YYYY-MM-DD') }}</td>
          {% else %}
          <td></td>
-         {% endif %}
-
+         {% endif %}         
          <td>{{ vul_report.vul_status }}</td>
       </tr>
     {% endfor %}

@@ -21,10 +21,10 @@
 				processData: false,
 				contentType: false
 			}).done(function(data) {
-				$("#label_result").text('上传图片成功!');
+				$("#label_result").text('上传成功!');
 				$("#result").text(data.result);
 			}).fail(function(data) {
-				$("#label_result").text('上传图片失败!');
+				$("#label_result").text('上传失败!');
 			});
 
 		});
@@ -80,7 +80,7 @@
 	<form id="img_form" action="" method="post" class="form" enctype="multipart/form-data" role="form">
     	<div style="display:none;"><input id="csrf_token" name="csrf_token" type="hidden" value=""></div>
     	<div class="form-group  required">
-    		<label class="control-label" for="upload" id="label_result">上传图片</label><p id="result"></p>
+    		<label class="control-label" for="upload" id="label_result">上传</label><p id="result"></p>
     		<input id="upload" name="upload" required type="file">
     	</div>
     </form>
