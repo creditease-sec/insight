@@ -5,3 +5,6 @@ data-dev.sqlite
 venv_srcpm/*
 config.txt
 migrations/*
+venv/*
+supervisor.conf
+log/*
