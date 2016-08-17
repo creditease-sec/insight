@@ -3,21 +3,20 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-	SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
-	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-	SQLALCHEMY_TRACK_MODIFICATIONS = True
-	SRCPM_MAIL_SUBJECT_PREFIX = '[SrcPM]'
-	SRCPM_MAIL_SENDER = 'SrcPM Admin <sec_creditease@sina.com>'
-	SRCPM_ADMIN = os.environ.get('MYBLOG_ADMIN') or '75065472@qq.com'
-	UPLOAD_IMG_FOLDER = os.path.join(basedir, 'app/static/upload/img/')
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    SRCPM_MAIL_SUBJECT_PREFIX = '[SrcPM]'
+    SRCPM_MAIL_SENDER = 'SrcPM Admin <sec_creditease@sina.com>'
+    SRCPM_ADMIN = os.environ.get('MYBLOG_ADMIN') or '75065472@qq.com'
+    UPLOAD_IMG_FOLDER = os.path.join(basedir, 'app/static/upload/img/')
     PER_PAGE = 10
-	UPLOAD_EXCEL_FOLDER = os.path.join(basedir, 'app/static/upload/excel/')
-	UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
+    UPLOAD_EXCEL_FOLDER = os.path.join(basedir, 'app/static/upload/excel/')
+    UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
 
-	@staticmethod
-	def init_app(app):
-		pass
-
+    @staticmethod
+    def init_app(app):
+        pass
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -43,6 +42,7 @@ class DevelopmentConfig(Config):
         }
     ]
 """
+
 
 class TestingConfig(Config):
     TESTING = True

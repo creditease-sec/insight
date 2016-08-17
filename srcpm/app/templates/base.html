@@ -31,6 +31,7 @@
 				<li><a href="{{ url_for('main.index') }}">主页</a></li>
 			</ul>
 
+
 			<ul class="nav navbar-nav navbar-left">
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -76,6 +77,24 @@
                             <li><a href="{{ url_for('src.rank_score_list', days=365) }}">一年内积分</a></li>
                         </ul>
                     </li>
+            </ul>
+            {% endif %}
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('drops.index') }}">知识库</a></li>
+            </ul>
+            {% if current_user.can('drops.manager') %}
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="{{ url_for('drops.readdrops')}}" class="dropdown-toggle" data-toggle="dropdown">
+                            dorps管理 <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('drops.newdrops')}}">新建drops</a></li>
+                        <li><a href="{{ url_for('drops.readdrops')}}">查看drops</a></li>
+                        <li><a href="{{ url_for('drops.newcate')}}">新建分类</a></li>
+                        <li><a href="{{ url_for('drops.readcate')}}">查看分类</a></li>
+                    </ul>
+                </li>
             </ul>
             {% endif %}
 
