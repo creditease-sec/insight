@@ -87,7 +87,7 @@ class PostQuery(BaseQuery):
     def newdrop(self):
         return self.order_by(Postdrop.drop_modified_time.desc())
 
-    # distinct去除重复记录,db.and_链接查询语句，q是查询语句
+    # distinct去除重复记录,db.and_链接查询语句，q是查询语句(待关键字)
     def search(self, keywords):
         criteria = []
         for keyword in keywords.split():

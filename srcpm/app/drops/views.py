@@ -92,6 +92,52 @@ def upload_img():
 
 #--------前台展示模块---------
 
+# 全文搜索
+
+@drops.route('/search',methods=['GET', 'POST'])
+@drops.route('/search/page/<int:pageid>',methods=['GET', 'POST'])
+def search(pageid=1):
+    per_page=10
+    categorys = Category.query.all()
+    hot = Postdrop.query.hotdrop()[:20]
+    new = Postdrop.query.newdrop()[:20]
+    tag = Tag.query.all()
+    shuffle(tag)
+    tag = tag[:20]
+    comments = Comment.query.order_by(Comment.comment_create_time.desc())[:20]
+    # 第二个参数是默认书据
+    searchword = request.form.get('keys', '')
+    searchword=str_filter(searchword)
+    if not searchword:
+        flash(u'没找到结果!')
+        redirect(url_for('drops.index'))
+
+    searchresult = Postdrop.query.search(searchword)
+
+    p = pageby(searchresult, pageid, per_page, Postdrop.drop_create_time.desc())
+
+    drops = p.items
+    if not p.total:
+        pagination = [0]
+    elif p.total % per_page:
+        pagination = range(1, p.total / per_page + 2)
+    else:
+        pagination = range(1, p.total / per_page + 1)
+
+    return render_template('drops/search.html',
+                           key=searchword,
+                           categorys=categorys,
+                           drops=drops,
+                           hotdrops=hot,
+                           newdrops=new,
+                           tags=tag,
+                           comments=comments,
+                           pageid=pageid,
+                           pagination=pagination[pageid - 1:pageid + 10],
+                           last_page=pagination[-1]
+                           )
+
+
 
 # 查询权限列表如果用户的角色和权限符合drop管理原跳转至manager页面
 
