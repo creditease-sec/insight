@@ -10,6 +10,8 @@ class Config:
 	SRCPM_MAIL_SENDER = 'SrcPM Admin <sec_creditease@sina.com>'
 	SRCPM_ADMIN = os.environ.get('MYBLOG_ADMIN') or '75065472@qq.com'
 	UPLOAD_IMG_FOLDER = os.path.join(basedir, 'app/static/upload/img/')
+	UPLOAD_EXCEL_FOLDER = os.path.join(basedir, 'app/static/upload/excel/')
+	UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
 
 	@staticmethod
 	def init_app(app):
@@ -24,6 +26,19 @@ class DevelopmentConfig(Config):
 	MAIL_USE_TLS = True
 	MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'sec_creditease@sina.com'
 	MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or ''
+
+"""
+	SCHEDULER_VIEWS_ENABLED = True
+
+	JOBS = [
+        {
+            'id': 'job1',
+            'func': 'app.src.views:weekly_mail',
+            'trigger': 'interval',
+            'seconds': 10,
+        }
+    ]
+"""
 
 class TestingConfig(Config):
 	TESTING = True
