@@ -61,7 +61,7 @@ def login_user_modify(id):
 	lg_user_get = LoginUser.query.get_or_404(id)
 	if form.validate_on_submit():
 		lg_user_get.role_name = form.role_name.data
-		flash('The user has been updated. ')
+		flash(u'用户角色更新成功')
 		return redirect(url_for('admin.login_user_read'))
 	form.role_name.data = lg_user_get.role_name
 	return render_template('admin/login_user_modify.html', form=form, id = lg_user_get.id)
@@ -74,7 +74,7 @@ def login_user_modify(id):
 def login_user_delete(id):
 	lg_user_del = LoginUser.query.get_or_404(id)
 	db.session.delete(lg_user_del)
-	flash('Delete user %s success.' %lg_user_del.username)
+	flash(u'删除用户 %s 成功' %lg_user_del.username)
 	return redirect(url_for('admin.login_user_read'))
 
 
@@ -87,7 +87,7 @@ def role_add():
 	if form.validate_on_submit():
 		r = Role(role_name=form.role_name.data)
 		db.session.add(r)
-		flash('Role %s add success!' %form.role_name.data)
+		flash(u'角色 %s 添加成功' %form.role_name.data)
 		return redirect(url_for('admin.role_read'))
 	return render_template('admin/role_add.html', form=form)
 
@@ -114,15 +114,15 @@ def role_modify(id):
 		if role_true is not None:
 			role_true.default = False
 			db.session.add(role_true)
-			flash('Role %s change to False.' %role_true.role_name)
+			flash(u'角色 %s 修改为非默认角色' %role_true.role_name)
 		role.default = True
 		db.session.add(role)
-		flash('Role %s change to True.' %role.role_name)
+		flash(u'角色 %s 修改为默认角色' %role.role_name)
 	#由true变为false
 	else:
 		role.default = False
 		db.session.add(role)
-		flash('Role %s change to False.' %role.role_name)
+		flash(u'角色 %s 修改为非默认角色' %role.role_name)
 	return redirect(url_for('admin.role_read'))
 
 
@@ -137,7 +137,7 @@ def perm_modify(role_name):
 				permission = Permission(role_name=role_name,
 										have_perm=h_p)
 				db.session.add(permission)
-				flash('Permission %s add success!' %h_p)
+				flash(u'权限 %s 添加成功' %h_p)
 		else:
 			for r_p_del in role_perm:
 				db.session.delete(r_p_del)
@@ -145,7 +145,7 @@ def perm_modify(role_name):
 				permission = Permission(role_name=role_name,
 										have_perm=h_p_update)
 				db.session.add(permission)
-				flash('Permission %s add success!' %h_p_update)
+				flash(u'权限 %s 添加成功' %h_p_update)
 		return redirect(url_for('admin.perm_modify', role_name=role_name))
 
 	#GET请求，先查询角色的权限，放置在form表单中，显示在页面上
@@ -163,11 +163,11 @@ def role_perm_delete(role_name):
 	#删除权限
 	for r_p_d in role_perm_del:
 		db.session.delete(r_p_d)
-	flash('Delete permission success.')
+	flash(u'删除权限成功')
 	#删除角色
 	role = Role.query.filter_by(role_name=role_name).first()
 	db.session.delete(role)
-	flash('Delete role %s success.' %role_name)
+	flash(u'删除权限 %s 成功' %role_name)
 	return redirect(url_for('admin.role_read'))
 
 
@@ -181,7 +181,7 @@ def depart_add():
 					leader=form.leader.data,
 					email=form.email.data)
 		db.session.add(d)
-		flash('Depart %s add success!' %form.department.data)
+		flash(u'部门 %s 添加成功' %form.department.data)
 		return redirect(url_for('admin.depart_add'))
 	return render_template('admin/depart_add.html', form=form)
 
@@ -207,7 +207,7 @@ def depart_modify(id):
 		#depart_get.department = form.department.data
 		depart_get.leader = form.leader.data
 		depart_get.email = form.email.data
-		flash('The department has been updated. ')
+		flash(u'部门更新成功')
 		return redirect(url_for('admin.depart_read'))
 	form.department.data = depart_get.department
 	form.leader.data = depart_get.leader
@@ -218,7 +218,7 @@ def depart_modify(id):
 def depart_delete(id):
 	depart_del = Depart.query.get_or_404(id)
 	db.session.delete(depart_del)
-	flash('Delete department success.')
+	flash(u'删除部门成功')
 	return redirect(url_for('admin.depart_read'))
 
 #－－－－－－－User模块－－－－－－－－－－－－－－－－－－－－－－
@@ -232,7 +232,7 @@ def user_add():
 					department=form.department.data)
 		db.session.add(u)
 		user_to_login_user(u)
-		flash('User %s add success!' %form.name.data)
+		flash(u'人员 %s 增加成功' %form.name.data)
 		return redirect(url_for('admin.user_add'))
 	return render_template('admin/user_add.html', form=form)
 
@@ -266,7 +266,7 @@ def user_modify(id):
 		user_to_login_user(user_get)
 
 		user_get.department = form.department.data
-		flash('The user has been updated. ')
+		flash(u'人员更新成功')
 		return redirect(url_for('admin.user_read'))
 	form.department.data = user_get.department
 	form.name.data = user_get.name
@@ -277,7 +277,7 @@ def user_modify(id):
 def user_delete(id):
 	user_del = User.query.get_or_404(id)
 	db.session.delete(user_del)
-	flash('Delete user success.')
+	flash(u'删除人员成功')
 	return redirect(url_for('admin.user_read'))
 
 
@@ -300,7 +300,7 @@ def assets_add():
 					status=form.status.data,
 					ps=form.ps.data)
 		db.session.add(a)
-		flash('Asset %s add success!' %form.domain.data)
+		flash(u'资产 %s 添加成功' %form.domain.data)
 		return redirect(url_for('admin.assets_add'))
 	return render_template('admin/assets_add.html', form=form)
 
@@ -360,7 +360,7 @@ def assets_modify(id):
 		asset_get.status = form.status.data
 		#asset_get.chkdate = form.chkdate.data
 		asset_get.ps = form.ps.data
-		flash('The asset has been updated. ')
+		flash(u'资产更新成功')
 		return redirect(url_for('admin.assets_read'))
 	form.sysname.data = asset_get.sysname
 	form.domain.data = asset_get.domain
@@ -382,7 +382,7 @@ def assets_modify(id):
 def assets_delete(id):
 	asset_del = Asset.query.get_or_404(id)
 	db.session.delete(asset_del)
-	flash('Delete asset success.')
+	flash(u'删除资产成功')
 	return redirect(url_for('admin.assets_read'))
 
 
@@ -396,7 +396,7 @@ def vul_type_add():
 	if form.validate_on_submit():
 		vt = VulType(vul_type=form.vul_type.data)
 		db.session.add(vt)
-		flash('Vul_type %s add success!' %form.vul_type.data)
+		flash(u'漏洞类型 %s 添加成功' %form.vul_type.data)
 		return redirect(url_for('admin.vul_type_add'))
 	return render_template('admin/vul_type_add.html', form=form)
 
@@ -417,7 +417,7 @@ def vul_type_modify(id):
 	vul_type_get = VulType.query.get_or_404(id)
 	if form.validate_on_submit():
 		#vul_type_get.vul_type = form.vul_type.data
-		flash('The vul_type has been updated. ')
+		flash(u'漏洞类型更新成功')
 		return redirect(url_for('admin.vul_type_read'))
 	form.vul_type.data = vul_type_get.vul_type
 	return render_template('admin/vul_type_modify.html', form=form, id = vul_type_get.id)
@@ -426,7 +426,7 @@ def vul_type_modify(id):
 def vul_type_delete(id):
 	vul_type_del = VulType.query.get_or_404(id)
 	db.session.delete(vul_type_del)
-	flash('Delete vul_type success.')
+	flash(u'删除漏洞类型成功')
 	return redirect(url_for('admin.vul_type_read'))
 
 

@@ -28,7 +28,7 @@ class VulReportForm(Form):
 	vul_source = SelectField(u'漏洞来源', choices=source_choices)
 	vul_poc = PageDownField(u'漏洞证明')
 	vul_solution = PageDownField(u'解决方案')
-	submit = SubmitField('Submit')
+	submit = SubmitField(u'提交')
 
 	def __init__(self, *args, **kwargs):
 		super(VulReportForm, self).__init__(*args, **kwargs)
@@ -50,7 +50,7 @@ class VulReportReviewForm(Form):
 	grant_rank = SelectField(u'Rank', choices=[(str(n),n) for n in range(0,21)])
 	start_date = DateField(u'通告日期')
 	end_date = DateField(u'限定修复日期')
-	submit = SubmitField('Submit')
+	submit = SubmitField(u'提交')
 
 	def __init__(self, *args, **kwargs):
 		super(VulReportReviewForm, self).__init__(*args, **kwargs)
@@ -58,10 +58,10 @@ class VulReportReviewForm(Form):
 
 class VulReportDevFinishForm(Form):
 	dev_finish_solution = TextAreaField(u'修复方法')
-	submit = SubmitField('Submit')
+	submit = SubmitField(u'提交')
 
 class VulReportRetestResultForm(Form):
 	done_solution = TextAreaField(u'复测结果')
 	done_rank = SelectField(u'剩余Rank', choices=[(str(n),n) for n in range(0,21)])
 	end_date = DateField(u'限定修复日期')
-	submit = SubmitField('Submit')
+	submit = SubmitField(u'提交')

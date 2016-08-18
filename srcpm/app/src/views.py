@@ -44,7 +44,7 @@ def vul_report_add():
 					vul_solution  = form.vul_solution.data,
 					)
 		db.session.add(vul_rpt)
-		flash('Vul_report %s-%s add success!' %(current_user.related_name, form.title.data))
+		flash(u'漏洞报告 %s-%s 提交成功' %(current_user.related_name, form.title.data))
 
 		#创建后的漏洞报告，获取ID
 		vul_report = VulReport.query.filter_by(title=vul_rpt.title).order_by(VulReport.id.desc()).first()
@@ -389,12 +389,12 @@ def vul_report_read(id):
 def vul_report_delete(id):
 	vul_report_del = VulReport.query.get_or_404(id)
 	db.session.delete(vul_report_del)
-	flash('Delete vul_report success.')
+	flash(u'删除漏洞报告成功')
 	query = VulLog.query.filter_by(related_vul_id=id)
 	if query.first():
 		for vul_log in query.all():
 			db.session.delete(vul_log)
-			flash('Delete vul_log success.')
+			flash(u'删除漏洞日志成功')
 	return redirect(url_for('src.vul_report_list_read'))
 
 
@@ -418,7 +418,7 @@ def vul_report_review(id):
 		risk_score, days = get_risk_score_and_end_date(int(vul_report_rv.grant_rank), asset_get)
 		vul_report_rv.risk_score = risk_score
 
-		flash('vul report review success!')
+		flash(u'漏洞报告审核成功')
 
 		#发送审核后的漏洞通告邮件
 		if vul_report_rv.related_vul_type == u'输出文档':
@@ -431,7 +431,7 @@ def vul_report_review(id):
 			to_email_list.append(email_dict['department_manager'])
 			to_email_list.append(email_dict['author'])
 			send_email('A new vul alert', 'src/email/new_vul_alert', to=to_email_list, vul_report_rv=vul_report_rv)
-			flash('send email success!')
+			flash(u'邮件发送成功')
 			vul_report_rv.vul_status = u'已通告'
 
 		#记录漏洞日志
@@ -527,7 +527,7 @@ def vul_report_dev_finish(id):
 		to_email_list.append(email_dict['department_manager'])
 		to_email_list.append(email_dict['author'])
 		send_email(u'漏洞复测申请', 'src/email/vul_re_test', to=to_email_list, vul_report_df=vul_report_df)
-		flash('send email to %s success!' %to_email_list[-1])
+		flash(u'发送邮件给 %s 成功' %to_email_list[-1])
 		vul_report_df.vul_status = u'复测中'
 		return redirect(url_for('src.vul_report_list_read'))
 	return render_template('src/vul_report_dev_finish.html', form=form, vul_report_df=vul_report_df)
@@ -569,7 +569,7 @@ def vul_report_retest_result(id):
 		to_email_list.append(email_dict['author'])
 		#成功提交复测结果后，发送提醒邮件给漏洞相关人员
 		send_email(u'复测结果已提交', 'src/email/vul_retest_result', to=to_email_list, vul_report=vul_report_retest, vul_log=vul_log)
-		flash('send email to %s success!' %to_email_list[0])
+		flash(u'发送邮件给 %s 成功' %to_email_list[0])
 		return redirect(url_for('src.vul_report_list_read'))
 
 	form.done_rank.data = str(vul_report_retest.done_rank)

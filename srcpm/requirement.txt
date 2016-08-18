@@ -16,3 +16,4 @@ Flask-Moment==0.5.1
 apscheduler==3.2.0
 gunicorn==19.6.0
 supervisor==3.3.1
+flask-apscheduler==1.4.0
