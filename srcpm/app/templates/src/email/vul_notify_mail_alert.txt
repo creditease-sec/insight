@@ -6,8 +6,8 @@
 
 {{ url_for('src.vul_notify_list', _external=True) }}
 
-Sincerely,
+感谢您的支持！
 
-The SrcPM Team
+信息系统安全部
 
-Note: replies to this email address are not monitored.
+注意: 此邮箱不会收到回复。
