@@ -4,6 +4,7 @@
 import os
 from app import create_app, db
 from app.admin.models import Asset
+from app.auth.models import LoginUser
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
@@ -21,8 +22,9 @@ if os.path.exists('.env'):
             os.environ[var[0]] = var[1]
 """
 
+
 def make_shell_context():
-	return dict(app=app, db=db, Asset=Asset)
+	return dict(app=app, db=db, Asset=Asset, LoginUser=LoginUser)
 manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
