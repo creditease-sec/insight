@@ -12,7 +12,7 @@ RUN yum install -y python-devel
 RUN yum install -y mysql-devel
 RUN yum install -y gcc
 RUN mkdir -p /opt/webapp/
-ENV REFRESHED_REQ_AT 2016-07-24-12-35
+ENV REFRESHED_REQ_AT 2016-08-18-1
 ADD srcpm/requirement.txt /opt/webapp/requirement.txt
 WORKDIR /opt/webapp/
 RUN pip install -r requirement.txt

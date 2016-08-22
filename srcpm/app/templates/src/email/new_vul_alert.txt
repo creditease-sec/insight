@@ -1,11 +1,11 @@
-Welcome to 漏洞管理平台!
+欢迎来到 漏洞管理平台!
 
 新漏洞链接:
 
 {{ url_for('src.vul_report_read', id=vul_report_rv.id, _external=True) }}
 
-Sincerely,
+感谢您的支持！
 
-The SrcPM Team
+信息系统安全部
 
-Note: replies to this email address are not monitored.
+注意: 此邮箱不会收到回复。

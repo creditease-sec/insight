@@ -57,24 +57,24 @@ class DepartForm(Form):
 	department = StringField(u'部门', validators=[Required(), Length(1, 64)])
 	leader = StringField(u'部门经理')
 	email = StringField(u'邮件')
-	submit = SubmitField('Submit')
+	submit = SubmitField(u'提交')
 
 	def validate_department(self, field):
 		if request.endpoint[:19] != 'admin.depart_modify':
 			if Depart.query.filter_by(department=field.data).first():
-				raise ValidationError('Department already exist.')
+				raise ValidationError(u'部门已经存在')
 
 
 class UserForm(Form):
 	name = StringField(u'姓名', validators=[Required(), Length(1, 64)])
 	email = StringField(u'邮件', validators=[Email()])
 	department = SelectField(u'部门')
-	submit = SubmitField('Submit')
+	submit = SubmitField(u'提交')
 
 	def validate_email(self, field):
 		if request.endpoint[:17] != 'admin.user_modify':
 			if User.query.filter_by(email=field.data).first():
-				raise ValidationError('Email already exist.')
+				raise ValidationError(u'邮箱已经存在')
 
 	def __init__(self, *args, **kwargs):
 		super(UserForm, self).__init__(*args, **kwargs)
@@ -83,7 +83,7 @@ class UserForm(Form):
 
 class UserRoleForm(Form):
 	role_name = SelectField(u'角色')
-	submit = SubmitField('Submit')
+	submit = SubmitField(u'提交')
 
 	def __init__(self, *args, **kwargs):
 		super(UserRoleForm, self).__init__(*args, **kwargs)
@@ -104,12 +104,12 @@ class AssetForm(Form):
 	owner = StringField(u'负责人')
 	status = SelectField(u'状态', choices=status_choices)
 	ps = TextField(u'说明')
-	submit = SubmitField('Submit')
+	submit = SubmitField(u'提交')
 
 	def validate_domain(self, field):
 		if request.endpoint[:19] != 'admin.assets_modify':
 			if Asset.query.filter_by(domain=field.data).first():
-				raise ValidationError('Domain already exist.')
+				raise ValidationError(u'域名已经存在')
 
 	def __init__(self, *args, **kwargs):
 		super(AssetForm, self).__init__(*args, **kwargs)
@@ -118,9 +118,9 @@ class AssetForm(Form):
 
 class VulTypeForm(Form):
 	vul_type = StringField(u'漏洞类型')
-	submit = SubmitField('Submit')
+	submit = SubmitField(u'提交')
 
 	def validate_domain(self, field):
 		if request.endpoint[:18] != 'src.vul_type_modify':
 			if VulType.query.filter_by(domain=field.data).first():
-				raise ValidationError('Vul_type already exist.')
+				raise ValidationError(u'漏洞类型已经存在')

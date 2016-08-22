@@ -1,13 +1,13 @@
-Dear {{ lg_user.username }},
+亲爱的 {{ lg_user.username }},
 
-Welcome to Myblog!
+欢迎来到 漏洞管理平台！
 
-To confirm your account please click on the following link:
+确认开通账户请点击下面链接:
 
 {{ url_for('auth.confirm', token=token, _external=True) }}
 
-Sincerely,
+感谢您的支持！
 
-The SrcPM Team
+信息系统安全部
 
-Note: replies to this email address are not monitored.
+注意: 此邮箱不会收到回复。

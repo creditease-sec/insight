@@ -23,7 +23,7 @@ def login():
 				return redirect(url_for('main.index'))
 
 			return redirect(request.args.get('next') or url_for('main.index'))
-		flash('Invalid username or password.')
+		flash(u'用户名或密码错误')
 	return render_template('auth/login.html', form=form)
 
 
@@ -31,7 +31,7 @@ def login():
 @login_required
 def logout():
 	logout_user()
-	flash('You have been logged out.')
+	flash(u'您已成功退出')
 	return redirect(url_for('main.index'))
 
 
@@ -44,7 +44,7 @@ def register():
 		db.session.commit()
 		token = lg_user.generate_confirmation_token()
 		send_email('Confirm Your Account', 'auth/email/confirm', to=[lg_user.email], lg_user=lg_user, token=token)
-		flash('A confirmation email has been sent to you by email.')
+		flash(u'确认邮件已发送至您的邮箱，请到邮箱确认.')
 		return redirect(url_for('main.index'))
 	return render_template('auth/register.html', form=form)
 
@@ -65,9 +65,9 @@ def confirm(token):
 		if related_user is not None:
 			current_user.related_name = related_user.name
 			db.session.add(current_user)
-		flash('You have confirmed your account. Thanks!')
+		flash(u'您的帐号已确认成功，谢谢！')
 	else:
-		flash('The confirmation link is invalid or has expired.')
+		flash(u'确认链接失效或已过期')
 	return redirect(url_for('main.index'))
 
 
@@ -76,8 +76,6 @@ def before_request():
 	if current_user.is_authenticated and not current_user.confirmed \
 			and request.endpoint[:5] != 'auth.' \
 			and request.endpoint != 'static':
-		print 'is_authenticated: %s' %str(current_user.is_authenticated)
-		print 'current_user.confirmed: %s' % current_user.confirmed
 		return redirect(url_for('auth.unconfirmed'))
 
 
@@ -94,7 +92,7 @@ def resend_confirmation():
 	token = current_user.generate_confirmation_token()
 	send_email('Confirm Your Account', 
 		'auth/email/confirm',to=[current_user.email], lg_user=current_user, token=token)
-	flash('A new confirmation email has been sent to you by email.')
+	flash(u'确认邮件已发送至您的邮箱，请到邮箱确认.')
 	return redirect(url_for('main.index'))
 
 @auth.route('/change_password', methods=['GET', 'POST'])
@@ -105,10 +103,10 @@ def change_password():
         if current_user.verify_password(form.old_password.data):
             current_user.password = form.password.data
             db.session.add(current_user)
-            flash('Your password has been updated.')
+            flash(u'您的密码已更新')
             return redirect(url_for('main.index'))
         else:
-            flash('Invalid password.')
+            flash(u'密码错误')
     return render_template("auth/change_password.html", form=form)
 
 
@@ -125,7 +123,7 @@ def password_reset_request():
                        'auth/email/reset_password',
                        lg_user=lg_user, token=token,
                        next=request.args.get('next'))
-        	flash('An email with instructions to reset your password has been sent to you.')
+        	flash(u'重置密码的邮件已发送至您的邮箱')
 
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
@@ -141,7 +139,7 @@ def password_reset(token):
 		if lg_user is None:
 			return redirect(url_for('main.index'))
 		if lg_user.reset_password(token, form.password.data):
-			flash('Your password has been updated.')
+			flash(u'您的密码已更新')
 			return redirect(url_for('auth.login'))
 		else:
 			return redirect(url_for('main.index'))
