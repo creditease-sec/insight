@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block scripts %}
-	{{ super() }}
+    {{ super() }}
     {{ moment.include_moment(local_js='/static/moment-with-locales.min.js') }}
-	{{ moment.lang("zh-CN") }}
+    {{ moment.lang("zh-CN") }}
 {% endblock %}
 
 {% block title%} SrcPM {% endblock%}
