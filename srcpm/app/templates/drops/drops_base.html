@@ -32,7 +32,7 @@
 {% block scripts %}
     {{ super() }}
     {{ moment.include_moment(local_js='/static/moment-with-locales.min.js') }}
-    {{ moment.lang("zh-CN") }} {{ pagedown.include_pagedown() }}
+    {{ moment.lang("zh-CN") }}
 {% endblock %}
 {% block title %} drops {% endblock %} {% block navbar%}
 <div class="navbar navbar-inverse" role="navigation">
