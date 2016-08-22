@@ -12,10 +12,14 @@ class Config:
     UPLOAD_EXCEL_FOLDER = os.path.join(basedir, 'app/static/upload/excel/')
     UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
 
+
     @staticmethod
     def init_app(app):
         pass
 
+    @staticmethod
+    def init_app(app):
+        pass
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -43,6 +47,7 @@ class DevelopmentConfig(Config):
         }
     ]
 """
+
 
 class TestingConfig(Config):
     TESTING = True
