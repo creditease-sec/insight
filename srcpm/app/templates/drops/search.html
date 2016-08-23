@@ -4,7 +4,7 @@
     <!-- <div class="col-md-3" style="background-color: #dedef8;box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;"> -->
     <div class="col-md-3">
         {% include 'drops/_sider.html' %}
-        
+
 
     </div>
 
@@ -19,13 +19,15 @@
             <br>
             <div class="content">
 
-                {% if a.drop_content_html %} {% if (a.drop_content|length)>100 %} {{ (a.drop_content_html)[:100]|safe }}... {% else %} {{ (a.drop_content_html)|safe }} {% endif %} {% else %}
+                {% if a.drop_content_html %} {% if (a.drop_content|length)>100 %} {{ (a.drop_content_html)[:200]|safe }}... {% else %} {{ (a.drop_content_html)|safe }} {% endif %} {% else %}
                 <b>您输入的页面字符长度太小不予显示！</b> {% endif %}
                 </code>
                 </pre>
                 <p><a href="{{ url_for('drops.drop', postid=a.id) }}" style="float:right">阅读全文 &raquo;</a></p>
             </div>
-            <hr style=" height:2px;border:none;border-top:2px dotted #185598;" />
+            <br>
+            <hr>
+            <!-- <hr style=" height:2px;border:none;border-top:2px dotted #185598;" /> -->
         </div>
 
         {% endfor %}

@@ -29,7 +29,7 @@
             <tbody>
             {% if not posts %}
                 <tr>
-                    <td><a href="#" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>沒有文章，点此新建？</a></td>
+                    <td><a href="{{ url_for('drops.newdrops')}}" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>沒有文章，点此新建？</a></td>
                 </tr>
             {% else %}
                 {% for i in posts %}

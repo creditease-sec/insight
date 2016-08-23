@@ -1,6 +1,8 @@
-<span style="font-size:30px;font-weight:bold;color:#708090;">drop标题: {{a.drop_title}}</span>
+<span style="font-size:35px;font-weight:bold;">{{a.drop_title}}</span>
+<br>
 <!-- <hr style="height:3px;border:none;border-top:3px double red;" /> -->
 <span style="float:right"><a title="{{a.drop_title}}" href="{{ url_for('drops.drop', postid=a.id) }}#comments">&nbsp;&nbsp;{{a.comment_count}}条评论&nbsp;&nbsp;</a></span>&nbsp;&nbsp;
 <span style="float:right">&nbsp;&nbsp;{{ a.view_num }}人阅读&nbsp;&nbsp;</span>&nbsp;&nbsp;
 <span style="float:right"><a href="{{url_for('drops.category',cateid=a.category_id)}}">&nbsp;&nbsp;{{ a.cate.category_name }}&nbsp;&nbsp;</a></span>&nbsp;&nbsp;
 <span style="float:right">&nbsp;&nbsp;{{ a.tags_name }}&nbsp;&nbsp;</span>&nbsp;&nbsp;
+<br>
