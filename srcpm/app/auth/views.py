@@ -119,8 +119,9 @@ def password_reset_request():
         lg_user = LoginUser.query.filter_by(email=form.email.data).first()
         if lg_user:
         	token = lg_user.generate_reset_token()
-        	send_email(lg_user.email, 'Reset Your Password',
+        	send_email(u'重置您的密码',
                        'auth/email/reset_password',
+                       to = [lg_user.email],
                        lg_user=lg_user, token=token,
                        next=request.args.get('next'))
         	flash(u'重置密码的邮件已发送至您的邮箱')
