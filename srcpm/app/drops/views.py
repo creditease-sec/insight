@@ -350,8 +350,7 @@ def drop_byname(postname):
                            form=form
                            )
 # 生成下载链接
-
-
+# 需要登录才能导出
 @drops.route('/downdrops/<int:postid>', methods=['GET', ])
 @permission_required('drops.manager')
 def downdrops(postid=1):
