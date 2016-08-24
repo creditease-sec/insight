@@ -7,18 +7,18 @@
                 <div style="display:none;">
                     {{ form.csrf_token(type="hidden") }}
                 </div>
-                <div class=form-group>
+                <div class="form-group required">
                     <span style="font-size:16px;font-weight:bold;">标题名：</span>{{ form.title.label(class="sr-only") }}{{ form.title(class="form-control" ) }}
                 </div>
-                <div class=form-group>
+                <div class="form-group required">
                     <span style="font-size:16px;font-weight:bold;">drop名：</span>{{ form.dropname.label(class="sr-only") }}{{ form.dropname(class="form-control" ) }}
                 </div>
-                <div class=form-group>
+                <div class="form-group required">
                     <span style="font-size:16px;font-weight:bold;">tag：</span>{{ form.tag.label(class="sr-only") }}{{ form.tag(class="form-control") }}
                 </div>
                 <div class=form-group>
                     <label class="sr-only" for="button">button</label>
-                    <button type="submit" class="btn btn-success btn-large btn-block" type="button">确认OK，立刻发布我的文章</button>
+                    <button type="submit" class="btn btn-success btn-large btn-block" type="button">确认OK，立刻发布</button>
                 </div>
 
                 <hr>{{ wtf.form_field(form.category) }}

@@ -37,6 +37,9 @@ def str_filter(str_input):
     str_output = str_output.replace(u'，', ',')
     str_output = re.sub(r"alert", '', str_output, 0, re.I)
     str_output = re.sub(r"script", '', str_output, 0, re.I)
+    str_output = re.sub(r"img", '', str_output, 0, re.I)
+    str_output = re.sub(r"on(.*)", '', str_output, 0, re.I)
+    str_output = re.sub(r"src", '', str_output, 0, re.I)
     str_output = re.sub(r";", '', str_output, 0, re.I)
     str_output = re.sub(r"&", '', str_output, 0, re.I)
     str_output = re.sub(r"'", '', str_output, 0, re.I)
@@ -44,6 +47,7 @@ def str_filter(str_input):
     str_output = re.sub(r"<", '', str_output, 0, re.I)
     str_output = re.sub(r">", '', str_output, 0, re.I)
     str_output = re.sub(r"/", '', str_output, 0, re.I)
+
 
     return str_output
 
@@ -118,7 +122,9 @@ def search(pageid=1):
     comments = Comment.query.order_by(Comment.comment_create_time.desc())[:20]
     # 第二个参数是默认书据
     searchword = request.form.get('keys', '')
-    searchword = str_filter(searchword)
+    # 过滤搜索字符串
+    # searchword = str_filter(searchword)
+    searchword = searchword.strip()
     if not searchword:
         flash(u'没找到结果!')
         redirect(url_for('drops.index'))
@@ -354,23 +360,25 @@ def drop_byname(postname):
 @drops.route('/downdrops/<int:postid>', methods=['GET', ])
 @permission_required('drops.manager')
 def downdrops(postid=1):
+    if isinstance(postid,int):
+        drop = Postdrop.query.getall()
+        post = Postdrop.query.get_or_404(postid)
+        s = post.drop_content.encode('utf-8', 'ignore')
+        file_basename = post.drop_name + '.' + 'md'
+        file_size = len(post.drop_content)
 
-    drop = Postdrop.query.getall()
-    post = Postdrop.query.get_or_404(postid)
-    s = post.drop_content.encode('utf-8', 'ignore')
-    file_basename = post.drop_name + '.' + 'md'
-    file_size = len(post.drop_content)
+        response = make_response(s, 200)
+        if response:
+            response.headers['Content-Description'] = 'File Transfer'
+            response.headers['Cache-Control'] = 'no-cache'
+            response.headers['Content-Type'] = 'text/plain'
+            response.headers[
+                'Content-Disposition'] = 'attachment; filename=%s' % file_basename
+            response.headers['Content-Length'] = file_size
 
-    response = make_response(s, 200)
-    if response:
-        response.headers['Content-Description'] = 'File Transfer'
-        response.headers['Cache-Control'] = 'no-cache'
-        response.headers['Content-Type'] = 'text/plain'
-        response.headers[
-            'Content-Disposition'] = 'attachment; filename=%s' % file_basename
-        response.headers['Content-Length'] = file_size
-
-        return response
+            return response
+    else:
+        abort(404)
 
 # 评论
 
