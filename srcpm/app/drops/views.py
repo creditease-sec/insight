@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-from flask import render_template, flash, url_for, redirect, request, current_app, session, jsonify, abort
+from flask import render_template, flash, url_for, redirect, request, current_app, session, jsonify, abort, make_response, send_file
 from flask_login import login_required, current_user, current_app, login_user
 from . import drops
 from .forms import CateForm, DropForm, UploadImgForm, CommentForm
@@ -12,6 +12,18 @@ from datetime import datetime
 from ..decorators import permission_required
 from random import shuffle
 import re
+import sys
+import os
+
+
+def cur_file_dir():
+
+    path = sys.path[0]
+
+    if os.path.isdir(path):
+        return path
+    elif os.path.isfile(path):
+        return os.path.dirname(path)
 
 # 过滤字符串
 
@@ -76,7 +88,6 @@ def login():
 #         session['filename'] = url_for(
 #             'static', filename='upload/img/' + save_filename)
 #         return jsonify(result=session['filename'])
-
 def upload_img():
     up_img_file = request.files['editormd-image-file']
     if up_img_file and allowed_file(up_img_file.filename):
@@ -86,7 +97,7 @@ def upload_img():
                          'UPLOAD_IMG_FOLDER'] + save_filename)
         session['filename'] = url_for(
             'static', filename='upload/img/' + save_filename)
-        s = {'success':1,'message': 'OK','url':session['filename']}
+        s = {'success': 1, 'message': 'OK', 'url': session['filename']}
         return jsonify(s)
 
 
@@ -94,10 +105,10 @@ def upload_img():
 
 # 全文搜索
 
-@drops.route('/search',methods=['GET', 'POST'])
-@drops.route('/search/page/<int:pageid>',methods=['GET', 'POST'])
+@drops.route('/search', methods=['GET', 'POST'])
+@drops.route('/search/page/<int:pageid>', methods=['GET', 'POST'])
 def search(pageid=1):
-    per_page=10
+    per_page = 10
     categorys = Category.query.all()
     hot = Postdrop.query.hotdrop()[:20]
     new = Postdrop.query.newdrop()[:20]
@@ -107,14 +118,15 @@ def search(pageid=1):
     comments = Comment.query.order_by(Comment.comment_create_time.desc())[:20]
     # 第二个参数是默认书据
     searchword = request.form.get('keys', '')
-    searchword=str_filter(searchword)
+    searchword = str_filter(searchword)
     if not searchword:
         flash(u'没找到结果!')
         redirect(url_for('drops.index'))
 
     searchresult = Postdrop.query.search(searchword)
 
-    p = pageby(searchresult, pageid, per_page, Postdrop.drop_create_time.desc())
+    p = pageby(searchresult, pageid, per_page,
+               Postdrop.drop_create_time.desc())
 
     drops = p.items
     if not p.total:
@@ -136,7 +148,6 @@ def search(pageid=1):
                            pagination=pagination[pageid - 1:pageid + 10],
                            last_page=pagination[-1]
                            )
-
 
 
 # 查询权限列表如果用户的角色和权限符合drop管理原跳转至manager页面
@@ -178,12 +189,13 @@ def index(pageid=1):
                            nav_current="index"
                            )
 
-#分类目录
+# 分类目录
+
+
 @drops.route('/category/<int:cateid>')
 @drops.route('/category/<int:cateid>/page/<int:pageid>')
-
 def category(cateid=1, pageid=1):
-    per_page=10
+    per_page = 10
     categorys = Category.query.all()
     hot = Postdrop.query.hotdrop()[:10]
     new = Postdrop.query.newdrop()[:10]
@@ -194,7 +206,8 @@ def category(cateid=1, pageid=1):
 
     cate = Category.query.get_or_404(cateid)
 
-    p = pageby(cate.postdrop, pageid, per_page, Postdrop.drop_create_time.desc())
+    p = pageby(cate.postdrop, pageid, per_page,
+               Postdrop.drop_create_time.desc())
 
     drops = p.items
     if not p.total:
@@ -218,12 +231,13 @@ def category(cateid=1, pageid=1):
                            last_page=pagination[-1]
                            )
 
-#标签目录
+# 标签目录
+
+
 @drops.route('/tag/<int:tagid>')
 @drops.route('/tag/<int:tagid>/page/<int:pageid>')
-
 def tag(tagid=1, pageid=1):
-    per_page=10
+    per_page = 10
     categorys = Category.query.all()
     hot = Postdrop.query.hotdrop()[:20]
     new = Postdrop.query.newdrop()[:20]
@@ -270,7 +284,8 @@ def drop(postid=5):
     tag = Tag.query.all()
     shuffle(tag)
     tag = tag[:20]
-    # commentss = Comment.query.order_by(Comment.comment_create_time.desc())[:20]
+    # commentss =
+    # Comment.query.order_by(Comment.comment_create_time.desc())[:20]
     drop = Postdrop.query.getall()
     shuffle(drop)
     drop = drop[:5]
@@ -289,7 +304,7 @@ def drop(postid=5):
                            newdrops=new,
                            tags=tag,
                            authorname=authorname,
-                        #    comments=commentss,
+                           #    comments=commentss,
                            postcoments=postcoments,
                            form=form
                            )
@@ -306,7 +321,7 @@ def drop_byname(postname):
     tag = Tag.query.all()
     shuffle(tag)
     tag = tag[:20]
-    #comments = Comment.query.all()[:20]
+    # comments = Comment.query.all()[:20]
     drop = Postdrop.query.getall()
 
     shuffle(drop)
@@ -330,13 +345,37 @@ def drop_byname(postname):
                            newdrops=new,
                            tags=tag,
                            authorname=authorname,
-                           #comments=comments,
+                           # comments=comments,
                            postcoments=postcoments,
                            form=form
                            )
+# 生成下载链接
 
+
+@drops.route('/downdrops/<int:postid>', methods=['GET', ])
+@permission_required('drops.manager')
+def downdrops(postid=1):
+
+    drop = Postdrop.query.getall()
+    post = Postdrop.query.get_or_404(postid)
+    s = post.drop_content.encode('utf-8', 'ignore')
+    file_basename = post.drop_name + '.' + 'md'
+    file_size = len(post.drop_content)
+
+    response = make_response(s, 200)
+    if response:
+        response.headers['Content-Description'] = 'File Transfer'
+        response.headers['Cache-Control'] = 'no-cache'
+        response.headers['Content-Type'] = 'text/plain'
+        response.headers[
+            'Content-Disposition'] = 'attachment; filename=%s' % file_basename
+        response.headers['Content-Length'] = file_size
+
+        return response
 
 # 评论
+
+
 @drops.route('/addcomment', methods=['GET', 'POST'])
 def addcomment():
     form = CommentForm()
@@ -356,7 +395,6 @@ def addcomment():
             post.comment_count += 1
             db.session.commit()
             return redirect(url_for('drops.drop', postid=comment.comt_id))
-
 
 
 @drops.route('/manager')

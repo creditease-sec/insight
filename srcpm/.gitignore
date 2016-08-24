@@ -8,3 +8,5 @@ migrations/*
 venv/*
 supervisor.conf
 log/*
+run/*
+gunicorn_conf.py
