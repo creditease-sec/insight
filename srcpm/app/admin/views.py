@@ -174,6 +174,7 @@ def role_perm_delete(role_name):
 #---------------Deaprts and Users--------------
 
 @admin.route('/depart_add', methods=['GET', 'POST'])
+@permission_required('admin.depart_add')
 def depart_add():
 	form = DepartForm()
 	if form.validate_on_submit():
@@ -187,6 +188,7 @@ def depart_add():
 
 
 @admin.route('/depart_read', methods=['GET', 'POST'])
+@permission_required('admin.depart_read')
 def depart_read():
 	opt = request.form.get('opt','all')
 	if opt=='all':
@@ -200,6 +202,7 @@ def depart_read():
 
 
 @admin.route('/depart_modify/<id>', methods=['GET', 'POST'])
+@permission_required('admin.depart_modify')
 def depart_modify(id):
 	form = DepartForm()
 	depart_get = Depart.query.get_or_404(id)
@@ -215,6 +218,7 @@ def depart_modify(id):
 	return render_template('admin/depart_modify.html', form=form, id = depart_get.id)
 
 @admin.route('/depart_delete/<id>')
+@permission_required('admin.depart_delete')
 def depart_delete(id):
 	depart_del = Depart.query.get_or_404(id)
 	db.session.delete(depart_del)
@@ -224,6 +228,7 @@ def depart_delete(id):
 #－－－－－－－User模块－－－－－－－－－－－－－－－－－－－－－－
 
 @admin.route('/user_add', methods=['GET', 'POST'])
+@permission_required('admin.user_add')
 def user_add():
 	form = UserForm()
 	if form.validate_on_submit():
@@ -238,6 +243,7 @@ def user_add():
 
 
 @admin.route('/user_read', methods=['GET', 'POST'])
+@permission_required('admin.user_read')
 def user_read():
 	opt = request.form.get('opt','all')
 	if opt=='all':
@@ -256,6 +262,7 @@ def user_to_login_user(user):
 		lg_user.related_name = user.name
 
 @admin.route('/user_modify/<id>', methods=['GET', 'POST'])
+@permission_required('admin.user_modify')
 def user_modify(id):
 	form = UserForm()
 	user_get = User.query.get_or_404(id)
@@ -274,6 +281,7 @@ def user_modify(id):
 	return render_template('admin/user_modify.html', form=form, id = user_get.id)
 
 @admin.route('/user_delete/<id>')
+@permission_required('admin.user_delete')
 def user_delete(id):
 	user_del = User.query.get_or_404(id)
 	db.session.delete(user_del)
@@ -284,6 +292,7 @@ def user_delete(id):
 #------------资产模块、漏洞类型模块--------------------------------------------------------------------------
 
 @admin.route('/assets_add', methods=['GET', 'POST'])
+@permission_required('admin.assets_add')
 def assets_add():
 	form = AssetForm()
 	if form.validate_on_submit():
@@ -305,6 +314,7 @@ def assets_add():
 	return render_template('admin/assets_add.html', form=form)
 
 @admin.route('/assets_add_ajax', methods=['GET','POST'])
+@permission_required('admin.assets_add_ajax')
 def assets_add_ajax():
 	department = request.form.get('department')
 	user_list = User.query.filter_by(department=department).all()
@@ -315,6 +325,7 @@ def assets_add_ajax():
 
 
 @admin.route('/assets_read', methods=['GET', 'POST'])
+@permission_required('admin.assets_read')
 def assets_read():
 	opt = request.form.get('opt','all')
 	if opt=='all':
@@ -334,6 +345,7 @@ def assets_read():
 
 
 @admin.route('/assets_modify/<id>', methods=['GET', 'POST'])
+@permission_required('admin.assets_modify')
 def assets_modify(id):
 	form = AssetForm()
 	asset_get = Asset.query.get_or_404(id)
@@ -379,6 +391,7 @@ def assets_modify(id):
 	return render_template('admin/assets_modify.html', form=form, id = asset_get.id)
 
 @admin.route('/assets_delete/<id>')
+@permission_required('admin.assets_delete')
 def assets_delete(id):
 	asset_del = Asset.query.get_or_404(id)
 	db.session.delete(asset_del)
@@ -391,6 +404,7 @@ def assets_delete(id):
 
 
 @admin.route('/vul_type_add', methods=['GET', 'POST'])
+@permission_required('admin.vul_type_add')
 def vul_type_add():
 	form = VulTypeForm()
 	if form.validate_on_submit():
@@ -402,6 +416,7 @@ def vul_type_add():
 
 
 @admin.route('/vul_type_read', methods=['GET', 'POST'])
+@permission_required('admin.vul_type_read')
 def vul_type_read():
 	opt = request.form.get('opt','all')
 	if opt=='all':
@@ -412,6 +427,7 @@ def vul_type_read():
 
 
 @admin.route('/vul_type_modify/<id>', methods=['GET', 'POST'])
+@permission_required('admin.vul_type_modify')
 def vul_type_modify(id):
 	form = VulTypeForm()
 	vul_type_get = VulType.query.get_or_404(id)
@@ -423,6 +439,7 @@ def vul_type_modify(id):
 	return render_template('admin/vul_type_modify.html', form=form, id = vul_type_get.id)
 
 @admin.route('/vul_type_delete/<id>')
+@permission_required('admin.vul_type_delete')
 def vul_type_delete(id):
 	vul_type_del = VulType.query.get_or_404(id)
 	db.session.delete(vul_type_del)
