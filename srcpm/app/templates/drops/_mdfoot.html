@@ -14,33 +14,24 @@
 
 <script src="/static/plugins/editormd/editormd.js"></script>
 <script type="text/javascript">
-    var testEditor;
-    var xsrf = $.cookie("_xsrf")
     $(function() {
         testEditor = editormd("editormd", {
             width: "100%",
-            height: 640,
+            height: 740,
+            theme : "dark",
+            previewTheme : "default",
+            editorTheme : "neat",
+            emoji : true,
+            taskList : true,
+            tocm : true,         // Using [TOCM]
+            tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+            flowChart : true,             // 开启流程图支持，默认关闭
+            sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
             path: "/static/plugins/editormd/lib/",
             imageUpload: true,
             imageFormats: ["jpg", "jpeg", "gif", "png", "bmp"],
             imageUploadURL: "/drops/upload_img",
         });
-        $("#editsub").bind('click', function() {
-                $.proxy(
-                    $.post("edit", {
-                            markdown: testEditor.getValue(),
-                            subject: $("#subject").val(),
-                            tags: $("#tags").val(),
-                            Category: $("#Category").val(),
-                            TYPE: "ADD",
-                            ID: "",
-                            _xsrf: xsrf
-                        },
-                        function(data) {
-                            alert(data)
-                        }
-                    ), testEditor);
-            })
     });
 
 </script>
