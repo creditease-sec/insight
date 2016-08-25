@@ -17,6 +17,7 @@ ADD srcpm/requirement.txt /opt/webapp/requirement.txt
 WORKDIR /opt/webapp/
 RUN pip install -r requirement.txt
 COPY srcpm/venv_srcpm/lib/python2.7/site-packages/flask_bootstrap/__init__.py /lib/python2.7/site-packages/flask_bootstrap/__init__.py
+COPY srcpm/venv_srcpm/lib/python2.7/site-packages/werkzeug/datastructures.py /lib/python2.7/site-packages/werkzeug/datastructures.py
 EXPOSE 5000
 
 
