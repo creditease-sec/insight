@@ -40,19 +40,19 @@ def create_app(config_name):
     scheduler.start()
 
     from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+    app.register_blueprint(main_blueprint, url_prefix='/srcpm')
 
     from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    app.register_blueprint(auth_blueprint, url_prefix='/srcpm/auth')
 
     from .admin import admin as admin_blueprint
-    app.register_blueprint(admin_blueprint, url_prefix='/admin')
+    app.register_blueprint(admin_blueprint, url_prefix='/srcpm/admin')
 
     from .src import src as src_blueprint
-    app.register_blueprint(src_blueprint, url_prefix='/src')
+    app.register_blueprint(src_blueprint, url_prefix='/srcpm/src')
 
     from .drops import drops as drops_blueprint
-    app.register_blueprint(drops_blueprint, url_prefix='/drops')
+    app.register_blueprint(drops_blueprint, url_prefix='/srcpm/drops')
 
     return app
 
