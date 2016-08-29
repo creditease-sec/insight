@@ -37,12 +37,12 @@
                     <td>{{i.id}}</td>
                     <td>{{i.drop_title}}</td>
                     <td>{{moment(i.drop_modified_time).format('YYYY年M月D日, H:mm:ss')}}</td>
-                    <!-- <td>222</td> -->
                     <td>{{i.cate.category_name}}</td>
                     <td>
                         <button onclick="del({{i.id}})" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span>刪除</button>
                         <a href="{{ url_for('drops.newdrops')}}" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>新建</a>
-                        <a href="{{ url_for('drops.editdrops',id=i.id)}}" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span>编辑</button>
+                        <a href="{{ url_for('drops.editdrops',id=i.id)}}" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span>编辑</a>
+                        <a href="{{ url_for('drops.downdrops',postid=i.id)}}" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-download"></span>下载</a></button>
 		            </td>
 		        </tr>
                 {% endfor %}
@@ -65,5 +65,6 @@ if (confirm(msg)){
 	$.get("/drops/deldrop/"+id,function(){alert("目标项目已成功刪除！");location.reload();})
 	}
 }
+
 </script>
 {% endblock %}

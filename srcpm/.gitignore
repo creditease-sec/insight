@@ -8,5 +8,10 @@ migrations/*
 venv/*
 supervisor.conf
 log/*
+<<<<<<< HEAD
 .idea/
 .idea/*
+=======
+run/*
+gunicorn_conf.py
+>>>>>>> 4e4d50880532fcc91dd454b8ad071a29099c2719
