@@ -4,7 +4,7 @@
 {% block head %}
  {{ super() }}
 
-   <link rel="stylesheet" href="/static/pygments.css" type="text/css" />
+   <link rel="stylesheet" href="{{ url_for('src.static', filename='pygments.css') }}" type="text/css" />
    <style>
         pre{
         white-space:pre-wrap;

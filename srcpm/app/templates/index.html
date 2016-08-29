@@ -3,8 +3,8 @@
 
 {% block head %}
 {{ super() }}
-<script src="{{ url_for('static', filename='highcharts.js') }}"></script>
-<script src="{{ url_for('static', filename='chartkick.js') }}"></script>
+<script src="{{ url_for('main.static', filename='highcharts.js') }}"></script>
+<script src="{{ url_for('main.static', filename='chartkick.js') }}"></script>
 {% endblock %}
 
 

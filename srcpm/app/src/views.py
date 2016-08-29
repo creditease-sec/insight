@@ -87,13 +87,13 @@ def upload_img():
 		save_filename = datetime.datetime.now().strftime('%Y%m%d%H%M%s') + '.' + img_type
 		if img_type == 'xlsx':
 			up_img_file.save(current_app.config['UPLOAD_EXCEL_FOLDER'] + save_filename)
-			session['filename'] = url_for('static', filename='upload/excel/'+save_filename)
+			session['filename'] = url_for('src.static', filename='upload/excel/'+save_filename)
 		elif img_type == 'xmind':
 			up_img_file.save(current_app.config['UPLOAD_XMIND_FOLDER'] + save_filename)
-			session['filename'] = url_for('static', filename='upload/xmind/'+save_filename)
+			session['filename'] = url_for('src.static', filename='upload/xmind/'+save_filename)
 		else:
 			up_img_file.save(current_app.config['UPLOAD_IMG_FOLDER'] + save_filename)
-			session['filename'] = url_for('static', filename='upload/img/'+save_filename)
+			session['filename'] = url_for('src.static', filename='upload/img/'+save_filename)
 		return jsonify(result=session['filename'])
 
 

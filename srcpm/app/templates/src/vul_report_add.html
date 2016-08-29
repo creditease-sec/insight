@@ -3,18 +3,18 @@
 
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='Markdown.Converter.min.js') }}"></script>
-<script src="{{ url_for('static', filename='Markdown.Sanitizer.min.js') }}"></script>
+<script src="{{ url_for('src.static', filename='Markdown.Converter.min.js') }}"></script>
+<script src="{{ url_for('src.static', filename='Markdown.Sanitizer.min.js') }}"></script>
 <!-- {{ pagedown.include_pagedown() }} -->
 
-<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+<script src="{{ url_for('src.static', filename='jquery.min.js') }}"></script>
 
 <script type=text/javascript>
 	$(function() {
 		$('#upload').bind('change', function() {
 
 			$.ajax({
-				url: '/src/upload_img',
+				url: '{{ url_for('src.upload_img') }}',
 				type: 'POST',
 				cache: false,
 				data: new FormData($('#img_form')[0]),
