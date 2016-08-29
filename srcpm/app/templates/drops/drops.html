@@ -1,136 +1,206 @@
- {% extends 'drops/drops_base.html' %} {% import 'bootstrap/wtf.html' as wtf %} {% import "drops/_macros.html" as macros %} {% block title %} drops {% endblock%} {% block head %} {{ super() }}
+ {% extends 'drops/drops_base.html' %} {% import 'bootstrap/wtf.html' as wtf %}
+ {% import "drops/_macros.html" as macros %} {% block title %} drops {% endblock %}
+ {% block head %}
+    {{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='plugins/editormd/css/editormd.preview.css') }}">
+<style>
+    body {
+        font-family: "ff-tisa-web-pro-1", "ff-tisa-web-pro-2", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "Microsoft YaHei UI", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    }
+</style>
+<style>
+    .w90 {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-<head>
-    <style>
-        body {
-            font-family: "ff-tisa-web-pro-1", "ff-tisa-web-pro-2", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "Microsoft YaHei UI", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
-        }
-    </style>
-    <style>
-        .w90 {
-            width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-        }
+    .w60 {
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-        .w60 {
-            width: 60%;
-            margin-left: auto;
-            margin-right: auto;
-        }
+    .w35 {
+        width: 35%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+<style>
+    #sidebar {
+        width: 400px;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        right: 0;
+        overflow: hidden;
+        background: #fff;
+        z-index: 100;
+        padding: 18px;
+        border: 1px solid #ddd;
+        border-top: none;
+        border-bottom: none;
+    }
 
-        .w35 {
-            width: 35%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
-    <style type="text/css">
-        a:link {
-            text-decoration: none;
-        }
+    #sidebar:hover {
+        overflow: auto;
+    }
 
-        a:visited {
-            text-decoration: none;
-        }
+    #sidebar h1 {
+        font-size: 16px;
+    }
 
-        a:hover {
-            text-decoration: none;
-        }
+    #custom-toc-container {
+        padding-left: 0;
+    }
 
-        a:active {
-            text-decoration: none;
-        }
-    </style>
-</head>
+    /*#test-editormd-view,
+    #test-editormd-view2 {
+        padding-left: 0;
+        padding-right: 430px;
+        margin: 0;
+    }*/
+</style>
+
 {% endblock %} {% block page_content %}
-
-<body data-spy="scroll" data-target=".bs-docs-sidebar" w90>
-    <header>
-        <span style="font-size:30px;font-weight:bold;color:#708090;">drop标题: {{post.drop_title}}</span>
+<header>
+    <span style="font-size:30px;font-weight:bold;color:#708090;">drop标题: {{post.drop_title}}</span>
+</header>
+<hr>
+<div class="container col-md-12 w90">
+    <b>
+            <p class="title_info">&nbsp;&nbsp;
+            作者:<span class="info_author">{{authorname.username}}</span>&nbsp;&nbsp;
+            更新时间：<span class="info_date">{{moment(post.drop_modified_time).format('YYYY年M月D日, H:mm:ss')}}</span>&nbsp;&nbsp;
+            阅读次数：<span class="info_times">{{post.view_num}}</span>&nbsp;&nbsp;
+            评论：<span class="info_commments">3</span>&nbsp;&nbsp;
+            标签:<span>{{post.tags_name}}</span>&nbsp;&nbsp;
+            </p>
+        </b>
+    <hr>
+</div>
+<div class="container w90">
+    <div id="layout">
+        <!-- <div id="sidebar">
+            <h1>目录</h1>
+            <div class="markdown-body editormd-preview-container" id="custom-toc-container">#custom-toc-container</div>
+        </div> -->
+        <br>
+        <div id="test-editormd-view">
+            <textarea style="display:none;" name="test-editormd-markdown-doc">{{ post.drop_content }}</textarea>
+        </div>
+        <br>
         <hr>
-    </header>
-    <div class="container ">
-        <div class="row">
-            <!-- 留空布局其他-->
-            <div class="col-md-3">
-            </div>
-            <!--/span-->
-            <div class="container col-md-12">
-                <b>
-                    <p class="title_info">&nbsp;&nbsp;
-                    作者:<span class="info_author">{{authorname.username}}</span>&nbsp;&nbsp;
-                    更新时间：<span class="info_date">{{moment(post.drop_modified_time).format('YYYY年M月D日, H:mm:ss')}}</span>&nbsp;&nbsp;
-                    阅读次数：<span class="info_times">{{post.view_num}}</span>&nbsp;&nbsp;
-                    评论：<span class="info_commments">3</span>&nbsp;&nbsp;
-                    标签:<span>{{post.tags_name}}</span>&nbsp;&nbsp;
-                    </p>
-                </b>
-                <HR /> {% if post.drop_content_html %} {{ post.drop_content_html|safe }} {% endif %}
-                <HR />
-            </div>
+        <div id="test-editormd-view2">
+            <textarea id="append-test" style="display:none; w90"></textarea>
         </div>
     </div>
-    <div class="container col-md-12">
+</div>
 
-            <ol class="commentlist">
-                {% for c in postcoments %}
+<div class="container w90">
+    <ol class="commentlist">
+        {% for c in postcoments %}
+        <li id="li-comment-{{c.id}}" class="comment even thread-even depth-1">
+            <article id="comment-{{c.id}}" class="comment">
+                <footer class="clearfix comment-head">
+                    昵称:<span style="font-size:16px;font-weight:bold;">&nbsp;&nbsp;{{c.author_name}}&nbsp;&nbsp;</span>
+                    <div class="comment-meta commentmetadata">
+                        <a href="#comments">
+                            <time datetime="2013-01-01T02:07:46+00:00" pubdate=""> {{moment(c.comment_create_time).format('YYYY年M月D日, H:mm:ss')}} </time>
+                        </a>
+                    </div>
+                </footer>
+                <div class="comment-content">
+                    <p>{{c.content_html|safe}}</p>
+                </div>
+                <div class="act">
+                    <!--  留空追加回复-->
+                </div>
+                <hr>
+            </article>
+        </li>
+        {% endfor %}
+    </ol>
+    <form action="{{url_for('drops.addcomment')}}" method="post" class="form-inline" role="form">
 
-                <li id="li-comment-{{c.id}}" class="comment even thread-even depth-1">
-                    <article id="comment-{{c.id}}" class="comment">
-                        <footer class="clearfix comment-head">
-                            昵称:<span style="font-size:16px;font-weight:bold;">&nbsp;&nbsp;{{c.author_name}}&nbsp;&nbsp;</span>
-                            <div class="comment-meta commentmetadata">
-                                <a href="#comments">
-                                    <time datetime="2013-01-01T02:07:46+00:00" pubdate=""> {{moment(c.comment_create_time).format('YYYY年M月D日, H:mm:ss')}} </time>
-                                </a>
-                            </div>
-                        </footer>
-                        <div class="comment-content">
-                            <p>{{c.content_html|safe}}</p>
-                        </div>
-                        <div class="act">
-                            <!--  留空追加回复-->
-                        </div>
-                        <hr>
+        <div style="display:none;">
+            {{ form.hidden_tag() }} {{ form.comt_id(type='hidden', value=post.id)}}
+        </div>
+        <div class=form-group>
+            <span style="font-size:16px;font-weight:bold;">Name：</span>{{ form.author_name.label(class="sr-only") }}{{ form.author_name(class="form-control" ) }}
+        </div>
+        <div class=form-group>
+            <span style="font-size:16px;font-weight:bold;">Email：</span>{{ form.author_email.label(class="sr-only") }}{{ form.author_email(class="form-control" ) }}
+        </div>
 
-                    </article>
-                </li>
+        <div class=form-group>
+            {{ form.content.label(class="control-label") }}{{ form.content(rows = 3, cols = 100) }}
+        </div>
+        <br>
+        <div class=form-group>
+            {{ form.submit(class="btn btn-default") }}
+        </div>
 
-                {% endfor %}
-            </ol>
-
-        <hr>
-        <form action="{{url_for('drops.addcomment')}}" method="post" class="form-inline" role="form">
-
-            <div style="display:none;">
-                {{ form.hidden_tag() }} {{ form.comt_id(type='hidden', value=post.id)}}
-            </div>
-            <div class=form-group>
-                <span style="font-size:16px;font-weight:bold;">Name：</span>{{ form.author_name.label(class="sr-only") }}{{ form.author_name(class="form-control" ) }}
-            </div>
-            <div class=form-group>
-                <span style="font-size:16px;font-weight:bold;">Email：</span>{{ form.author_email.label(class="sr-only") }}{{ form.author_email(class="form-control" ) }}
-            </div>
-
-            <div class=form-group>
-                {{ form.content.label(class="control-label") }}{{ form.content(rows = 3, cols = 100) }}
-            </div>
-            <br>
-            <div class=form-group>
-                {{ form.submit(class="btn btn-default") }}
-            </div>
-    </div>
     </form>
-    </div>
+</div>
 
-    <footer>
+<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+<script src="/static/plugins/editormd/lib/marked.min.js"></script>
+<script src="/static/plugins/editormd/lib/prettify.min.js"></script>
 
-    </footer>
-    <link rel="stylesheet" href="{{ url_for('static', filename='plugins/highlight/styles/monokai-sublime.css') }}">
-    <script src="{{ url_for('static', filename='plugins/highlight/highlight.pack.js') }}"></script>
-    <script>
-        hljs.initHighlightingOnLoad();
-    </script>
-</body>
+<script src="/static/plugins/editormd/lib/raphael.min.js"></script>
+<script src="/static/plugins/editormd/lib/underscore.min.js"></script>
+<script src="/static/plugins/editormd/lib/sequence-diagram.min.js"></script>
+<script src="/static/plugins/editormd/lib/flowchart.min.js"></script>
+<script src="/static/plugins/editormd/lib/jquery.flowchart.min.js"></script>
+
+<script src="/static/plugins/editormd/editormd.js"></script>
+<script type="text/javascript">
+    $(function() {
+        var testEditormdView, testEditormdView2;
+        // $.get("{{ url_for('drops.downdrops',postid=post.id)}}", function(markdown) {
+        //
+        //
+        //     testEditormdView = editormd.markdownToHTML("test-editormd-view", {
+        //         markdown: markdown, //+ "\r\n" + $("#append-test").text(),
+        //         //htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
+        //         htmlDecode: "style,script,iframe", // you can filter tags decode
+        //         //toc             : false,
+        //         tocm: true, // Using [TOCM]
+        //         tocContainer: "#custom-toc-container", // 自定义 ToC 容器层
+        //         //gfm             : false,
+        //         //tocDropdown     : true,
+        //         // markdownSourceCode : true, // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
+        //         emoji: true,
+        //         taskList: true,
+        //         tex: true, // 默认不解析
+        //         flowChart: true, // 默认不解析
+        //         sequenceDiagram: true, // 默认不解析
+        //     });
+        //
+        //     //console.log("返回一个 jQuery 实例 =>", testEditormdView);
+        //
+        //     // 获取Markdown源码
+        //     //console.log(testEditormdView.getMarkdown());
+        //
+        //     //alert(testEditormdView.getMarkdown());
+        // });
+
+        testEditormdView = editormd.markdownToHTML("test-editormd-view", {
+            htmlDecode: "style,script,iframe", // you can filter tags decode
+            //toc             : false,
+            //tocm: true, // Using [TOCM]
+            //tocContainer: "#custom-toc-container", // 自定义 ToC 容器层
+            gfm : true,
+            //tocDropdown     : true,
+            // markdownSourceCode : true, // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
+            //emoji: true,
+            taskList: true,
+            //tex: true, // 默认不解析
+            flowChart: true, // 默认不解析
+            sequenceDiagram: true, // 默认不解析
+        });
+    });
+</script>
 {% endblock %}
