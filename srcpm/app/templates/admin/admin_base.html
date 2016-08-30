@@ -6,7 +6,7 @@
 
 {% block scripts %}
     {{ super() }}
-    {{ moment.include_moment(local_js='/static/moment-with-locales.min.js') }}
+    {{ moment.include_moment(local_js=url_for('main.static', filename='moment-with-locales.min.js') ) }}
     {{ moment.lang("zh-CN") }}
 {% endblock %}
 

@@ -75,7 +75,11 @@ def confirm(token):
 def before_request():
 	if current_user.is_authenticated and not current_user.confirmed \
 			and request.endpoint[:5] != 'auth.' \
-			and request.endpoint != 'static':
+			and request.endpoint != 'static' \
+            and request.endpoint != 'src.static' \
+            and request.endpoint != 'main.static' \
+            and request.endpoint != 'auth.static' \
+            and request.endpoint != 'drops.static':
 		return redirect(url_for('auth.unconfirmed'))
 
 
