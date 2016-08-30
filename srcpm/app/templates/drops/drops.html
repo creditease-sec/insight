@@ -74,7 +74,7 @@
             作者:<span class="info_author">{{authorname.username}}</span>&nbsp;&nbsp;
             更新时间：<span class="info_date">{{moment(post.drop_modified_time).format('YYYY年M月D日, H:mm:ss')}}</span>&nbsp;&nbsp;
             阅读次数：<span class="info_times">{{post.view_num}}</span>&nbsp;&nbsp;
-            评论：<span class="info_commments">3</span>&nbsp;&nbsp;
+            评论：<span class="info_commments">{{post.comment_count}}</span>&nbsp;&nbsp;
             标签:<span>{{post.tags_name}}</span>&nbsp;&nbsp;
             </p>
         </b>
