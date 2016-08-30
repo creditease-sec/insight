@@ -318,7 +318,7 @@ def drop(postid=5):
 # drop_name固定链接
 
 
-@drops.route('/drop/<postname>.html')
+@drops.route('/drop/<postname>')
 def drop_byname(postname):
     categorys = Category.query.all()
     hot = Postdrop.query.hotdrop()[:20]
