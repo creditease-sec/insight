@@ -1,4 +1,6 @@
-{% extends 'drops/drops_base.html' %} {% import 'bootstrap/wtf.html' as wtf %} {% block title %} drops-分类目录 {% endblock%} {% block page_content %}
+{% extends 'drops/drops_base.html' %} {% import 'bootstrap/wtf.html' as wtf %}
+{% block title %} drops-分类目录 {% endblock%}
+{% block page_content %}
 <div class="row">
 
     <!-- <div class="col-md-3" style="background-color: #dedef8;box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;"> -->
@@ -31,9 +33,9 @@
 
         {% endfor %}
         <div id="Pagination" class="pagination">
-            <a href="/drops/page/1">首页 &raquo;</a> {% for i in pagination %} {% if i==pageid %}<span class="current">{{pageid}}</span> {% else %}<a href="/drops/page/{{i}}">{{i}}</a> {% endif %} {% endfor %}
+            <a href="/srcpm/drops/page/1">首页 &raquo;</a> {% for i in pagination %} {% if i==pageid %}<span class="current">{{pageid}}</span> {% else %}<a href="/srcpm/drops/page/{{i}}">{{i}}</a> {% endif %} {% endfor %}
             <span>...</span>
-            <a href="/drops/page/{{last_page}}">末页 &raquo;</a>
+            <a href="/srcpm/drops/page/{{last_page}}">末页 &raquo;</a>
         </div>
     </div>
 

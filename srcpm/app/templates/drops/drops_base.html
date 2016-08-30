@@ -1,10 +1,10 @@
 {% extends 'bootstrap/base.html' %}
 {% block head %}
     {{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='plugins/highlight/styles/monokai-sublime.css') }}">
-<script src="{{ url_for('static', filename='plugins/highlight/highlight.pack.js') }}"></script>
-<script src="{{ url_for('static', filename='Markdown.Converter.min.js') }}"></script>
-<script src="{{ url_for('static', filename='Markdown.Sanitizer.min.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('drops.static', filename='plugins/highlight/styles/tomorrow.css') }}">
+<script src="{{ url_for('drops.static', filename='plugins/highlight/highlight.pack.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='Markdown.Converter.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='Markdown.Sanitizer.min.js') }}"></script>
 <script>
     hljs.initHighlightingOnLoad();
 </script>
@@ -30,7 +30,7 @@
 {% endblock %}
 {% block scripts %}
     {{ super() }}
-    {{ moment.include_moment(local_js='/static/moment-with-locales.min.js') }}
+    {{ moment.include_moment(local_js=url_for('drops.static', filename='moment-with-locales.min.js') ) }}
     {{ moment.lang("zh-CN") }}
 {% endblock %}
 {% block title %} drops {% endblock %} {% block navbar%}

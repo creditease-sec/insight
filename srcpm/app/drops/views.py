@@ -100,7 +100,7 @@ def upload_img():
         up_img_file.save(current_app.config[
                          'UPLOAD_IMG_FOLDER'] + save_filename)
         session['filename'] = url_for(
-            'static', filename='upload/img/' + save_filename)
+            'drops.static', filename='upload/img/' + save_filename)
         s = {'success': 1, 'message': 'OK', 'url': session['filename']}
         return jsonify(s)
 

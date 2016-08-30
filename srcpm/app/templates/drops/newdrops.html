@@ -13,9 +13,9 @@
 {% endblock %}
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='Markdown.Converter.min.js') }}"></script>
-<script src="{{ url_for('static', filename='Markdown.Sanitizer.min.js') }}"></script>
-<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='Markdown.Converter.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='Markdown.Sanitizer.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='jquery.min.js') }}"></script>
 <script type="text/javascript">
     function Checknull(str, xx) {
         var strReg = "";
@@ -33,7 +33,7 @@
         $('#upload').bind('change', function() {
 
             $.ajax({
-                url: '/drops/upload_img',
+                url: '{{url_for("drops.upload_img")}}',
                 type: 'POST',
                 cache: false,
                 data: new FormData($('#img_form')[0]),

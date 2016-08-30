@@ -32,9 +32,9 @@
 
         {% endfor %}
         <div id="Pagination" class="pagination">
-            <a href="/drops/page/1">首页 &raquo;</a> {% for i in pagination %} {% if i==pageid %}<span class="current">{{pageid}}</span> {% else %}<a href="/drops/page/{{i}}">{{i}}</a> {% endif %} {% endfor %}
+            <a href="/srcpm/drops/page/1">首页 &raquo;</a> {% for i in pagination %} {% if i==pageid %}<span class="current">{{pageid}}</span> {% else %}<a href="/srcpm/drops/page/{{i}}">{{i}}</a> {% endif %} {% endfor %}
             <span>...</span>
-            <a href="/drops/page/{{last_page}}">末页 &raquo;</a>
+            <a href="/srcpm/drops/page/{{last_page}}">末页 &raquo;</a>
         </div>
     </div>
 

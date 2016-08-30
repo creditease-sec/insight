@@ -62,7 +62,7 @@
 function del(id){
 var msg="確定要刪除吗？\n注意：刪除后无法恢复！"
 if (confirm(msg)){
-	$.get("/drops/deldrop/"+id,function(){alert("目标项目已成功刪除！");location.reload();})
+	$.get('/srcpm/drops/deldrop/'+id,function(){alert("目标项目已成功刪除！");location.reload();})
 	}
 }
 

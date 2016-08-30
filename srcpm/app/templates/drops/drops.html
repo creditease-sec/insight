@@ -2,7 +2,7 @@
  {% import "drops/_macros.html" as macros %} {% block title %} drops {% endblock %}
  {% block head %}
     {{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='plugins/editormd/css/editormd.preview.css') }}">
+<link rel="stylesheet" href="{{ url_for('drops.static', filename='plugins/editormd/css/editormd.preview.css') }}">
 <style>
     body {
         font-family: "ff-tisa-web-pro-1", "ff-tisa-web-pro-2", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "Microsoft YaHei UI", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
@@ -65,10 +65,10 @@
 
 {% endblock %} {% block page_content %}
 <header>
-    <span style="font-size:30px;font-weight:bold;color:#708090;">drop标题: {{post.drop_title}}</span>
+    <span style="font-size:30px;font-weight:bold;color:#6495ED;">*{{post.drop_title}}</span>
 </header>
 <hr>
-<div class="container col-md-12 w90">
+<div class="container w90">
     <b>
             <p class="title_info">&nbsp;&nbsp;
             作者:<span class="info_author">{{authorname.username}}</span>&nbsp;&nbsp;
@@ -145,17 +145,16 @@
     </form>
 </div>
 
-<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
-<script src="/static/plugins/editormd/lib/marked.min.js"></script>
-<script src="/static/plugins/editormd/lib/prettify.min.js"></script>
+<script src="{{ url_for('drops.static', filename='jquery.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='plugins/editormd/lib/marked.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='plugins/editormd/lib/prettify.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='plugins/editormd/lib/raphael.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='plugins/editormd/lib/underscore.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='plugins/editormd/lib/sequence-diagram.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='plugins/editormd/lib/flowchart.min.js') }}"></script>
+<script src="{{ url_for('drops.static', filename='plugins/editormd/lib/jquery.flowchart.min.js') }}"></script>
 
-<script src="/static/plugins/editormd/lib/raphael.min.js"></script>
-<script src="/static/plugins/editormd/lib/underscore.min.js"></script>
-<script src="/static/plugins/editormd/lib/sequence-diagram.min.js"></script>
-<script src="/static/plugins/editormd/lib/flowchart.min.js"></script>
-<script src="/static/plugins/editormd/lib/jquery.flowchart.min.js"></script>
-
-<script src="/static/plugins/editormd/editormd.js"></script>
+<script src="{{ url_for('drops.static', filename='plugins/editormd/editormd.js') }}"></script>
 <script type="text/javascript">
     $(function() {
         var testEditormdView, testEditormdView2;
