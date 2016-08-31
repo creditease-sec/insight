@@ -4755,6 +4755,19 @@
      * @returns {String} EventType                   返回事件类型名称
      */
 
+    // editormd.mouseOrTouch = function(mouseEventType, touchEventType) {
+    //     mouseEventType = mouseEventType || "click";
+    //     touchEventType = touchEventType || "touchend";
+    //
+    //     var eventType = mouseEventType;
+    //
+    //     try {
+    //         document.createEvent("TouchEvent");
+    //         eventType = touchEventType;
+    //     } catch (e) {}
+    //
+    //     return eventType;
+    // };
     editormd.mouseOrTouch = function(mouseEventType, touchEventType) {
         mouseEventType = mouseEventType || "click";
         touchEventType = touchEventType || "touchend";
@@ -4893,3 +4906,4 @@
     return editormd;
 
 }));
+译
