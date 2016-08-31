@@ -368,6 +368,7 @@ def downdrops(postid=1):
         file_size = len(post.drop_content)
 
         response = make_response(s)
+        file_size=len(s)
         if response:
             response.headers['Content-Description'] = 'File Transfer'
             response.headers['Cache-Control'] = 'no-cache'
