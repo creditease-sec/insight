@@ -48,6 +48,10 @@
     <a href="javascript:if(confirm('确实要删除该内容吗?'))location='{{ url_for('src.vul_report_delete', id=vul_report.id ) }}'" >删除</a>
   {% endif %}
 
+  {% if current_user.can('src.vul_report_admin_edit') %}
+    <a href="{{ url_for('src.vul_report_admin_edit', id=vul_report.id ) }}" >管理编辑</a>
+  {% endif %}
+
   {% if current_user.can('src.vul_report_review') %}
     {% if (vul_report.vul_status == '未审核') %}
     <a href="{{ url_for('src.vul_report_review', id=vul_report.id ) }}">审核</a>

@@ -36,6 +36,7 @@ perm_choices = [('admin.index',u'管理后台－首页'),        #管理后台�
 				('admin.vul_type_modify',u'管理后台－漏洞类型修改'),        #管理后台－漏洞类型修改
 				('admin.vul_type_delete',u'管理后台－漏洞类型删除'),        #管理后台－漏洞类型删除
 				('src.vul_report_delete', u'SRC－漏洞报告删除'),        #SRC－漏洞报告删除
+				('src.vul_report_admin_edit', u'SRC－漏洞报告管理编辑'),        #SRC－漏洞报告管理编辑
 				('src.vul_report_review',u'SRC-漏洞报告审核'),        #SRC-漏洞报告审核
 				('src.vul_report_review_ajax',u'SRC-漏洞报告审核AJAX'),        #SRC-漏洞报告审核AJAX
 				('src.vul_report_known',u'SRC-漏洞报告－已知悉提交'),        #SRC-漏洞报告－已知悉提交

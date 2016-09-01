@@ -35,6 +35,31 @@ class VulReportForm(Form):
 		self.related_asset.choices = [('', '')] + [(ast.domain, ast.domain) for ast in Asset.query.all()]
 		self.related_vul_type.choices = [('', '')] + [(vtp.vul_type, vtp.vul_type) for vtp in VulType.query.all()]
 
+class VulReportAdminForm(Form):
+	title = StringField(u'漏洞标题')
+	related_asset = StringField(u'关联资产')
+	related_asset_inout = StringField(u'内外网')
+	related_asset_status = StringField(u'资产状态')
+	related_vul_type = StringField(u'漏洞类型')
+	vul_self_rank = StringField(u'自评Rank')
+	vul_source = StringField(u'漏洞来源')
+	vul_poc = PageDownField(u'漏洞证明')
+	#vul_poc_html = StringField(u'漏洞证明HTML')
+	vul_solution = PageDownField(u'解决方案')
+	#vul_solution_html = StringField(u'解决方案HTML')
+	grant_rank = StringField(u'Rank')
+	vul_type_level = StringField(u'漏洞等级')
+	risk_score = StringField(u'风险值')
+	person_score = StringField(u'个人积分')
+	done_solution = StringField(u'复测结果')
+	done_rank = StringField(u'剩余Rank')
+	residual_risk_score = StringField(u'剩余风险值')
+	vul_status = StringField(u'漏洞状态')
+	start_date = StringField(u'通告日期')
+	end_date = StringField(u'结束日期')
+	fix_date = StringField(u'修复日期')
+	submit = SubmitField(u'提交')
+
 
 
 class UploadImgForm(Form):

@@ -2,7 +2,7 @@
 
 from flask import render_template, flash, url_for, redirect, request, current_app, session, jsonify, abort
 from . import src
-from .forms import VulReportForm, UploadImgForm, VulReportReviewForm
+from .forms import VulReportForm, UploadImgForm, VulReportReviewForm, VulReportAdminForm
 from .forms import VulReportDevFinishForm, VulReportRetestResultForm
 from .models import VulReport, VulLog
 from ..admin.models import Asset, User, Depart
@@ -21,6 +21,62 @@ def weekly_mail():
 """
 
 #-------------漏洞报告模块------------------------------------------------------------------------------
+
+@src.route('/vul_report_admin_edit/<id>', methods=['GET', 'POST'])
+@permission_required('src.vul_report_admin_edit')
+def vul_report_admin_edit(id):
+	form = VulReportAdminForm()
+	vul_report = VulReport.query.get_or_404(id)
+	if form.validate_on_submit():
+		vul_report.title = form.title.data
+		vul_report.related_asset = form.related_asset.data
+		vul_report.related_asset_inout = form.related_asset_inout.data
+		vul_report.related_asset_status = form.related_asset_status.data
+		vul_report.related_vul_type = form.related_vul_type.data
+		vul_report.vul_self_rank = int(form.vul_self_rank.data)
+		vul_report.vul_source = form.vul_source.data
+		vul_report.vul_poc = form.vul_poc.data
+		#vul_report.vul_poc_html = form.vul_poc_html.data 
+		vul_report.vul_solution = form.vul_solution.data
+		#vul_report.vul_solution_html = form.vul_solution_html.data 
+		vul_report.grant_rank = int(form.grant_rank.data)
+		vul_report.vul_type_level = form.vul_type_level.data 
+		vul_report.risk_score = float(form.risk_score.data)
+		#vul_report.person_score = form.person_score.data
+		vul_report.done_solution = form.done_solution.data
+		vul_report.done_rank = int(form.done_rank.data)
+		vul_report.residual_risk_score = float(form.residual_risk_score.data)
+		vul_report.vul_status = form.vul_status.data
+		vul_report.start_date = form.start_date.data
+		vul_report.end_date = form.end_date.data
+		vul_report.fix_date = form.fix_date.data
+		flash(u'更新漏洞 %s 报告成功!' %vul_report.title)
+		redirect(url_for('src.vul_report_admin_edit', id=vul_report.id))
+
+	form.title.data = vul_report.title
+	form.related_asset.data = vul_report.related_asset
+	form.related_asset_inout.data = vul_report.related_asset_inout
+	form.related_asset_status.data = vul_report.related_asset_status
+	form.related_vul_type.data = vul_report.related_vul_type
+	form.vul_self_rank.data = vul_report.vul_self_rank
+	form.vul_source.data = vul_report.vul_source
+	form.vul_poc.data = vul_report.vul_poc
+	#form.vul_poc_html.data = vul_report.vul_poc_html
+	form.vul_solution.data = vul_report.vul_solution
+	#form.vul_solution_html.data = vul_report.vul_solution_html
+	form.grant_rank.data = vul_report.grant_rank
+	form.vul_type_level.data = vul_report.vul_type_level
+	form.risk_score.data = vul_report.risk_score
+	form.person_score.data = vul_report.person_score
+	form.done_solution.data = vul_report.done_solution
+	form.done_rank.data = vul_report.done_rank
+	form.residual_risk_score.data = vul_report.residual_risk_score
+	form.vul_status.data = vul_report.vul_status
+	form.start_date.data = vul_report.start_date
+	form.end_date.data = vul_report.end_date
+	form.fix_date.data = vul_report.fix_date
+	return render_template('src/vul_report_admin_edit.html', form=form)
+
 
 @src.route('/vul_report_add', methods=['GET', 'POST'])
 @login_required
