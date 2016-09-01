@@ -13,6 +13,7 @@ from flask_login import current_user, login_required
 from werkzeug import secure_filename
 from ..email import send_email
 from ..decorators import permission_required
+from sqlalchemy import or_
 
 """
 def weekly_mail():
@@ -670,7 +671,7 @@ def get_email_dict(vul_report_id):
 
 @src.route('/rank_score_list/<int:days>')
 def rank_score_list(days):
-	query = LoginUser.query.filter_by(role_name=u'安全人员')
+	query = LoginUser.query.filter(or_(LoginUser.role_name==u'安全人员',LoginUser.role_name==u'安全管理员'))
 	list_user_rank_score = []
 	if query.first():
 		for sec_user in query.all():
