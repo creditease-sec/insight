@@ -1,5 +1,11 @@
+{% extends 'drops/drops_base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
-{% include 'drops/_mdhead.html' %}
+{% block head %}
+   {{ super() }}
+   <link rel="stylesheet" href="{{ url_for('drops.static', filename='plugins/editormd/css/editormd.preview.css') }}">
+   <link rel="stylesheet" href="{{ url_for('drops.static', filename='plugins/editormd/css/editormd.css') }}" />
+{% endblock %}
+{% block content %}
     <div class="container" w90>
         <div class="contentform">
             <form action="" method="post" class="form-inline" role="form">
@@ -31,4 +37,44 @@
             </form>
         </div>
     </div>
-{% include 'drops/_mdfoot.html' %}
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <script src="{{ url_for('drops.static', filename='jquery.min.js') }}"></script>
+    <script src="{{ url_for('drops.static', filename='jquery.cookie.js') }}"></script>
+    <script src="{{ url_for('drops.static', filename='plugins/editormd/editormd.js') }}"></script>
+    <script type="text/javascript">
+        $(function() {
+            testEditor = editormd("editormd", {
+                width: "100%",
+                height: 740,
+                theme : "dark",
+                previewTheme : "default",
+                editorTheme : "neat",
+                //markdown : md,
+                codeFold : true,
+                //syncScrolling : false,
+                saveHTMLToTextarea : true,    // 保存 HTML 到 Textarea
+                searchReplace : true,
+                emoji : true,
+                taskList : true,
+                tocm : true,         // Using [TOCM]
+                tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+                flowChart : true,             // 开启流程图支持，默认关闭
+                sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+                path: "{{ url_for('drops.static', filename='plugins/editormd/lib/') }}",
+                imageUpload: true,
+                imageFormats: ["jpg", "jpeg", "gif", "png", "bmp"],
+                imageUploadURL: "{{url_for('drops.upload_img')}}",
+            });
+        });
+
+    </script>
+{% endblock %}

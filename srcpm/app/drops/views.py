@@ -318,7 +318,7 @@ def drop(postid=5):
 # drop_name固定链接
 
 
-@drops.route('/drop/<postname>.html')
+@drops.route('/drop/<postname>')
 def drop_byname(postname):
     categorys = Category.query.all()
     hot = Postdrop.query.hotdrop()[:20]
@@ -367,7 +367,8 @@ def downdrops(postid=1):
         file_basename = post.drop_name + '.' + 'md'
         file_size = len(post.drop_content)
 
-        response = make_response(s, 200)
+        response = make_response(s)
+        file_size=len(s)
         if response:
             response.headers['Content-Description'] = 'File Transfer'
             response.headers['Cache-Control'] = 'no-cache'
