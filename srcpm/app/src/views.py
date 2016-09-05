@@ -158,7 +158,7 @@ def upload_img():
 def vul_report_list_read():
 	opt = request.form.get('opt','all')
 	if current_user.is_authenticated:
-		if current_user.role_name==u'安全管理员' or current_user.role_name==u'超级管理员':
+		if current_user.role_name==u'安全管理员' or current_user.role_name==u'超级管理员' or current_user.role_name==u'安全人员':
 			query = VulReport.query
 		else:
 			query = VulReport.query.filter(VulReport.vul_status==u'完成', VulReport.related_vul_type!=u'输出文档')
