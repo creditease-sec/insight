@@ -28,6 +28,7 @@ class LoginUser(UserMixin, db.Model):
 
 	def count(self, vul_status):
 		from ..src.models import VulReport
+		count = 0
 		if self.role_name == u'超级管理员' or self.role_name == u'安全管理员':
 			query = VulReport.query.filter_by(vul_status=vul_status)
 			count = query.count()
