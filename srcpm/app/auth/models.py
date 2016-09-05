@@ -4,7 +4,7 @@ from flask_login import UserMixin, current_app, AnonymousUserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from .. import login_manager
-from ..admin.models import Permission
+from ..admin.models import Permission, Asset, Depart
 
 
 class LoginUser(UserMixin, db.Model):
@@ -30,11 +30,22 @@ class LoginUser(UserMixin, db.Model):
 		from ..src.models import VulReport
 		if self.role_name == u'超级管理员' or self.role_name == u'安全管理员':
 			query = VulReport.query.filter_by(vul_status=vul_status)
+			count = query.count()
 		elif self.role_name == u'安全人员':
 			query = VulReport.query.filter_by(vul_status=vul_status, author=self.email)
+			count = query.count()
 		elif self.role_name == u'普通用户':
-			query = VulReport.query.filter_by(vul_status=vul_status, author=self.email)
-		count = query.count()
+			query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
+				   												VulReport.vul_status==vul_status)
+			#判断普通用户是否为部门经理，部门经理有权限查看部门所有漏洞
+			department_list = Depart.query.filter_by(email=self.email).all()
+			if department_list:
+				vul_report_list = []
+				for department in department_list:
+					vul_report_list = [] + query.filter(Asset.department==department.department).all()
+			else:
+				vul_report_list = query.filter(Asset.owner.like("%" + self.email + "%")).all()
+			count = len(vul_report_list)
 		return count
 
 
