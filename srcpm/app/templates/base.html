@@ -100,11 +100,11 @@
 
 			<ul class="nav navbar-nav navbar-right">
 				{% if current_user.is_authenticated %}
-					<li><a href="#">欢迎您！{{ current_user.email }}</a></li>
+				<!--	<li><a href="#">欢迎您！{{ current_user.email.split('@')[0] }}</a></li> -->
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        	帐户 <b class="caret"></b>
-                    	</a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            {{ current_user.email.split('@')[0] }} <b class="caret"></b>
+                        </a>
                     	<ul class="dropdown-menu">
                         	<li><a href="{{ url_for('auth.change_password') }}">修改密码</a></li>
                         	<li><a href="{{ url_for('auth.logout') }}">退出</a></li>
