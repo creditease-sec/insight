@@ -26,6 +26,17 @@ class LoginUser(UserMixin, db.Model):
 		else:
 			return True
 
+	def count(self, vul_status):
+		from ..src.models import VulReport
+		if self.role_name == u'超级管理员' or self.role_name == u'安全管理员':
+			query = VulReport.query.filter_by(vul_status=vul_status)
+		elif self.role_name == u'安全人员':
+			query = VulReport.query.filter_by(vul_status=vul_status, author=self.email)
+		elif self.role_name == u'普通用户':
+			query = VulReport.query.filter_by(vul_status=vul_status, author=self.email)
+		count = query.count()
+		return count
+
 
 	def generate_confirmation_token(self, expiration=3600):
 		s = Serializer(current_app.config['SECRET_KEY'], expiration)

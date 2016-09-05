@@ -1,12 +1,10 @@
 #-*- coding:utf-8 -*-
 
 from flask import render_template, flash, url_for, redirect, request, current_app, session, jsonify, abort
-from . import src
 from .forms import VulReportForm, UploadImgForm, VulReportReviewForm, VulReportAdminForm
 from .forms import VulReportDevFinishForm, VulReportRetestResultForm
 from .models import VulReport, VulLog
 from ..admin.models import Asset, User, Depart
-from ..auth.models import LoginUser
 from .. import db
 import datetime
 from flask_login import current_user, login_required
@@ -14,6 +12,8 @@ from werkzeug import secure_filename
 from ..email import send_email
 from ..decorators import permission_required
 from sqlalchemy import or_
+from ..auth.models import LoginUser
+from . import src
 
 """
 def weekly_mail():
