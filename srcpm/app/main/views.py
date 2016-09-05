@@ -12,11 +12,13 @@ import json
 def index():
     #-----------------漏洞类型数量统计-------------------
     query = db.session.query( db.func.count(VulReport.related_vul_type), VulReport.related_vul_type ).group_by( VulReport.related_vul_type )
+    print query
     list_count_vul_type = query.all()
     data_vul_type = {}
     #data = {'王昊': 150, '万杰': 200, '潘烁宇': 100}
     for i in list_count_vul_type:
         data_vul_type[i[1]] = int(i[0])
+    data_vul_type = sorted(data_vul_type.iteritems(), key=lambda d:d[1], reverse = True)
     
     #-----------------漏洞状态统计------------------------
     query = db.session.query( db.func.count(VulReport.vul_status), VulReport.vul_status ).group_by( VulReport.vul_status )
@@ -33,14 +35,16 @@ def index():
     #data = {'王昊': 150, '万杰': 200, '潘烁宇': 100}
     for i in list_count_related_asset:
         data_related_asset[i[1]] = int(i[0])
+    data_related_asset = sorted(data_related_asset.iteritems(), key=lambda d:d[1], reverse = True)
 
     #---------------部门漏洞数量--------------------
     query = db.session.query( db.func.count(Asset.department), Asset.department ).filter(VulReport.related_asset == Asset.domain).group_by( Asset.department )
     #query = query.query( db.func.count(Asset.department), Asset.department ).group_by( Asset.department )
-    list_count_department_vul = query.all()
+    list_count_department_vul = query.order_by(-db.func.count(Asset.department)).all()
     data_department_vul = {}
     for i in list_count_department_vul:
         data_department_vul[i[1]] = int(i[0])
+    data_department_vul = sorted(data_department_vul.iteritems(), key=lambda d:d[1], reverse = True)
 
 
     #-------------------剩余风险变化趋势---------------------
