@@ -3,7 +3,7 @@ from flask import render_template
 from . import main
 import chartkick
 from .. import db
-from ..admin.models import VulType
+from ..admin.models import VulType, Asset
 from ..src.models import VulReport
 from datetime import datetime
 import json
@@ -34,10 +34,25 @@ def index():
     for i in list_count_related_asset:
         data_related_asset[i[1]] = int(i[0])
 
+    #---------------部门漏洞数量--------------------
+    query = db.session.query( db.func.count(Asset.department), Asset.department ).filter(VulReport.related_asset == Asset.domain).group_by( Asset.department )
+    #query = query.query( db.func.count(Asset.department), Asset.department ).group_by( Asset.department )
+    list_count_department_vul = query.all()
+    data_department_vul = {}
+    for i in list_count_department_vul:
+        data_department_vul[i[1]] = int(i[0])
+
+
+    #-------------------剩余风险变化趋势---------------------
+    
+
+    #-----------------部门剩余风险值------------------
+
     return render_template('index.html', data_vul_type=json.dumps(data_vul_type, encoding='utf-8', indent=4),
                             data_vul_status = json.dumps(data_vul_status, encoding='utf-8', indent=4),
                             data_related_asset = json.dumps(data_related_asset, encoding='utf-8', indent=4),
                             count_asset = len(list_count_related_asset),
+                            data_department_vul = json.dumps(data_department_vul, encoding='utf-8', indent=4),
                         )
 
 
