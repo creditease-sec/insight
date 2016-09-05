@@ -11,6 +11,7 @@ class Config:
     PER_PAGE = 10
     UPLOAD_EXCEL_FOLDER = os.path.join(basedir, 'app/static/upload/excel/')
     UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
+    CC_EMAIL = ['IT.set.list@creditease.cn']
 
 
     @staticmethod

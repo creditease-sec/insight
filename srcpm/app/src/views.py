@@ -120,7 +120,7 @@ def vul_report_add():
 		if query.first():
 			for lg_user in query.all():
 				to_email_list.append(lg_user.email)
-			send_email(u'新漏洞等待审核', 'src/email/new_vul_submit', to=to_email_list, vul_report=vul_report)
+			send_email(u'新漏洞等待审核', 'src/email/new_vul_submit', to=to_email_list, cc=current_app.config['CC_EMAIL'], vul_report=vul_report)
 			flash(u'等待审核的邮件已发送给安全管理员！')
 		else:
 			flash(u'安全管理员未设置!')
@@ -252,7 +252,7 @@ def vul_notify_list():
 					send_email(u'新通告漏洞提醒',
 								'src/email/vul_notify_mail_alert',
 								to=e_l,
-								cc=[],
+								cc=current_app.config['CC_EMAIL'],
 								)
 					flash(u'给 %s 的提醒邮件已发出!' %e_l[0])
 
@@ -311,7 +311,7 @@ def vul_processing_list():
 					send_email(u'修复中漏洞提醒',
 								'src/email/vul_processing_mail_alert',
 								to=e_l,
-								cc=[],
+								cc=current_app.config['CC_EMAIL'],
 								)
 					flash(u'给 %s 的提醒邮件已发出!' %e_l[0])		
 
@@ -487,7 +487,7 @@ def vul_report_review(id):
 				to_email_list.append(i)
 			to_email_list.append(email_dict['department_manager'])
 			to_email_list.append(email_dict['author'])
-			send_email('A new vul alert', 'src/email/new_vul_alert', to=to_email_list, vul_report_rv=vul_report_rv)
+			send_email('A new vul alert', 'src/email/new_vul_alert', to=to_email_list, cc=current_app.config['CC_EMAIL'], vul_report_rv=vul_report_rv)
 			flash(u'邮件发送成功')
 			vul_report_rv.vul_status = u'已通告'
 
@@ -583,7 +583,7 @@ def vul_report_dev_finish(id):
 		to_email_list = email_dict['owner']
 		to_email_list.append(email_dict['department_manager'])
 		to_email_list.append(email_dict['author'])
-		send_email(u'漏洞复测申请', 'src/email/vul_re_test', to=to_email_list, vul_report_df=vul_report_df)
+		send_email(u'漏洞复测申请', 'src/email/vul_re_test', to=to_email_list, cc=current_app.config['CC_EMAIL'], vul_report_df=vul_report_df)
 		flash(u'发送邮件给 %s 成功' %to_email_list[-1])
 		vul_report_df.vul_status = u'复测中'
 		return redirect(url_for('src.vul_report_list_read'))
@@ -625,7 +625,7 @@ def vul_report_retest_result(id):
 		to_email_list.append(email_dict['department_manager'])
 		to_email_list.append(email_dict['author'])
 		#成功提交复测结果后，发送提醒邮件给漏洞相关人员
-		send_email(u'复测结果已提交', 'src/email/vul_retest_result', to=to_email_list, vul_report=vul_report_retest, vul_log=vul_log)
+		send_email(u'复测结果已提交', 'src/email/vul_retest_result', to=to_email_list,cc=current_app.config['CC_EMAIL'], vul_report=vul_report_retest, vul_log=vul_log)
 		flash(u'发送邮件给 %s 成功' %to_email_list[0])
 		return redirect(url_for('src.vul_report_list_read'))
 
