@@ -1,3 +1,4 @@
+
 #-*- coding:utf-8 -*-
 
 from flask import render_template, flash, url_for, redirect, request, current_app, session, jsonify, abort
@@ -101,7 +102,7 @@ def vul_report_add():
 					vul_solution  = form.vul_solution.data,
 					)
 		db.session.add(vul_rpt)
-		flash(u'漏洞报告 %s-%s 提交成功' %(current_user.related_name, form.title.data))
+		flash(u'漏洞报告 %s-%s 提交成功' %(current_user.username, form.title.data))
 
 		#创建后的漏洞报告，获取ID
 		vul_report = VulReport.query.filter_by(title=vul_rpt.title).order_by(VulReport.id.desc()).first()
