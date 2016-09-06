@@ -167,7 +167,7 @@ def vul_report_list_read():
 		query = VulReport.query.filter(VulReport.vul_status==u'完成', VulReport.related_vul_type!=u'输出文档')
 
 	if opt=='all':
-		vul_report_list_result = query.all()
+		vul_report_list_result = query.order_by(-VulReport.start_date).all()
 	else:
 		vul_report_list_result = query.filter(VulReport.author.like("%" + opt + "%")
 											| VulReport.title.like("%" + opt + "%")
@@ -177,7 +177,7 @@ def vul_report_list_read():
 											| VulReport.related_vul_type.like("%" + opt + "%")
 											| VulReport.vul_source.like("%" + opt + "%")
 											| VulReport.vul_status.like("%" + opt + "%")
-											)
+											).order_by(-VulReport.start_date)
 	return render_template('src/vul_report_list_read.html', vul_report_list_result=vul_report_list_result)
 
 

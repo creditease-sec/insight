@@ -54,7 +54,7 @@
                             {% if current_user.can('src.vul_review_list') %}
                             <li><a href="{{ url_for('src.vul_review_list') }}">未审核漏洞 ({{ current_user.count('未审核') }})</a></li>
                             {% endif %}
-                            <li><a href="{{ url_for('src.vul_notify_list') }}">新通告漏洞 ({{ current_user.count('已知悉') }})</a></li>
+                            <li><a href="{{ url_for('src.vul_notify_list') }}">新通告漏洞 ({{ current_user.count('已通告') }})</a></li>
                             <li><a href="{{ url_for('src.vul_processing_list') }}">修复中漏洞 ({{ current_user.count('修复中') }})</a></li>
                             <li><a href="{{ url_for('src.vul_retest_list') }}">复测中漏洞 ({{ current_user.count('复测中') }})</a></li>
                             <li><a href="{{ url_for('src.vul_finished_list') }}">已完成漏洞 ({{ current_user.count('完成') }})</a></li>
