@@ -482,14 +482,21 @@ def vul_report_review(id):
 		if vul_report_rv.related_vul_type == u'输出文档':
 			vul_report_rv.vul_status = u'完成'
 			asset_get.chkdate = datetime.date.today()
+			to_email_list = []
+			for i in email_dict['owner']:
+				to_email_list.append(i)
+			to_email_list.append(email_dict['department_manager'])
+			to_email_list.append(email_dict['author'])
+			send_email(u'安全测试输出文档', 'src/email/new_xmind_alert', to=to_email_list, cc=current_app.config['CC_EMAIL'], vul_report_rv=vul_report_rv)
+			flash(u'安全测试输出文档-邮件发送成功')
 		else:
 			to_email_list = []
 			for i in email_dict['owner']:
 				to_email_list.append(i)
 			to_email_list.append(email_dict['department_manager'])
 			to_email_list.append(email_dict['author'])
-			send_email('A new vul alert', 'src/email/new_vul_alert', to=to_email_list, cc=current_app.config['CC_EMAIL'], vul_report_rv=vul_report_rv)
-			flash(u'邮件发送成功')
+			send_email(u'新漏洞通告', 'src/email/new_vul_alert', to=to_email_list, cc=current_app.config['CC_EMAIL'], vul_report_rv=vul_report_rv)
+			flash(u'新漏洞通告邮件发送成功')
 			vul_report_rv.vul_status = u'已通告'
 
 		#记录漏洞日志
