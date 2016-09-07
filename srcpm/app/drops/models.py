@@ -123,7 +123,7 @@ class Postdrop(db.Model):
     view_num = db.Column(db.Integer, default=0)
     comment_count = db.Column(db.Integer, default=0)
     status = db.Column(db.Integer, default=1)
-    author_id = db.Column(db.Integer, db.ForeignKey('login_users.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('login_users.id',ondelete='SET NULL', onupdate='CASCADE'))
     drop_modified_time = db.Column(db.DateTime, default=datetime.utcnow)
     category_id = db.Column(db.Integer, db.ForeignKey('categorys.id'))
     categorys = db.relationship('Category', backref=db.backref(
