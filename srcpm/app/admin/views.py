@@ -28,7 +28,7 @@ def index():
 
 #------用户查看－－－－－－
 
-@admin.route('/login_user_read')
+@admin.route('/login_user_read', methods=['GET', 'POST'])
 @permission_required('admin.login_user_read')
 def login_user_read():
 	opt = request.form.get('opt','all')
@@ -329,7 +329,7 @@ def assets_add_ajax():
 def assets_read():
 	opt = request.form.get('opt','all')
 	if opt=='all':
-		asset_result = Asset.query.all()
+		asset_result = Asset.query.order_by(-Asset.chkdate).all()
 	else:
 		asset_result = Asset.query.filter(Asset.sysname.like("%" + opt + "%") 
 											| Asset.domain.like("%" + opt + "%")
@@ -340,7 +340,7 @@ def assets_read():
 											| Asset.department.like("%" + opt + "%") 
 											| Asset.owner.like("%" + opt + "%")
 											| Asset.status.like("%" + opt + "%")
-											)
+											).order_by(-Asset.chkdate)
 	return render_template('admin/assets_read.html', asset_result=asset_result)
 
 
