@@ -568,7 +568,9 @@ def vul_report_dev_finish(id):
 			abort(403)
 		else:
 			email_dict = get_email_dict(id)
-			if (current_user.email in email_dict['owner']) or (current_user.email == email_dict['department_manager']):
+			if (current_user.email in email_dict['owner']) or (current_user.email == email_dict['department_manager']) \
+				   							or (current_user.role_name == u'超级管理员') \
+				   							or (current_user.role_name == u'安全管理员'):
 				pass
 			else:
 				abort(403)
