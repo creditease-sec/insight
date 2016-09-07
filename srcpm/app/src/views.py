@@ -481,7 +481,7 @@ def vul_report_review(id):
 		#发送审核后的漏洞通告邮件
 		if vul_report_rv.related_vul_type == u'输出文档':
 			vul_report_rv.vul_status = u'完成'
-			asset_get.chkdate = datetime.date.today()
+			asset_get.chkdate = form.start_date.data
 			to_email_list = []
 			for i in email_dict['owner']:
 				to_email_list.append(i)
