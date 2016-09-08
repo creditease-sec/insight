@@ -24,7 +24,7 @@
     {% for vul_log in vul_log_list %}
       <tr>
          <td>{{ vul_log.id }}</td>
-         <td>{{ moment(vul_log.time).format('YYYY-MM-DD hh:mm:ss') }}</td>
+         <td>{{ moment(vul_log.time).format('YYYY-MM-DD HH:mm:ss') }}</td>
          <td>{{ vul_log.related_user_email }}</td>
          <td>{{ vul_log.action }}</td>
          <td>{{ vul_log.content }}</td>
