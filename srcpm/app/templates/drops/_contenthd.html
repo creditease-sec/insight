@@ -1,8 +1,8 @@
-<span style="font-size:35px;font-weight:bold;">{{a.drop_title}}</span>
+<span style="font-size:35px;font-weight:bold;" class="glyphicon glyphicon-bookmark"><a title="{{a.drop_title}}" href="{{ url_for('drops.drop', postid=a.id) }}">{{a.drop_title}}</span>
 <br>
-<!-- <hr style="height:3px;border:none;border-top:3px double red;" /> -->
-<span style="float:right"><a title="{{a.drop_title}}" href="{{ url_for('drops.drop', postid=a.id) }}#comments">&nbsp;&nbsp;{{a.comment_count}}条评论&nbsp;&nbsp;</a></span>&nbsp;&nbsp;
-<span style="float:right">&nbsp;&nbsp;{{ a.view_num }}人阅读&nbsp;&nbsp;</span>&nbsp;&nbsp;
-<span style="float:right"><a href="{{url_for('drops.category',cateid=a.category_id)}}">&nbsp;&nbsp;{{ a.cate.category_name }}&nbsp;&nbsp;</a></span>&nbsp;&nbsp;
-<span style="float:right">&nbsp;&nbsp;{{ a.tags_name }}&nbsp;&nbsp;</span>&nbsp;&nbsp;
+<hr style="height:3px;border:none;border-top:3px double gray;" />
+<a href="{{ url_for('drops.drop', postid=a.id) }}" class="btn btn-warning btn-sm">&nbsp;&nbsp;{{a.comment_count}}条评论&nbsp;&nbsp;</a>
+|<a href="{{url_for('drops.category',cateid=a.category_id)}}" class="btn btn-warning btn-sm">&nbsp;&nbsp;{{ a.cate.category_name }}&nbsp;&nbsp;</a>
+|<a href="{{ url_for('drops.tag', tagid=a.id) }}" class="btn btn-warning btn-sm">&nbsp;&nbsp;{{ a.tags_name }}&nbsp;&nbsp;</a>
+<span style="float:right" class="btn btn-success btn-sm">&nbsp;&nbsp;{{ a.view_num }}人阅读&nbsp;&nbsp;</span>
 <br>
