@@ -26,15 +26,11 @@
          <th>系统域名</th>
          <th>备用域名</th>
          <th>Web Or Int</th>
-<!--         <th>HTTP</th>
-         <th>HTTPS</th>  
-         <th>内外网</th>   -->
          <th>重要程度</th>
          <th>部门</th>
          <th>负责人</th>
          <th>状态</th>
          <th>检测时间</th>
- <!--        <th>备注</th>  -->
       </tr>
    </thead>
    <tbody>
@@ -45,9 +41,6 @@
          <td><a href="{{ url_for('admin.assets_modify', id=asset.id) }}">{{ asset.domain }}</a></td>
          <td>{{ asset.back_domain }}</td>
          <td>{{ asset.web_or_int }}</td>
-<!--         <td>{{ asset.is_http }}</td>
-         <td>{{ asset.is_https }}</td>    
-         <td>{{ asset.in_or_out }}</td>   -->
          <td>{{ asset.level }}</td>
          <td>{{ asset.department }}</td>
          <td>{{ asset.owner }}</td>
@@ -57,7 +50,6 @@
          {% else %}
          <td></td>
          {% endif %}
-   <!--      <td>{{ asset.ps }}</td>  -->
       </tr>
     {% endfor %}
    </tbody>
