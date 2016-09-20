@@ -19,6 +19,7 @@ class Config:
                 'haowang53@creditease.cn',
                 'shuoyupan@creditease.cn',
             ]
+    #PERMANENT_SESSION_LIFETIME = 10
 
 
     @staticmethod
