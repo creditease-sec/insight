@@ -32,9 +32,20 @@
 
 
     <div style="width:90%">
-    <h3>漏洞状态</h3>
+    <h3>漏洞({{ count_vul }})状态</h3>
                 <div>
                     {% pie_chart data_vul_status with id='chart-1' height='400px' %}
+                </div>
+    </div>
+
+
+    <legend></legend>
+
+
+    <div style="width:90%">
+    <h3>漏洞来源</h3>
+                <div>
+                    {% pie_chart data_vul_source with id='chart-2' height='400px' %}
                 </div>
     </div>
 
@@ -53,6 +64,27 @@
 
     <legend></legend>
 
+
+    <div style="width:90%">
+    <h3>资产({{ count_asset_timeout }})逾期已修复漏洞数量</h3>
+                <div>
+                    {% line_chart data_related_asset_timeout with style="width:200px; height:20px;" %}
+                </div>
+    </div>
+
+
+    <legend></legend>
+
+
+    <div style="width:90%">
+    <h3>资产({{ count_asset_timeout_unfinish }})逾期未修复漏洞数量</h3>
+                <div>
+                    {% line_chart data_related_asset_timeout_unfinish with style="width:200px; height:20px;" %}
+                </div>
+    </div>
+
+
+    <legend></legend>
 
 
     <div style="width:90%">

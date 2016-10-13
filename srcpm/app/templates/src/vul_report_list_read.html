@@ -27,42 +27,51 @@
          <th>标题</th>
          <th>关联资产</th>
          <th>资产状态</th>
+         <th>部门</th>
          <th>漏洞类型</th>
          <th>来源</th>
          <th>Rank</th>
          <th>剩余风险</th>
           <th>通告时间</th>
           <th>结束时间</th>
+          <th>修复时间</th>
          <th>漏洞状态</th>
       </tr>
    </thead>
    <tbody>
    	{% for vul_report in vul_report_list_result %}
       <tr>
-         <td>{{ vul_report.id }}</td>
+         <td>{{ vul_report[0].id }}</td>
       <!--   <td>{{ vul_report.timestamp }}</td> -->
-         <td>{{ vul_report.author }}</td>
-         <td><a href="{{ url_for('src.vul_report_read', id=vul_report.id) }}">{{ vul_report.title }}</a></td>
-         <td>{{ vul_report.related_asset }}</td>
-         <td>{{ vul_report.related_asset_status }}</td>
-         <td>{{ vul_report.related_vul_type }}</td>
-         <td>{{ vul_report.vul_source }}</td>
-         <td>{{ vul_report.grant_rank }}</td>
-         <th>{{ vul_report.residual_risk_score }}</th>
+         <td>{{ vul_report[0].author.split('@')[0] }}</td>
+         <td><a href="{{ url_for('src.vul_report_read', id=vul_report[0].id) }}">{{ vul_report[0].title }}</a></td>
+         <td>{{ vul_report[0].related_asset }}</td>
+         <td>{{ vul_report[0].related_asset_status }}</td>
+         <td>{{ vul_report[1].department }}</td>
+         <td>{{ vul_report[0].related_vul_type }}</td>
+         <td>{{ vul_report[0].vul_source }}</td>
+         <td>{{ vul_report[0].grant_rank }}</td>
+         <th>{{ vul_report[0].residual_risk_score }}</th>
          
-         {% if vul_report.start_date %}
-         <td>{{ moment(vul_report.start_date).format('YYYY-MM-DD') }}</td>
+         {% if vul_report[0].start_date %}
+         <td>{{ moment(vul_report[0].start_date).format('YYYY-MM-DD') }}</td>
          {% else %}
          <td></td>
          {% endif %}
 
-         {% if vul_report.start_date %}
-         <td>{{ moment(vul_report.end_date).format('YYYY-MM-DD') }}</td>
+         {% if vul_report[0].start_date %}
+         <td>{{ moment(vul_report[0].end_date).format('YYYY-MM-DD') }}</td>
          {% else %}
          <td></td>
          {% endif %}
 
-         <td>{{ vul_report.vul_status }}</td>
+         {% if vul_report[0].fix_date %}
+         <td>{{ moment(vul_report[0].fix_date).format('YYYY-MM-DD') }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
+
+         <td>{{ vul_report[0].vul_status }}</td>
       </tr>
     {% endfor %}
    </tbody>
