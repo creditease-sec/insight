@@ -6,6 +6,7 @@ from .forms import VulReportForm, UploadImgForm, VulReportReviewForm, VulReportA
 from .forms import VulReportDevFinishForm, VulReportRetestResultForm
 from .models import VulReport, VulLog
 from ..admin.models import Asset, User, Depart
+from ..admin.forms import AssetForm
 from .. import db
 import datetime
 from flask_login import current_user, login_required
@@ -783,3 +784,114 @@ def vul_report_log(id):
 	vul_log_list =VulLog.query.filter_by(related_vul_id=id).all()
 	return render_template('src/vul_report_log.html', vul_log_list=vul_log_list)
 
+
+
+
+
+
+
+
+#------------资产模块-------------------------------------------------------------------------
+
+
+@src.route('/assets_read', methods=['GET', 'POST'])
+@permission_required('src.assets_read')
+def assets_read():
+	query = Asset.query
+	opt = request.form.get('opt','all')
+	if opt=='all':
+		asset_result = query.order_by(-Asset.chkdate).all()
+	else:
+		asset_result = query.filter(Asset.sysname.like("%" + opt + "%") 
+											| Asset.domain.like("%" + opt + "%")
+											| Asset.back_domain.like("%" + opt + "%")
+											| Asset.web_or_int.like("%" + opt + "%")
+											| Asset.in_or_out.like("%" + opt + "%")
+											| Asset.level.like("%" + opt + "%")
+											| Asset.department.like("%" + opt + "%") 
+											| Asset.owner.like("%" + opt + "%")
+											| Asset.status.like("%" + opt + "%")
+											).order_by(-Asset.chkdate)
+
+	return render_template('src/assets_read.html', asset_result=asset_result)
+
+
+
+@src.route('/assets_add', methods=['GET', 'POST'])
+@permission_required('src.assets_add')
+def assets_add():
+	form = AssetForm()
+	if form.validate_on_submit():
+		a = Asset(sysname=form.sysname.data, 
+					domain=form.domain.data, 
+					back_domain=form.back_domain.data, 
+					web_or_int=form.web_or_int.data, 
+					is_http=form.is_http.data, 
+					is_https=form.is_https.data,
+					in_or_out=form.in_or_out.data,
+					level=form.level.data,
+					department=form.department.data,
+					owner=form.owner.data,
+					status=form.status.data,
+					ps=form.ps.data)
+		db.session.add(a)
+		flash(u'资产 %s 添加成功' %form.domain.data)
+		return redirect(url_for('src.assets_add'))
+	return render_template('src/assets_add.html', form=form)
+
+
+@src.route('/assets_modify/<id>', methods=['GET', 'POST'])
+@permission_required('src.assets_modify')
+def assets_modify(id):
+	form = AssetForm()
+	asset_get = Asset.query.get_or_404(id)
+	if form.validate_on_submit():
+		asset_get.sysname = form.sysname.data
+
+		vul_report_list = VulReport.query.filter_by(related_asset=asset_get.domain)
+		#更改资产的域名
+		asset_get.domain = form.domain.data
+		#更改关联漏洞报告的域名
+		if vul_report_list.first():
+			for vul_report in vul_report_list:
+				vul_report.related_asset = form.domain.data
+
+		#asset_get.root_dir = form.root_dir.data
+		asset_get.back_domain = form.back_domain.data
+		asset_get.web_or_int = form.web_or_int.data
+		asset_get.is_http = form.is_http.data
+		asset_get.is_https = form.is_https.data
+		asset_get.in_or_out = form.in_or_out.data
+		asset_get.level = form.level.data
+		asset_get.department = form.department.data
+		asset_get.owner = form.owner.data
+		asset_get.status = form.status.data
+		#asset_get.chkdate = form.chkdate.data
+		asset_get.ps = form.ps.data
+		flash(u'资产更新成功')
+		return redirect(url_for('src.assets_read'))
+	form.sysname.data = asset_get.sysname
+	form.domain.data = asset_get.domain
+	#form.root_dir.data = asset_get.root_dir
+	form.back_domain.data = asset_get.back_domain
+	form.web_or_int.data = asset_get.web_or_int
+	form.is_http.data = asset_get.is_http
+	form.is_https.data = asset_get.is_https
+	form.in_or_out.data = asset_get.in_or_out
+	form.level.data = asset_get.level
+	form.department.data = asset_get.department
+	form.owner.data = asset_get.owner
+	form.status.data = asset_get.status
+	#form.chkdate.data = asset_get.chkdate
+	form.ps.data = asset_get.ps
+	return render_template('src/assets_modify.html', form=form, id = asset_get.id)
+
+@src.route('/assets_add_ajax', methods=['GET','POST'])
+@permission_required('src.assets_add_ajax')
+def assets_add_ajax():
+	department = request.form.get('department')
+	user_list = User.query.filter_by(department=department).all()
+	opt_list = []
+	for user in user_list:
+		opt_list.append({'name': user.name, 'email': user.email})
+	return jsonify(opt_list)

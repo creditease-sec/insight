@@ -79,6 +79,23 @@
                     </li>
             </ul>
             {% endif %}
+
+            {% if current_user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            资产管理 <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('src.assets_read') }}">资产查看</a></li>
+                            {% if current_user.can('src.assets_add') %}
+                            <li><a href="{{ url_for('src.assets_add') }}">资产增加</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+            </ul>
+            {% endif %}
+
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('drops.index') }}">知识库</a></li>
             </ul>

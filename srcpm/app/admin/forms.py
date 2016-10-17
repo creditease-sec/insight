@@ -46,6 +46,10 @@ perm_choices = [('admin.index',u'管理后台－首页'),        #管理后台�
 				('src.vul_report_add',u'SRC-漏洞报告-增加'),      #SRC-漏洞报告-增加
 				('src.upload_img',u'SRC-漏洞报告－上传'),        #SRC-漏洞报告－上传
 				('src.vul_review_list',u'SRC-漏洞报告－未审核列表'),        #SRC-漏洞报告－未审核列表
+				('src.assets_read',u'SRC-资产查看'),        #SRC-资产查看
+				('src.assets_add',u'SRC-资产增加'),        #SRC-资产增加
+				('src.assets_add_ajax',u'SRC－资产增加AJAX'),        #SRC-资产增加AJAX
+				('src.assets_modify',u'SRC-资产修改'),        #SRC-资产修改
                 ('drops.manager',u'SRC－知识库管理'),        #SRC－知识库管理
 				]
 
@@ -125,7 +129,7 @@ class AssetForm(Form):
 	submit = SubmitField(u'提交')
 
 	def validate_domain(self, field):
-		if request.endpoint[:19] != 'admin.assets_modify':
+		if (request.endpoint[:19] != 'admin.assets_modify') and (request.endpoint[:17] != 'src.assets_modify'):
 			if Asset.query.filter_by(domain=field.data).first():
 				raise ValidationError(u'域名已经存在')
 
