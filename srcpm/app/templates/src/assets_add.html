@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+<!--
+{% block scripts %}
+    {{ super() }}
+
+<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+
+
+<script type=text/javascript>
+    $(function() {
+        $('#department').bind('change', function() {
+
+            $.ajax({
+
+                type:"POST",
+                url:"{{ url_for('admin.assets_add_ajax') }}",
+                data:{department:$('#department option:selected').val()},
+                datatype:"json",
+                success:function(data){
+                    var ddl = $("#owner");
+                    //删除节点
+                    $("#owner option").remove();
+                    //转成Json对象
+                    var result = eval(data)
+                    //循环遍历 下拉框绑定
+                    $.each(result,function(i,n) {
+                        //添加option 对应Json对象名称
+                        var opt = $("<option></option>").text(n["name"]).val(n["name"]);
+                        ddl.append(opt);
+                     });
+
+                }
+
+            });
+
+
+        });
+
+
+    });
+
+</script>
+
+{% endblock %}
+-->
+
+{% block title %} 资产增加 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>资产增加</h1>
+</div>
+
+<div class="col-md-4">
+	{{ wtf.quick_form(form) }}
+</div>
+{% endblock %}
+

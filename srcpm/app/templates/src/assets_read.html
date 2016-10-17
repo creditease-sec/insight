@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block title %} 资产查看 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>资产查看</h1>
+</div>
+
+<form role="form" method='POST'>
+<div class="form-group">
+   <label for="name"></label>
+   <input type="text" class="form-control" name="opt" placeholder="请输入查询关键字">
+   <button type="submit" class="btn btn-default">提交</button>
+</div>
+</form>
+
+<div>
+<table class="table table-hover">
+   <thead>
+      <tr>
+      	<th>系统ID</th>
+         <th>系统名称</th>
+         <th>系统域名</th>
+         <th>备用域名</th>
+         <th>Web Or Int</th>
+         <th>重要程度</th>
+         <th>部门</th>
+         <th>负责人</th>
+         <th>状态</th>
+         <th>检测时间</th>
+      </tr>
+   </thead>
+   <tbody>
+   	{% for asset in asset_result %}
+      <tr>
+      	<td>{{ asset.id }}</td>
+         <td>{{ asset.sysname }}</td>
+         {% if current_user.can('src.assets_modify') %}
+         <td><a href="{{ url_for('src.assets_modify', id=asset.id) }}">{{ asset.domain }}</a></td>
+         {% else %}
+         <td>{{ asset.domain }}</td>
+         {% endif %}
+         <td>{{ asset.back_domain }}</td>
+         <td>{{ asset.web_or_int }}</td>
+         <td>{{ asset.level }}</td>
+         <td>{{ asset.department }}</td>
+         <td>{{ asset.owner }}</td>
+         <td>{{ asset.status }}</td>
+         {% if asset.chkdate %}
+         <td>{{ moment(asset.chkdate).format('YYYY-MM-DD') }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
+      </tr>
+    {% endfor %}
+   </tbody>
+</table
+</div>
+{% endblock %}
+
