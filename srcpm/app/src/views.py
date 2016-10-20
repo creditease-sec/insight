@@ -179,6 +179,16 @@ def vul_report_list_read():
 
 	if opt=='all':
 		vul_report_list_result = query.order_by(-VulReport.start_date).all()
+	elif opt==u'逾期完成':
+		vul_report_list_result = query.filter(VulReport.vul_status == u'完成',
+											VulReport.fix_date > VulReport.end_date,
+											VulReport.related_vul_type != u'输出文档',
+											).order_by(-VulReport.start_date)
+	elif opt==u'逾期未完成':
+		vul_report_list_result = query.filter(VulReport.vul_status != u'完成',
+											datetime.date.today() > VulReport.end_date,
+											VulReport.related_vul_type != u'输出文档',
+											).order_by(-VulReport.start_date)
 	else:
 		vul_report_list_result = query.filter(VulReport.author.like("%" + opt + "%")
 											| VulReport.title.like("%" + opt + "%")
