@@ -52,6 +52,10 @@ class Asset(db.Model):
 	status = db.Column(db.String(64))
 	chkdate = db.Column(db.Date)
 	ps = db.Column(db.String(200))
+	private_data = db.Column(db.Text)
+	count_private_data = db.Column(db.String(100))
+	down_time = db.Column(db.String(100))
+	secure_level = db.Column(db.String(64))
 
 class VulType(db.Model):
 	__tablename__ = 'vul_types'

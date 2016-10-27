@@ -2,7 +2,7 @@
 
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, BooleanField, SelectMultipleField, SelectField, ValidationError
-from wtforms import DateField, TextField, IntegerField ,SubmitField
+from wtforms import DateField, TextField, IntegerField ,SubmitField, TextAreaField
 from wtforms.validators import Required, Length, Email
 from flask import request
 from .models import User, Depart, Role, Asset, VulType
@@ -57,7 +57,9 @@ perm_choices = [('admin.index',u'管理后台－首页'),        #管理后台�
 area_choices = [('',''), (u'外网', u'外网'), (u'内网', u'内网')]
 status_choices = [('',''), (u'线上', u'线上'), (u'上线前', u'上线前'),(u'下线', u'下线')]
 level_choices = [('',''), (u'一级', u'一级'), (u'二级', u'二级'), (u'三级', u'三级'), (u'其它', u'其它')]
-
+secure_level_choices = [('',''), (u'安全一级', u'安全一级'), (u'安全二级', u'安全二级'), (u'安全三级', u'安全三级'), (u'安全其它', u'安全其它')]
+count_private_data_choice = [('',''), (u'几十条', u'几十条'), (u'几百条', u'几百条'), (u'几千条', u'几千条'), (u'几万条及以上', u'几万条及以上')]
+down_time_choice = [('',''), (u'几分钟', u'几分钟'), (u'几十分钟', u'几十分钟'), (u'几小时', u'几小时'), (u'几天', u'几天')]
 
 class LoginForm(Form):
 	email = StringField('Email', validators=[Required(),
@@ -125,6 +127,10 @@ class AssetForm(Form):
 	department = SelectField(u'部门')
 	owner = StringField(u'负责人')
 	status = SelectField(u'状态', choices=status_choices)
+	private_data = TextAreaField(u'敏感数据说明')
+	count_private_data = SelectField(u'敏感数据条数', choices=count_private_data_choice)
+	down_time = SelectField(u'允许宕机时长', choices=down_time_choice)
+	secure_level = SelectField(u'安全重要等级', choices=secure_level_choices)
 	ps = TextField(u'说明')
 	submit = SubmitField(u'提交')
 

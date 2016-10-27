@@ -307,6 +307,10 @@ def assets_add():
 					department=form.department.data,
 					owner=form.owner.data,
 					status=form.status.data,
+					private_data=form.private_data.data,
+					count_private_data=form.count_private_data.data,
+					down_time=form.down_time.data,
+					secure_level=form.secure_level.data,
 					ps=form.ps.data)
 		db.session.add(a)
 		flash(u'资产 %s 添加成功' %form.domain.data)
@@ -337,6 +341,7 @@ def assets_read():
 											| Asset.web_or_int.like("%" + opt + "%")
 											| Asset.in_or_out.like("%" + opt + "%")
 											| Asset.level.like("%" + opt + "%")
+											| Asset.secure_level.like("%" + opt + "%")
 											| Asset.department.like("%" + opt + "%") 
 											| Asset.owner.like("%" + opt + "%")
 											| Asset.status.like("%" + opt + "%")
@@ -371,6 +376,10 @@ def assets_modify(id):
 		asset_get.owner = form.owner.data
 		asset_get.status = form.status.data
 		#asset_get.chkdate = form.chkdate.data
+		asset_get.private_data = form.private_data.data
+		asset_get.count_private_data = form.count_private_data.data
+		asset_get.down_time = form.down_time.data
+		asset_get.secure_level = form.secure_level.data
 		asset_get.ps = form.ps.data
 		flash(u'资产更新成功')
 		return redirect(url_for('admin.assets_read'))
@@ -387,6 +396,10 @@ def assets_modify(id):
 	form.owner.data = asset_get.owner
 	form.status.data = asset_get.status
 	#form.chkdate.data = asset_get.chkdate
+	form.private_data.data = asset_get.private_data
+	form.count_private_data.data = asset_get.count_private_data
+	form.down_time.data = asset_get.down_time
+	form.secure_level.data = asset_get.secure_level
 	form.ps.data = asset_get.ps
 	return render_template('admin/assets_modify.html', form=form, id = asset_get.id)
 

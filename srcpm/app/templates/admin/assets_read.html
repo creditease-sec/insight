@@ -24,9 +24,10 @@
       	<th>系统ID</th>
          <th>系统名称</th>
          <th>系统域名</th>
-         <th>备用域名</th>
+      <!--   <th>备用域名</th>  -->
          <th>Web Or Int</th>
          <th>重要程度</th>
+         <th>Sec_重要程度</th>
          <th>部门</th>
          <th>负责人</th>
          <th>状态</th>
@@ -39,9 +40,10 @@
       	<td>{{ asset.id }}</td>
          <td>{{ asset.sysname }}</td>
          <td><a href="{{ url_for('admin.assets_modify', id=asset.id) }}">{{ asset.domain }}</a></td>
-         <td>{{ asset.back_domain }}</td>
+      <!--   <td>{{ asset.back_domain }}</td>  -->
          <td>{{ asset.web_or_int }}</td>
          <td>{{ asset.level }}</td>
+         <td>{{ asset.secure_level }}</td>
          <td>{{ asset.department }}</td>
          <td>{{ asset.owner }}</td>
          <td>{{ asset.status }}</td>

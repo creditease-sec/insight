@@ -26,9 +26,6 @@ class Config:
     def init_app(app):
         pass
 
-    @staticmethod
-    def init_app(app):
-        pass
 
 class DevelopmentConfig(Config):
     DEBUG = True
