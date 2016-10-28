@@ -45,39 +45,39 @@
 
 <div>
   {% if current_user.can('src.vul_report_delete') %}
-    <a href="javascript:if(confirm('确实要删除该内容吗?'))location='{{ url_for('src.vul_report_delete', id=vul_report.id ) }}'" >删除</a>
+    <a href="javascript:if(confirm('确实要删除该内容吗?'))location='{{ url_for('src.vul_report_delete', id=vul_report.id ) }}'" ><button type="button" class="btn btn-danger btn-lg">删除</button></a>
   {% endif %}
 
   {% if current_user.can('src.vul_report_admin_edit') %}
-    <a href="{{ url_for('src.vul_report_admin_edit', id=vul_report.id ) }}" >管理编辑</a>
+    <a href="{{ url_for('src.vul_report_admin_edit', id=vul_report.id ) }}" ><button type="button" class="btn btn-danger btn-lg">管理编辑</button></a>
   {% endif %}
 
   {% if current_user.can('src.vul_report_review') %}
     {% if (vul_report.vul_status == '未审核') %}
-    <a href="{{ url_for('src.vul_report_review', id=vul_report.id ) }}">审核</a>
+    <a href="{{ url_for('src.vul_report_review', id=vul_report.id ) }}"><button type="button" class="btn btn-danger btn-lg">审核</button></a>
     {% endif %}
   {% endif %}
 
   {% if current_user.can('src.vul_report_known') %}
     {% if (vul_report.vul_status == '已通告') %}
-    <a href="javascript:if(confirm('是否已知悉漏洞详情?'))location='{{ url_for('src.vul_report_known', id=vul_report.id ) }}'">已知悉</a>
+    <a href="javascript:if(confirm('是否已知悉漏洞详情?'))location='{{ url_for('src.vul_report_known', id=vul_report.id ) }}'"><button type="button" class="btn btn-danger btn-lg">请确认已知悉漏洞</button></a>
     {% endif %}
   {% endif %}
 
   {% if current_user.can('src.vul_report_dev_finish') %}
     {% if vul_report.vul_status == '修复中' %}
-    <a href="{{ url_for('src.vul_report_dev_finish', id=vul_report.id) }}">申请复测</a>
+    <a href="{{ url_for('src.vul_report_dev_finish', id=vul_report.id) }}"><button type="button" class="btn btn-danger btn-lg">申请复测</button></a>
     {% endif %}
   {% endif %}
 
   {% if current_user.can('src.vul_report_retest_result') %}
     {% if vul_report.vul_status == '复测中' %}
-    <a href="{{ url_for('src.vul_report_retest_result', id=vul_report.id) }}">提交复测结果</a>
+    <a href="{{ url_for('src.vul_report_retest_result', id=vul_report.id) }}"><button type="button" class="btn btn-danger btn-lg">提交复测结果</button></a>
     {% endif %}
   {% endif %}
 
   {% if current_user.is_authenticated %}
-    <a href="{{ url_for('src.vul_report_log', id=vul_report.id) }}">查看漏洞日志</a>
+    <a href="{{ url_for('src.vul_report_log', id=vul_report.id) }}"><button type="button" class="btn btn-danger btn-lg">查看漏洞日志</button></a>
   {% endif %}
 </div>
 
@@ -94,7 +94,16 @@
    <label>时间:</label> {{ moment(vul_report.timestamp).format('YYYY年M月D日, H:mm:ss') }}<br>
    <label>受影响域名:</label> {{ vul_report.related_asset }}<br>
    <label>漏洞类型:</label> {{ vul_report.related_vul_type }}<br>
-   <label>自评Rank:</label> {{ vul_report.vul_self_rank }}
+   <label>Rank:</label> {{ vul_report.grant_rank }}<br>
+   {% if 0 < vul_report.risk_score <= 25 %}
+   <label>风险等级: </label> 低
+   {% elif 25 < vul_report.risk_score <= 50 %}
+   <label>风险等级: </label> 中
+   {% elif 50 < vul_report.risk_score <= 75 %}
+   <label>风险等级: </label> 高
+   {% elif 75 < vul_report.risk_score <= 100 %}
+   <label>风险等级: </label> 严重
+   {% endif %}
 </div>
 
 <div class="page-header">
@@ -115,6 +124,24 @@
    {% endif %}
 </div>
 
+  {% if current_user.can('src.vul_report_known') %}
+    {% if (vul_report.vul_status == '已通告') %}
+    <a href="javascript:if(confirm('是否已知悉漏洞详情?'))location='{{ url_for('src.vul_report_known', id=vul_report.id ) }}'"><button type="button" class="btn btn-danger btn-block">请确认已知悉漏洞</button></a>
+    {% endif %}
+  {% endif %}
+
+  {% if current_user.can('src.vul_report_dev_finish') %}
+    {% if vul_report.vul_status == '修复中' %}
+    <a href="{{ url_for('src.vul_report_dev_finish', id=vul_report.id) }}"><button type="button" class="btn btn-danger btn-block">申请复测</button></a>
+    {% endif %}
+  {% endif %}
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 {% endblock %}
 
