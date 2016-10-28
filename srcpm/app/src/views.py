@@ -40,18 +40,25 @@ def vul_report_admin_edit(id):
 		vul_report.vul_poc = form.vul_poc.data
 		#vul_report.vul_poc_html = form.vul_poc_html.data 
 		vul_report.vul_solution = form.vul_solution.data
-		#vul_report.vul_solution_html = form.vul_solution_html.data 
-		vul_report.grant_rank = int(form.grant_rank.data)
-		vul_report.vul_type_level = form.vul_type_level.data 
-		vul_report.risk_score = float(form.risk_score.data)
+		#vul_report.vul_solution_html = form.vul_solution_html.data
+		if form.grant_rank.data != '':
+			vul_report.grant_rank = int(form.grant_rank.data)
+		vul_report.vul_type_level = form.vul_type_level.data
+		if form.risk_score.data != '': 
+			vul_report.risk_score = float(form.risk_score.data)
 		#vul_report.person_score = form.person_score.data
 		vul_report.done_solution = form.done_solution.data
-		vul_report.done_rank = int(form.done_rank.data)
-		vul_report.residual_risk_score = float(form.residual_risk_score.data)
+		if form.done_rank.data != '':
+			vul_report.done_rank = int(form.done_rank.data)
+		if form.residual_risk_score.data != '':
+			vul_report.residual_risk_score = float(form.residual_risk_score.data)
 		vul_report.vul_status = form.vul_status.data
-		vul_report.start_date = form.start_date.data
-		vul_report.end_date = form.end_date.data
-		vul_report.fix_date = form.fix_date.data
+		if form.start_date.data !='':
+			vul_report.start_date = form.start_date.data
+		if form.end_date.data != '':
+			vul_report.end_date = form.end_date.data
+		if form.fix_date.data != '':
+			vul_report.fix_date = form.fix_date.data
 		flash(u'更新漏洞 %s 报告成功!' %vul_report.title)
 		redirect(url_for('src.vul_report_admin_edit', id=vul_report.id))
 
