@@ -18,6 +18,7 @@ class Config:
                 'zhipengcheng@creditease.cn',
                 'haowang53@creditease.cn',
                 'shuoyupan@creditease.cn',
+                'zixiaozhao@creditease.cn',
             ]
     #PERMANENT_SESSION_LIFETIME = 10
 
