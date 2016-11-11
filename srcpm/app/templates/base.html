@@ -128,7 +128,17 @@
                     	</ul>
 					</li>
 				{% else %}
-					<li><a href="{{ url_for('auth.login') }}">登录</a></li>
+                    <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="{{ url_for('auth.login_ldap') }}" class="dropdown-toggle" data-toggle="dropdown">
+                            登录 <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('auth.login_ldap') }}">LDAP登录</a></li>
+                            <li><a href="{{ url_for('auth.login') }}">旧版登录</a></li>
+                        </ul>
+                    </li>
+            </ul>
 				{% endif %}
 			</ul>
 

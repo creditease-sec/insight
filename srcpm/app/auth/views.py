@@ -9,6 +9,47 @@ from .. import db
 from . import auth
 from ..email import send_email
 from flask_login import login_required, current_user, login_user, logout_user
+from ..LDAPLogin import ldap_login
+
+
+@auth.route('/login_ldap', methods=['GET','POST'])
+def login_ldap():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.email.data.split('@')[0]
+        password = form.password.data
+
+        lg_user = LoginUser.query.filter_by(email=form.email.data).first()
+
+        # 超级管理员登录判定方法
+        if username=='srcadmin' and lg_user.verify_password(form.password.data):
+            login_user(lg_user, form.remember_me.data)
+            #防止任意URL跳转到其它网站
+            if request.args.get('next') is not None and ('//' in request.args.get('next')):
+                return redirect(url_for('main.index'))
+
+            return redirect(request.args.get('next') or url_for('main.index'))
+        # 不是超级管理员登录
+        else:
+            if ldap_login(username, password):
+                if lg_user:
+                    login_user(lg_user, form.remember_me.data)
+                else:
+                    lg_user = LoginUser(email=form.email.data,
+                                        username=username,
+                                        password=form.password.data,
+                                        confirmed=True,
+                                        role_name=u'普通用户',
+                                        )
+                    db.session.add(lg_user)
+                    db.session.commit()
+                    login_user(lg_user, form.remember_me.data)
+                return redirect(request.args.get('next') or url_for('main.index'))
+            else:
+                flash(u'用户名或密码错误')
+
+    return render_template('auth/login_ldap.html', form=form)
+
 
 
 @auth.route('/login', methods=['GET','POST'])
