@@ -216,7 +216,7 @@ def vul_report_list_read():
 @src.route('/vul_review_list', methods=['GET', 'POST'])
 @permission_required('src.vul_review_list')
 def vul_review_list():
-	query = VulReport.query.filter_by(vul_status=u'未审核')
+	query = VulReport.query.filter_by(vul_status=u'未审核').order_by(-VulReport.start_date)
 
 	#处理post查询提交
 	opt_label = [u'查询', u'请输入关键字进行查询']
@@ -247,7 +247,7 @@ def vul_review_list():
 @login_required
 def vul_notify_list():
 	query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
-														VulReport.vul_status==u'已通告')
+														VulReport.vul_status==u'已通告').order_by(-VulReport.start_date)
 	opt_label = [u'查询', u'请输入关键字进行查询']
 
 	if request.method == 'POST':
@@ -309,7 +309,7 @@ def vul_notify_list():
 @login_required
 def vul_processing_list():
 	query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
-														VulReport.vul_status==u'修复中')
+														VulReport.vul_status==u'修复中').order_by(-VulReport.start_date)
 	#处理post查询提交
 	opt_label = [u'查询', u'请输入关键字进行查询']
 	if request.method == 'POST':
@@ -370,7 +370,7 @@ def vul_processing_list():
 @login_required
 def vul_retest_list():
 	query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
-														VulReport.vul_status==u'复测中')
+														VulReport.vul_status==u'复测中').order_by(-VulReport.start_date)
 
 	#处理post提交
 	opt_label = [u'查询', u'请输入关键字进行查询']
@@ -410,7 +410,7 @@ def vul_retest_list():
 @login_required
 def vul_finished_list():
 	query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
-														VulReport.vul_status==u'完成')
+														VulReport.vul_status==u'完成').order_by(-VulReport.start_date)
 
 	#处理post查询提交
 	opt_label = [u'查询', u'请输入关键字进行查询']

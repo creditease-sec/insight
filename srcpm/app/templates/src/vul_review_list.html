@@ -41,7 +41,7 @@
       <tr>
          <td>{{ vul_report.id }}</td>
       <!--   <td>{{ vul_report.timestamp }}</td> -->
-         <td>{{ vul_report.author }}</td>
+         <td>{{ vul_report.author.split('@')[0] }}</td>
          <td><a href="{{ url_for('src.vul_report_read', id=vul_report.id) }}">{{ vul_report.title }}</a></td>
          <td>{{ vul_report.related_asset }}</td>
          <td>{{ vul_report.related_asset_status }}</td>
