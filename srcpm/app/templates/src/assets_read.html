@@ -21,7 +21,7 @@
 <table class="table table-hover">
    <thead>
       <tr>
-      	<th>系统ID</th>
+      	<th>序号</th>
          <th>系统名称</th>
          <th>系统域名</th>
       <!--   <th>备用域名</th> -->
@@ -36,7 +36,7 @@
    <tbody>
    	{% for asset in asset_result %}
       <tr>
-      	<td>{{ asset.id }}</td>
+      	<td>{{ loop.index }}</td>
          <td>{{ asset.sysname }}</td>
          {% if current_user.can('src.assets_modify') %}
          <td><a href="{{ url_for('src.assets_modify', id=asset.id) }}">{{ asset.domain }}</a></td>
