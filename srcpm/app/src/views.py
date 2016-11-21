@@ -463,7 +463,7 @@ def vul_report_read(id):
 					if (current_user.email not in email_dict['owner']) and (current_user.email != email_dict['department_manager']):
 						abort(403)
 		else:
-			return redirect( url_for('auth.login', next=url_for('src.vul_report_read', id=id)) )
+			return redirect( url_for('auth.login_ldap', next=url_for('src.vul_report_read', id=id)) )
 	else:
 		#完成漏洞，都可以访问
 		pass
