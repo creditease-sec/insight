@@ -48,7 +48,7 @@ class Asset(db.Model):
 	in_or_out = db.Column(db.String(64))
 	level = db.Column(db.String(64))
 	department = db.Column(db.String(64))
-	owner = db.Column(db.String(64))
+	owner = db.Column(db.String(600))
 	status = db.Column(db.String(64))
 	chkdate = db.Column(db.Date)
 	ps = db.Column(db.String(200))

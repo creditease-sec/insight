@@ -11,7 +11,7 @@ from flask_migrate import Migrate, MigrateCommand
 
 app = create_app(os.getenv('SrcPM_CONFIG') or 'default')
 manager = Manager(app)
-migrate = Migrate(app, db)
+migrate = Migrate(app, db, compare_type=True)
 
 """
 if os.path.exists('.env'):
