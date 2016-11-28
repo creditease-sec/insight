@@ -65,7 +65,7 @@
   {% endif %}
 
   {% if current_user.can('src.vul_report_dev_finish') %}
-    {% if vul_report.vul_status == '修复中' %}
+    {% if vul_report.vul_status == '修复中' or vul_report.vul_status == '暂不处理' %}
     <a href="{{ url_for('src.vul_report_dev_finish', id=vul_report.id) }}"><button type="button" class="btn btn-danger btn-lg">申请复测</button></a>
     {% endif %}
   {% endif %}

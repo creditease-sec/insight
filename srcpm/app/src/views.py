@@ -365,6 +365,66 @@ def vul_processing_list():
 	return render_template('src/vul_processing_list.html', vul_report_list=vul_report_list, opt_label=opt_label)
 
 
+#修复中暂不处理漏洞列表
+@src.route('/vul_processing_noalert_list', methods=['GET', 'POST'])
+@login_required
+def vul_processing_noalert_list():
+	query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
+														VulReport.vul_status==u'暂不处理').order_by(-VulReport.start_date)
+	#处理post查询提交
+	opt_label = [u'查询', u'请输入关键字进行查询']
+	if request.method == 'POST':
+		opt = request.form.get('opt','all')
+		if opt != 'send_email_password':
+			query = query.filter(VulReport.author.like("%" + opt + "%")
+									| VulReport.title.like("%" + opt + "%")
+									| VulReport.related_asset.like("%" + opt + "%")
+									| VulReport.related_asset_inout.like("%" + opt + "%")
+									| VulReport.related_asset_status.like("%" + opt + "%")
+									| VulReport.related_vul_type.like("%" + opt + "%")
+									| VulReport.vul_source.like("%" + opt + "%")
+									| VulReport.vul_status.like("%" + opt + "%")
+								)
+		elif opt=='send_email_password':
+			if current_user.role_name==u'超级管理员' or current_user.role_name==u'安全管理员':
+				#设置发送邮件的列表
+				list_to_send_email = []
+				for vul_report in query.all():
+					email_dict = get_email_dict(vul_report[0].id)
+					email_list = email_dict['owner']
+					email_list.append(email_dict['department_manager'])
+					email_list.append(email_dict['author'])
+					if email_list not in list_to_send_email:
+						list_to_send_email.append(email_list)
+
+				#遍历发送邮件列表，发送提醒邮件
+				for e_l in list_to_send_email:
+					send_email(u'暂不处理漏洞提醒',
+								'src/email/vul_processing_noalert_mail_alert',
+								to=e_l,
+								cc=current_app.config['CC_EMAIL'],
+								)
+					flash(u'给 %s 的提醒邮件已发出!' %e_l[0])		
+
+	if current_user.role_name == u'超级管理员' or current_user.role_name == u'安全管理员':
+		vul_report_list = query.all()
+		opt_label = [u'发送邮件', u'请输入密码发送邮件']
+	elif current_user.role_name == u'安全人员':
+		vul_report_list = query.filter(VulReport.author==current_user.email).all()
+	elif current_user.role_name == u'普通用户':
+		#查询用户email是否为部门经理，可能为多个部门经理。
+		department_list = Depart.query.filter_by(email=current_user.email).all()
+		#如果是部门经理，则可查看部门漏洞
+		if department_list:
+			vul_report_list = []
+			for department in department_list:
+				vul_report_list = [] + query.filter(Asset.department==department.department).all()
+		else:
+			query = query.filter(Asset.owner.like("%" + current_user.email + "%"))
+			vul_report_list = query.all()
+
+	return render_template('src/vul_processing_noalert_list.html', vul_report_list=vul_report_list, opt_label=opt_label)
+
 #复测中漏洞列表
 @src.route('/vul_retest_list', methods=['GET', 'POST'])
 @login_required
@@ -593,7 +653,7 @@ def vul_report_dev_finish(id):
 	form = VulReportDevFinishForm()
 	vul_report_df = VulReport.query.get_or_404(id)
 	if current_user.is_authenticated:
-		if vul_report_df.vul_status != u'修复中':
+		if vul_report_df.vul_status != u'修复中' and vul_report_df.vul_status != u'暂不处理':
 			abort(403)
 		else:
 			email_dict = get_email_dict(id)
