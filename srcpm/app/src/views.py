@@ -3,7 +3,7 @@
 
 from flask import render_template, flash, url_for, redirect, request, current_app, session, jsonify, abort
 from .forms import VulReportForm, UploadImgForm, VulReportReviewForm, VulReportAdminForm
-from .forms import VulReportDevFinishForm, VulReportRetestResultForm
+from .forms import VulReportDevFinishForm, VulReportRetestResultForm, VulReportSendEmailForm
 from .models import VulReport, VulLog
 from ..admin.models import Asset, User, Depart
 from ..admin.forms import AssetForm
@@ -687,6 +687,46 @@ def vul_report_dev_finish(id):
 		vul_report_df.vul_status = u'复测中'
 		return redirect(url_for('src.vul_report_list_read'))
 	return render_template('src/vul_report_dev_finish.html', form=form, vul_report_df=vul_report_df)
+
+
+@src.route('/vul_report_send_email/<id>', methods=['GET','POST'])
+@permission_required('src.vul_report_send_email')
+def vul_report_send_email(id):
+	form = VulReportSendEmailForm()
+	vul_report_se = VulReport.query.get_or_404(id)
+	if current_user.is_authenticated:
+		if vul_report_se.vul_status != u'修复中' and vul_report_se.vul_status != u'暂不处理':
+			abort(403)
+		else:
+			if (current_user.role_name == u'超级管理员') or (current_user.role_name == u'安全管理员'):
+				pass
+			else:
+				abort(403)
+	else:
+		abort(403)
+
+
+	email_dict = get_email_dict(id)
+	#Post提交密码发送邮件
+	if form.validate_on_submit():
+		if form.pwd.data == 'send_email_password':
+			#设置发送邮件的列表
+			#成功申请复测后，发送提醒邮件给漏洞相关人员
+			to_email_list = email_dict['owner']
+			to_email_list.append(email_dict['department_manager'])
+			to_email_list.append(email_dict['author'])
+			send_email(u'修复中漏洞提醒', 
+						'src/email/vul_processing_mail_alert', 
+						to=to_email_list, 
+						cc=current_app.config['CC_EMAIL'], 
+						vul_report_se=vul_report_se
+						)
+			flash(u'发送邮件给 %s 成功' %to_email_list[0])	
+		return redirect(url_for('src.vul_report_list_read'))
+	return render_template('src/vul_report_send_email.html', form=form, 
+								vul_report_se=vul_report_se, 
+								email_dict=email_dict,
+							)
 
 
 @src.route('/vul_report_retest_result/<id>', methods=['GET','POST'])

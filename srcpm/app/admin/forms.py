@@ -39,6 +39,7 @@ perm_choices = [('admin.index',u'管理后台－首页'),        #管理后台�
 				('src.vul_report_admin_edit', u'SRC－漏洞报告管理编辑'),        #SRC－漏洞报告管理编辑
 				('src.vul_report_review',u'SRC-漏洞报告审核'),        #SRC-漏洞报告审核
 				('src.vul_report_review_ajax',u'SRC-漏洞报告审核AJAX'),        #SRC-漏洞报告审核AJAX
+				('src.vul_report_send_email', u'SRC-漏洞报告发送邮件'),		#SRC-漏洞报告发送邮件
 				('src.vul_report_known',u'SRC-漏洞报告－已知悉提交'),        #SRC-漏洞报告－已知悉提交
 				('src.vul_report_dev_finish',u'SRC-漏洞报告－申请复测'),        #SRC-漏洞报告－申请复测
 				('src.vul_report_retest_result',u'SRC-漏洞报告－复测结果提交'),        #SRC-漏洞报告－复测结果提交

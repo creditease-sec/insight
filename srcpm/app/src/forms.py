@@ -85,6 +85,10 @@ class VulReportDevFinishForm(Form):
 	dev_finish_solution = TextAreaField(u'修复方法')
 	submit = SubmitField(u'提交')
 
+class VulReportSendEmailForm(Form):
+	pwd = StringField(u'发送邮件密码')
+	submit = SubmitField(u'提交')
+
 class VulReportRetestResultForm(Form):
 	done_solution = TextAreaField(u'复测结果')
 	done_rank = SelectField(u'剩余Rank', choices=[(str(n),n) for n in range(0,21)])

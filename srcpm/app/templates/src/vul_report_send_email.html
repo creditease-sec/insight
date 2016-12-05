@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block scripts %}
+	{{ super() }}
+
+<script src="{{ url_for('src.static', filename='jquery.min.js') }}"></script>
+
+
+{% endblock %}
+
+{% block title %} 发送提醒邮件 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>发送提醒邮件</h1>
+</div>
+
+<div class="col-md-4">
+	<div class=form-group>
+		<label class="control-label">漏洞标题</label>
+		<label class="form-control">{{ vul_report_se.title }}</label>
+	</div>
+
+
+    <div class=form-group>
+        <label>邮件收件人: </label><br>
+        <font size="2" color="blue">
+            {% for i in email_dict['owner'] %}
+                {{ i }}
+            {%endfor%}
+            {{ email_dict['department_manager'] }}
+            {{ email_dict['author'] }}
+        </font>
+    </div>
+
+
+	{{ wtf.quick_form(form) }}
+	
+</div>
+
+{% endblock %}
+
