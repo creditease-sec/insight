@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block title %} 漏洞统计页面 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+  <h1>漏洞统计页面</h1>
+</div>
+
+<form role="form" method='POST'>
+<div class="form-group">
+   <label for="name"></label>
+   <input type="text" class="form-control" name="opt" placeholder="请输入查询关键字">
+   <button type="submit" class="btn btn-default">提交</button>
+</div>
+</form>
+
+<div>
+<table class="table table-hover">
+   <thead>
+      <tr>
+         <th>漏洞ID</th>
+         <th>系统名称</th>
+         <th>域名</th>
+         <th>资产状态<th>
+         <th>漏洞类型<th>
+         <th>部门</th>
+         <th>负责人</th>
+         <th>Rank</th>
+         <th>风险等级</th>
+         <th>剩余风险</th>
+          <th>通告时间</th>
+          <th>结束时间</th>
+          <th>修复时间</th>
+         <th>漏洞状态</th>
+         <th>是否逾期</th>
+      </tr>
+   </thead>
+   <tbody>
+    {% for vul_report in vul_report_list_result %}
+      <tr>
+         <td>{{ vul_report[0].id }}</td>
+         <td>{{ vul_report[1].sysname }}</td>
+         <td>{{ vul_report[0].related_asset }}</td>
+         <td>{{ vul_report[0].related_asset_status }}</td>
+         <td>{{ vul_report[0].related_vul_type }}</td>
+         <td>{{ vul_report[1].department }}</td>
+         <td>{{ vul_report[1].owner }}</td>
+         <td>{{ vul_report[0].grant_rank }}</td>
+
+         {% if 0 < vul_report[0].risk_score <= 25 %}
+            <td>低</td>
+         {% elif 25 < vul_report[0].risk_score <= 50 %}
+            <td>中</td>
+         {% elif 50 < vul_report[0].risk_score <= 75 %}
+            <td>高</td>
+         {% elif 75 < vul_report[0].risk_score <= 100 %}
+            <td>严重</td>
+         {% endif %}
+
+         <th>{{ vul_report[0].residual_risk_score }}</th>
+         
+         {% if vul_report[0].start_date %}
+         <td>{{ moment(vul_report[0].start_date).format('YYYY-MM-DD') }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
+
+         {% if vul_report[0].start_date %}
+         <td>{{ moment(vul_report[0].end_date).format('YYYY-MM-DD') }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
+
+         {% if vul_report[0].fix_date %}
+         <td>{{ moment(vul_report[0].fix_date).format('YYYY-MM-DD') }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
+
+         <td>{{ vul_report[0].vul_status }}</td>
+         <td>{{ vul_report[0].timeout }}</td>
+      </tr>
+    {% endfor %}
+   </tbody>
+</table>
+</div>
+
+{% endblock %}
+
