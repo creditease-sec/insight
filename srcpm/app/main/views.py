@@ -8,6 +8,7 @@ from ..src.models import VulReport
 from datetime import datetime
 from datetime import date
 import json
+from ..decorators import permission_required
 
 
 @main.route('/')
@@ -188,4 +189,56 @@ def index(start_date=0, end_date=0):
                             data_department_residual_risk = json.dumps(data_department_residual_risk, encoding='utf-8', indent=4),
                         )
 
+
+
+
+@main.route('/index_count/')
+@main.route('/index_count/<start_date>/<end_date>')
+@permission_required('main.index_count')
+def index_count(start_date=0, end_date=0):
+    try:
+        startDate = datetime.strptime(start_date, '%Y%m%d')
+        endDate = datetime.strptime(end_date, '%Y%m%d')
+    except:
+        startDate = datetime(2015,1,1)
+        endDate = datetime(2099,1,1)
+
+
+    query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
+                                                            VulReport.related_asset_status!=u'上线前',
+                                                            VulReport.related_vul_type!=u'输出文档',
+                                                        )
+    vul_report_list_result = query.order_by(-VulReport.start_date).all()
+
+
+    list_asset = []
+    list_department = []
+    for vul_asset in vul_report_list_result:
+        if vul_asset[0].fix_date:
+            if vul_asset[0].fix_date > vul_asset[0].end_date:
+                vul_asset[0].timeout = u'逾期'
+        else:
+            if date.today() > vul_asset[0].end_date:
+                vul_asset[0].timeout = u'逾期'
+
+        if vul_asset[1].domain not in list_asset:
+            list_asset.append(vul_asset[1].domain)
+
+        if vul_asset[1].department not in list_department:
+            list_department.append(vul_asset[1].department)
+    
+    list_result_sort_asset = []
+    for asset in list_asset:
+        for vul_asset in vul_report_list_result:
+            if vul_asset[1].domain == asset:
+                list_result_sort_asset.append(vul_asset)
+
+    list_result_sort_department = []
+    for department in list_department:
+        for vul_asset in list_result_sort_asset:
+            if vul_asset[1].department == department:
+                list_result_sort_department.append(vul_asset)
+
+
+    return render_template('index_count.html', vul_report_list_result = list_result_sort_department)
 

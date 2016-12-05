@@ -51,6 +51,7 @@ perm_choices = [('admin.index',u'管理后台－首页'),        #管理后台�
 				('src.assets_add',u'SRC-资产增加'),        #SRC-资产增加
 				('src.assets_add_ajax',u'SRC－资产增加AJAX'),        #SRC-资产增加AJAX
 				('src.assets_modify',u'SRC-资产修改'),        #SRC-资产修改
+				('main.index_count',u'MAIN-漏洞报告统计'),		#MAIN-漏洞报告统计
                 ('drops.manager',u'SRC－知识库管理'),        #SRC－知识库管理
 				]
 
