@@ -207,6 +207,8 @@ def index_count(start_date=0, end_date=0):
     query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
                                                             VulReport.related_asset_status!=u'上线前',
                                                             VulReport.related_vul_type!=u'输出文档',
+                                                            VulReport.start_date >= startDate,
+                                                            VulReport.start_date <= endDate,
                                                         )
     vul_report_list_result = query.order_by(-VulReport.start_date).all()
 
