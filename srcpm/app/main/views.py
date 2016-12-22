@@ -4,7 +4,7 @@ from . import main
 import chartkick
 from .. import db
 from ..admin.models import VulType, Asset
-from ..src.models import VulReport
+from ..src.models import VulReport, VulLog
 from datetime import datetime
 from datetime import date
 import json
@@ -244,3 +244,160 @@ def index_count(start_date=0, end_date=0):
 
     return render_template('index_count.html', vul_report_list_result = list_result_sort_department)
 
+
+@main.route('/index_stats_time/')
+@main.route('/index_stats_time/<start_date>/<end_date>')
+@permission_required('main.index_stats_time')
+def index_stats_time(start_date=0, end_date=0):
+    try:
+        startDate = datetime.strptime(start_date, '%Y%m%d')
+        endDate = datetime.strptime(end_date, '%Y%m%d')
+    except:
+        startDate = datetime(2015,1,1)
+        endDate = datetime(2099,1,1)
+
+    #计算所有漏洞的已知悉时间
+    query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
+                                                            VulReport.related_asset_status!=u'上线前',
+                                                            VulReport.related_vul_type!=u'输出文档',
+                                                            VulReport.start_date >= startDate,
+                                                            VulReport.start_date <= endDate,
+                                                        )
+
+    vul_report_list_result = query.order_by(-VulReport.start_date).all()
+
+    #统计漏洞处理时间数据列表
+    list_stats_time = []
+    list_stats_retest_time = []
+    #加入所有漏洞统计数据
+    list_stats_time.append(compute_take_time('all', vul_report_list_result))
+    list_stats_retest_time.append(compute_retest_time('all', vul_report_list_result))
+
+
+    #统计漏洞作者姓名
+    author_list = []
+    for vulreport, asset in vul_report_list_result:
+        if vulreport.author not in author_list:
+            author_list.append(vulreport.author)
+
+    #print author_list
+
+    
+    for author in author_list:
+        query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
+                                                            VulReport.related_asset_status!=u'上线前',
+                                                            VulReport.related_vul_type!=u'输出文档',
+                                                            VulReport.start_date >= startDate,
+                                                            VulReport.start_date <= endDate,
+                                                            VulReport.author == author,
+                                                        )
+
+        vul_report_list_result = query.order_by(-VulReport.start_date).all()
+        
+        list_stats_time.append(compute_take_time(author, vul_report_list_result))
+        list_stats_retest_time.append(compute_retest_time(author, vul_report_list_result))
+
+
+
+    return render_template('index_stats_time.html', 
+                            list_stats_time = list_stats_time,
+                            list_stats_retest_time = list_stats_retest_time,
+                        )
+
+
+def compute_take_time(author, vul_report_list_result):
+    #print 'author: ', author
+    vul_known_take_time_list = []
+    for vulreport, asset in vul_report_list_result:
+        #print vulreport.id
+        #print asset.id
+        vul_logs = VulLog.query.filter_by(related_vul_id = vulreport.id)
+        if vul_logs.first():
+            vul_known_take_time = 0
+            vul_known_time_start = 0
+            vul_known_time_end = 0
+            for vul_log in vul_logs:
+                if vul_log.action == u'发送新漏洞通告':
+                    vul_known_time_start = vul_log.time
+                if vul_log.action == u'已知悉':
+                    vul_known_time_end = vul_log.time
+            #print 'vul_log_related_vul_id: ', vul_log.related_vul_id
+            #print 'vul_known_time_start: ', vul_known_time_start
+            #print 'vul_known_time_end: ', vul_known_time_end
+            if vul_known_time_start != 0 and vul_known_time_end !=0:
+                #start_datetime = datetime.strptime(vul_known_time_start, "%Y-%m-%d %H:%M:%S")
+                #end_datetime = datetime.strptime(vul_known_time_end, "%Y-%m-%d %H:%M:%S")
+                vul_known_take_time = (vul_known_time_end - vul_known_time_start).seconds
+                #print 'known_datetime: ', known_datetime
+                vul_known_take_time_list.append(vul_known_take_time)
+
+    count = len(vul_known_take_time_list)
+    #print '统计已知悉漏洞数量: %d 个' %count
+    if count != 0:
+        max_time = round(max(vul_known_take_time_list) / 60.0 / 60.0, 2)
+        min_time = round(min(vul_known_take_time_list) / 60.0 / 60.0, 2)
+        #print '最大值: %s 小时' % str(max_time)
+        #print '最小值: %s 小时' % str(min_time)
+
+        time_sum = 0
+        for take_time in vul_known_take_time_list:
+            time_sum += take_time
+
+        #print '总和: %d 秒' %time_sum
+        averge_time = round((time_sum / count) / 60.0 / 60.0, 2)
+        #print '平均值: %s 小时' % str(averge_time)
+    else:
+        max_time = 0
+        min_time = 0
+        averge_time = 0
+
+    return author, count, max_time, min_time, averge_time
+
+
+
+def compute_retest_time(author, vul_report_list_result):
+    #print 'author: ', author
+    vul_retest_time_list = []
+    for vulreport, asset in vul_report_list_result:
+        #print vulreport.id
+        #print asset.id
+        vul_logs = VulLog.query.filter_by(related_vul_id = vulreport.id)
+        if vul_logs.first():
+            vul_retest_time = 0
+            vul_retest_time_start = 0
+            vul_retest_time_end = 0
+            for vul_log in vul_logs:
+                if vul_log.action == u'申请复测':
+                    vul_retest_time_start = vul_log.time
+                if vul_log.action == u'复测结果提交':
+                    vul_retest_time_end = vul_log.time
+                    vul_retest_time = (vul_retest_time_end - vul_retest_time_start).seconds
+                    # 如果超过14个小时，认为是下班后申请，减去晚上休息时间14个小时。
+                    if 223200 > vul_retest_time > 50400:
+                        vul_retest_time -= 50400
+                    # 如果超过2天，认为是周末，减去62个小时，24+24+14=62
+                    elif vul_retest_time >= 223200:
+                        vul_retest_time -= 223200
+                    vul_retest_time_list.append(vul_retest_time)
+
+    count = len(vul_retest_time_list)
+    #print '统计复测漏洞数量: %d 个' %count
+    if count != 0:
+        max_time = round(max(vul_retest_time_list) / 60.0 / 60.0, 2)
+        min_time = round(min(vul_retest_time_list) / 60.0 / 60.0, 2)
+        #print '最大值: %s 小时' % str(max_time)
+        #print '最小值: %s 小时' % str(min_time)
+
+        time_sum = 0
+        for take_time in vul_retest_time_list:
+            time_sum += take_time
+
+        #print '总和: %d 秒' %time_sum
+        averge_time = round((time_sum / count) / 60.0 / 60.0, 2)
+        #print '平均值: %s 小时' % str(averge_time)
+    else:
+        max_time = 0
+        min_time = 0
+        averge_time = 0
+
+    return author, count, max_time, min_time, averge_time

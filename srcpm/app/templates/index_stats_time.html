@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block head %}
+{{ super() }}
+<script src="{{ url_for('main.static', filename='highcharts.js') }}"></script>
+<script src="{{ url_for('main.static', filename='chartkick.js') }}"></script>
+{% endblock %}
+
+
+{% block title %} 漏洞管理平台 {% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>漏洞处理时间统计</h1>
+</div>
+
+
+
+
+<div class="page-header">
+    <h2>漏洞已知悉时间</h2>
+</div>
+
+
+
+
+<div>
+<table class="table table-hover">
+   <thead>
+      <tr>
+         <th>漏洞作者</th>
+         <th>统计漏洞数量</th>
+         <th>最大值(单位:小时)</th>
+         <th>最小值(单位:小时)<th>
+         <th>平均值(单位:小时)<th>
+      </tr>
+   </thead>
+   <tbody>
+    {% for stats_time in list_stats_time %}
+        {% if stats_time[1] != 0 %}
+          <tr>
+             <td>{{ stats_time[0].split('@')[0] }}</td>
+             <td>{{ stats_time[1] }}</td>
+             <td>{{ stats_time[2] }}</td>
+             <td>{{ stats_time[3] }}</td>
+             <td>{{ stats_time[4] }}</td>
+          </tr>
+        {% endif %}
+    {% endfor %}
+   </tbody>
+</table>
+</div>
+
+
+<div class="page-header">
+    <h2>漏洞复测时间</h2>
+</div>
+
+
+<div>
+<table class="table table-hover">
+   <thead>
+      <tr>
+         <th>漏洞作者</th>
+         <th>统计漏洞数量</th>
+         <th>最大值(单位:小时)</th>
+         <th>最小值(单位:小时)<th>
+         <th>平均值(单位:小时)<th>
+      </tr>
+   </thead>
+   <tbody>
+    {% for stats_time in list_stats_retest_time %}
+        {% if stats_time[1] != 0 %}
+          <tr>
+             <td>{{ stats_time[0].split('@')[0] }}</td>
+             <td>{{ stats_time[1] }}</td>
+             <td>{{ stats_time[2] }}</td>
+             <td>{{ stats_time[3] }}</td>
+             <td>{{ stats_time[4] }}</td>
+          </tr>
+        {% endif %}
+    {% endfor %}
+   </tbody>
+</table>
+</div>
+
+
+
+
+
+     
+
+
+<!--
+
+{% column_chart data_vul_type with min=400 max=1000 %}
+
+{% bar_chart data_vul_type %}
+
+{% area_chart data_vul_type %}
+-->
+
+{% endblock %}
