@@ -14,7 +14,7 @@ class Config:
     CC_EMAIL = ['jianfangli@creditease.cn',
                 'shengliu1@creditease.cn',
                 'zhongweidu@creditease.cn',
-                'jiewan@creditease.cn',
+                'jianchengren@creditease.cn',
                 'zhipengcheng@creditease.cn',
                 'haowang53@creditease.cn',
                 'shuoyupan@creditease.cn',
