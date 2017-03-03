@@ -112,6 +112,9 @@
    {% elif 75 < vul_report.risk_score <= 100 %}
    <label>风险等级: </label> 严重
    {% endif %}
+   <br>
+   <label>开始时间:</label> {{ moment(vul_report.start_date).format('YYYY年M月D日') }}<br>
+   <label>结束时间:</label> {{ moment(vul_report.end_date).format('YYYY年M月D日') }}<br>
 </div>
 
 <div class="page-header">
