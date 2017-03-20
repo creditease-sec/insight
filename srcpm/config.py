@@ -13,12 +13,12 @@ class Config:
     UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
     CC_EMAIL = ['jianfangli@creditease.cn',
                 'shengliu1@creditease.cn',
-                'zhongweidu@creditease.cn',
+                'chenlinshi@creditease.cn',
                 'jianchengren@creditease.cn',
                 'zhipengcheng@creditease.cn',
-                'haowang53@creditease.cn',
                 'shuoyupan@creditease.cn',
                 'zixiaozhao@creditease.cn',
+                'yanggao63@creditease.cn',
             ]
     #PERMANENT_SESSION_LIFETIME = 10
 
