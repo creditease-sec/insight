@@ -21,6 +21,10 @@ class Config:
                 'yanggao63@creditease.cn',
             ]
     #PERMANENT_SESSION_LIFETIME = 10
+    REMEMBER_COOKIE_PATH = '/srcpm'
+    REMEMBER_COOKIE_NAME = 'srcpm_session'
+    #COOKIE_NAME = 'srcpm_session'
+    #COOKIE_PATH = '/srcpm'
 
 
     @staticmethod
