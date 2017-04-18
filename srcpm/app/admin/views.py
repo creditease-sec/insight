@@ -304,8 +304,11 @@ def assets_add():
 					is_https=form.is_https.data,
 					in_or_out=form.in_or_out.data,
 					level=form.level.data,
+					business_cata=form.business_cata.data,
 					department=form.department.data,
 					owner=form.owner.data,
+					sec_owner=form.sec_owner.data,
+					app_sec_score=float(form.app_sec_score.data),
 					status=form.status.data,
 					private_data=form.private_data.data,
 					count_private_data=form.count_private_data.data,
@@ -342,8 +345,10 @@ def assets_read():
 											| Asset.in_or_out.like("%" + opt + "%")
 											| Asset.level.like("%" + opt + "%")
 											| Asset.secure_level.like("%" + opt + "%")
+											| Asset.business_cata.like("%" + opt + "%")
 											| Asset.department.like("%" + opt + "%") 
 											| Asset.owner.like("%" + opt + "%")
+											| Asset.sec_owner.like("%" + opt + "%")
 											| Asset.status.like("%" + opt + "%")
 											).order_by(-Asset.chkdate)
 	return render_template('admin/assets_read.html', asset_result=asset_result)
@@ -372,8 +377,11 @@ def assets_modify(id):
 		asset_get.is_https = form.is_https.data
 		asset_get.in_or_out = form.in_or_out.data
 		asset_get.level = form.level.data
+		asset_get.business_cata = form.business_cata.data
 		asset_get.department = form.department.data
 		asset_get.owner = form.owner.data
+		asset_get.sec_owner = form.sec_owner.data
+		asset_get.app_sec_score = float(form.app_sec_score.data)
 		asset_get.status = form.status.data
 		#asset_get.chkdate = form.chkdate.data
 		asset_get.private_data = form.private_data.data
@@ -392,8 +400,11 @@ def assets_modify(id):
 	form.is_https.data = asset_get.is_https
 	form.in_or_out.data = asset_get.in_or_out
 	form.level.data = asset_get.level
+	form.business_cata.data = asset_get.business_cata
 	form.department.data = asset_get.department
 	form.owner.data = asset_get.owner
+	form.sec_owner.data = asset_get.sec_owner
+	form.app_sec_score.data = asset_get.app_sec_score
 	form.status.data = asset_get.status
 	#form.chkdate.data = asset_get.chkdate
 	form.private_data.data = asset_get.private_data

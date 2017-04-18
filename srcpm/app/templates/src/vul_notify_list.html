@@ -29,7 +29,7 @@
          <th>资产状态</th>
          <th>漏洞类型</th>
          <th>来源</th>
-         <th>Rank</th>
+         <th>风险值</th>
          <th>风险等级</th>
          <th>剩余风险</th>
           <th>通告时间</th>
@@ -48,7 +48,7 @@
          <td>{{ vul_report[0].related_asset_status }}</td>
          <td>{{ vul_report[0].related_vul_type }}</td>
          <td>{{ vul_report[0].vul_source }}</td>
-         <td>{{ vul_report[0].grant_rank }}</td>
+         <td>{{ vul_report[0].risk_score }}</td>
 
         {% if 0 < vul_report[0].risk_score <= 25 %}
             <td>低</td>
