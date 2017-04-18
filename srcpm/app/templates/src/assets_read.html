@@ -39,9 +39,9 @@
    	{% for asset in asset_result %}
       <tr>
       	<td>{{ loop.index }}</td>
-         <td>{{ asset.sysname }}</td>
+         <td><a href="{{ url_for('src.assets_modify', id=asset.id) }}" target="_blank">{{ asset.sysname }}</td>
          {% if current_user.can('src.assets_modify') %}
-         <td><a href="{{ url_for('src.assets_modify', id=asset.id) }}">{{ asset.domain }}</a></td>
+         <td><a href="{{ url_for('src.vul_report_list_read', opt=asset.domain) }}" target="_blank">{{ asset.domain }}</a></td>
          {% else %}
          <td>{{ asset.domain }}</td>
          {% endif %}

@@ -165,7 +165,7 @@ def upload_img():
 
 @src.route('/vul_report_list_read', methods=['GET', 'POST'])
 def vul_report_list_read():
-	opt = request.form.get('opt','all')
+	opt = request.args.get('opt','all')
 	if current_user.is_authenticated:
 		if current_user.role_name==u'安全管理员' or current_user.role_name==u'超级管理员' or current_user.role_name==u'安全人员':
 			#query = VulReport.query
@@ -199,7 +199,7 @@ def vul_report_list_read():
 	else:
 		vul_report_list_result = query.filter(VulReport.author.like("%" + opt + "%")
 											| VulReport.title.like("%" + opt + "%")
-											| VulReport.related_asset.like("%" + opt + "%")
+											| (VulReport.related_asset == opt)
 											| VulReport.related_asset_inout.like("%" + opt + "%")
 											| VulReport.related_asset_status.like("%" + opt + "%")
 											| VulReport.related_vul_type.like("%" + opt + "%")
