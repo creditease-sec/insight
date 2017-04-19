@@ -33,6 +33,7 @@
          <th>安全值</th>
          <th>状态</th>
          <th>检测时间</th>
+         <th>安全分</th>
       </tr>
    </thead>
    <tbody>
@@ -71,6 +72,7 @@
          {% else %}
          <td></td>
          {% endif %}
+         <td><a href="{{ url_for('src.asset_sec_score', opt=asset.domain) }}" target="_blank">{{ asset_dict[asset.domain] }}</td>
       </tr>
     {% endfor %}
    </tbody>

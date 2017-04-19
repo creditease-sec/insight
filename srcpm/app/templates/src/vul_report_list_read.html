@@ -28,6 +28,7 @@
          <th>关联资产</th>
          <th>资产状态</th>
          <th>部门</th>
+         <th>漏洞层面</th>
          <th>漏洞类型</th>
          <th>来源</th>
          <th>风险值</th>
@@ -37,6 +38,7 @@
           <th>结束时间</th>
           <th>修复时间</th>
          <th>漏洞状态</th>
+         <th>攻击发现</th>
       </tr>
    </thead>
    <tbody>
@@ -49,6 +51,11 @@
          <td>{{ vul_report[0].related_asset }}</td>
          <td>{{ vul_report[0].related_asset_status }}</td>
          <td>{{ vul_report[1].department }}</td>
+         {% if vul_report[0].related_vul_cata %}
+         <td>{{ vul_report[0].related_vul_cata }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
          <td>{{ vul_report[0].related_vul_type }}</td>
          <td>{{ vul_report[0].vul_source }}</td>
          <td>{{ vul_report[0].risk_score }}</td>
@@ -84,6 +91,12 @@
          {% endif %}
 
          <td>{{ vul_report[0].vul_status }}</td>
+
+         {% if vul_report[0].attack_check %}
+         <td>{{ vul_report[0].attack_check }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
       </tr>
     {% endfor %}
    </tbody>

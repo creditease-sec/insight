@@ -16,6 +16,7 @@ class VulReport(db.Model):
 	related_asset = db.Column(db.String(64))
 	related_asset_inout = db.Column(db.String(64))
 	related_asset_status = db.Column(db.String(64))
+	related_vul_cata = db.Column(db.String(64))
 	related_vul_type = db.Column(db.String(64))
 	vul_self_rank = db.Column(db.Integer)
 	vul_source = db.Column(db.String(64))
@@ -34,6 +35,7 @@ class VulReport(db.Model):
 	start_date = db.Column(db.Date)
 	end_date = db.Column(db.Date)
 	fix_date = db.Column(db.Date)
+	attack_check = db.Column(db.String(64))
 
 
 

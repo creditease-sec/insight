@@ -4,6 +4,7 @@
 from flask import render_template, flash, url_for, redirect, request, current_app, session, jsonify, abort
 from .forms import VulReportForm, UploadImgForm, VulReportReviewForm, VulReportAdminForm
 from .forms import VulReportDevFinishForm, VulReportRetestResultForm, VulReportSendEmailForm
+from .forms import VulReportAttackForm, VulReportVulCataForm
 from .models import VulReport, VulLog
 from ..admin.models import Asset, User, Depart
 from ..admin.forms import AssetForm
@@ -34,6 +35,7 @@ def vul_report_admin_edit(id):
 		vul_report.related_asset = form.related_asset.data
 		vul_report.related_asset_inout = form.related_asset_inout.data
 		vul_report.related_asset_status = form.related_asset_status.data
+		vul_report.related_vul_cata = form.related_vul_cata.data
 		vul_report.related_vul_type = form.related_vul_type.data
 		vul_report.vul_self_rank = int(form.vul_self_rank.data)
 		vul_report.vul_source = form.vul_source.data
@@ -59,6 +61,7 @@ def vul_report_admin_edit(id):
 			vul_report.end_date = form.end_date.data
 		if form.fix_date.data != '':
 			vul_report.fix_date = form.fix_date.data
+		vul_report.attack_check = form.attack_check.data
 		flash(u'更新漏洞 %s 报告成功!' %vul_report.title)
 		redirect(url_for('src.vul_report_admin_edit', id=vul_report.id))
 
@@ -66,6 +69,7 @@ def vul_report_admin_edit(id):
 	form.related_asset.data = vul_report.related_asset
 	form.related_asset_inout.data = vul_report.related_asset_inout
 	form.related_asset_status.data = vul_report.related_asset_status
+	form.related_vul_cata.data = vul_report.related_vul_cata
 	form.related_vul_type.data = vul_report.related_vul_type
 	form.vul_self_rank.data = vul_report.vul_self_rank
 	form.vul_source.data = vul_report.vul_source
@@ -84,6 +88,7 @@ def vul_report_admin_edit(id):
 	form.start_date.data = vul_report.start_date
 	form.end_date.data = vul_report.end_date
 	form.fix_date.data = vul_report.fix_date
+	form.attack_check.data = vul_report.attack_check
 	return render_template('src/vul_report_admin_edit.html', form=form)
 
 
@@ -103,6 +108,7 @@ def vul_report_add():
 					related_asset = form.related_asset.data,
 					related_asset_inout = asset_get.in_or_out,
 					related_asset_status = asset_get.status,
+					related_vul_cata = form.related_vul_cata.data,
 					related_vul_type = form.related_vul_type.data,
 					vul_self_rank = form.vul_self_rank.data,
 					vul_source = form.vul_source.data,
@@ -202,6 +208,7 @@ def vul_report_list_read():
 											| (VulReport.related_asset == opt)
 											| VulReport.related_asset_inout.like("%" + opt + "%")
 											| VulReport.related_asset_status.like("%" + opt + "%")
+											| VulReport.related_vul_cata.like("%" + opt + "%")
 											| VulReport.related_vul_type.like("%" + opt + "%")
 											| VulReport.vul_source.like("%" + opt + "%")
 											| VulReport.vul_status.like("%" + opt + "%")
@@ -228,6 +235,7 @@ def vul_review_list():
 									| VulReport.related_asset.like("%" + opt + "%")
 									| VulReport.related_asset_inout.like("%" + opt + "%")
 									| VulReport.related_asset_status.like("%" + opt + "%")
+									| VulReport.related_vul_cata.like("%" + opt + "%")
 									| VulReport.related_vul_type.like("%" + opt + "%")
 									| VulReport.vul_source.like("%" + opt + "%")
 									| VulReport.vul_status.like("%" + opt + "%")
@@ -556,6 +564,7 @@ def vul_report_review(id):
 
 	#Post提交审核完成，发送通告邮件
 	if form.validate_on_submit():
+		vul_report_rv.related_vul_cata = form.related_vul_cata.data
 		vul_report_rv.related_vul_type = form.related_vul_type.data
 		vul_report_rv.grant_rank = form.grant_rank.data
 		vul_report_rv.start_date = form.start_date.data
@@ -608,6 +617,7 @@ def vul_report_review(id):
 
 
 	form.related_vul_type.data = vul_report_rv.related_vul_type
+	form.related_vul_cata.data = vul_report_rv.related_vul_cata
 	form.grant_rank.data = str(vul_report_rv.grant_rank)
 	form.start_date.data = start_date
 	form.end_date.data = end_date
@@ -727,6 +737,50 @@ def vul_report_send_email(id):
 								vul_report_se=vul_report_se, 
 								email_dict=email_dict,
 							)
+
+
+
+@src.route('/vul_report_attack_check/<id>', methods=['GET','POST'])
+@permission_required('src.vul_report_attack_check')
+def vul_report_attack_check(id):
+	form = VulReportAttackForm()
+	vul_report_attack = VulReport.query.get_or_404(id)
+	asset_get = Asset.query.filter_by(domain=vul_report_attack.related_asset).first()
+
+	if form.validate_on_submit():
+		vul_report_attack.attack_check = form.attack_check.data
+
+
+		vul_log = VulLog(related_vul_id=id,
+						related_user_email=current_user.email,
+						action=u'攻击发现结果提交',
+						content=form.attack_check.data,
+						)
+		db.session.add(vul_log)
+		flash(u'攻击发现结果提交成功！')
+		return redirect(url_for('src.vul_report_list_read'))
+
+	form.attack_check.data = vul_report_attack.attack_check
+	return render_template('src/vul_report_attack_check.html', form=form, 
+							vul_report_attack=vul_report_attack, asset_get=asset_get)
+
+
+@src.route('/vul_report_vul_cata/<id>', methods=['GET','POST'])
+@permission_required('src.vul_report_vul_cata')
+def vul_report_vul_cata(id):
+	form = VulReportVulCataForm()
+	vul_report_vul_cata = VulReport.query.get_or_404(id)
+	asset_get = Asset.query.filter_by(domain=vul_report_vul_cata.related_asset).first()
+
+	if form.validate_on_submit():
+		vul_report_vul_cata.related_vul_cata = form.related_vul_cata.data
+
+		return redirect(url_for('src.vul_report_list_read'))
+
+	form.related_vul_cata.data = vul_report_vul_cata.related_vul_cata
+	return render_template('src/vul_report_vul_cata.html', form=form, 
+							vul_report_vul_cata=vul_report_vul_cata, asset_get=asset_get)
+
 
 
 @src.route('/vul_report_retest_result/<id>', methods=['GET','POST'])
@@ -933,7 +987,11 @@ def assets_read():
 											| Asset.status.like("%" + opt + "%")
 											).order_by(-Asset.chkdate)
 
-	return render_template('src/assets_read.html', asset_result=asset_result)
+	asset_dict = {}
+	for asset in asset_result:
+		asset_sec_score = get_asset_sec_score(asset.domain, datetime.date(2017,1,1), datetime.date.today())
+		asset_dict.update({asset.domain: asset_sec_score})
+	return render_template('src/assets_read.html', asset_result=asset_result, asset_dict=asset_dict)
 
 
 
@@ -1036,3 +1094,241 @@ def assets_add_ajax():
 	for user in user_list:
 		opt_list.append({'name': user.name, 'email': user.email})
 	return jsonify(opt_list)
+
+
+@src.route('/asset_sec_score', methods=['GET','POST'])
+@src.route('/asset_sec_score/<start_date>/<end_date>', methods=['GET','POST'])
+def asset_sec_score(start_date=0, end_date=0):
+	opt = request.args.get('opt','all')
+	try:
+		startDate = datetime.date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
+		endDate = datetime.date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+	except:
+		startDate = datetime.date(2017,1,1)
+		endDate = datetime.date.today()
+
+	asset_code_score = get_asset_code_score(opt,startDate,endDate,u'代码层面')
+	asset_ops_score = get_asset_code_score(opt,startDate,endDate,u'运维层面')
+	asset_attack_score = get_asset_attack_score(opt,startDate,endDate)
+	asset_sec_score = get_asset_sec_score(opt,startDate,endDate)
+	return render_template('src/asset_sec_score.html', 
+							asset_code_score=asset_code_score,
+							asset_ops_score=asset_ops_score,
+							asset_attack_score=asset_attack_score,
+							asset_sec_score=asset_sec_score,
+							)
+
+
+
+
+def get_asset_code_score(domain,startDate,endDate,vul_cata=u'代码层面'):
+	query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
+															VulReport.vul_status!=u'未审核',
+															VulReport.related_vul_type!=u'输出文档',
+															VulReport.related_asset==domain,
+															VulReport.start_date>=startDate,
+															VulReport.start_date<=endDate,
+														)
+
+#--------代码层面安全分的计算------
+
+#-----以前风险（完成漏洞）的计算---
+	vul_report_code_yisrc = query.filter(VulReport.related_vul_cata==vul_cata,
+    										VulReport.vul_status==u'完成',
+    										VulReport.vul_source=='YISRC',
+    										)
+
+	vul_report_code_timeout = query.filter(VulReport.related_vul_cata==vul_cata,
+    										VulReport.vul_status==u'完成',
+    										VulReport.fix_date>VulReport.end_date,
+    										)
+
+	vul_report_code_list = vul_report_code_yisrc.all() + vul_report_code_timeout.all()
+
+	if len(vul_report_code_list) >= 1:
+
+		max_risk = 0
+		for vul_report in vul_report_code_list:
+			if vul_report[0].risk_score > max_risk:
+				max_risk = vul_report[0].risk_score
+				max_risk_vul_report = vul_report[0]
+
+		days_count = (endDate - max_risk_vul_report.fix_date).days
+
+		asset_code_score_finish = 100 - max_risk + days_count*0.3
+	else:
+		days_count = (endDate - startDate).days
+		asset_code_score_finish = 35 + days_count*0.3
+#---------------------
+#-------目前暴露风险的计算------
+	vul_report_code_yisrc_unfinish = query.filter(VulReport.related_vul_cata==vul_cata,
+    										VulReport.vul_status!=u'完成',
+    										VulReport.vul_source=='YISRC',
+    										)
+
+	vul_report_code_timeout_unfinish = query.filter(VulReport.related_vul_cata==vul_cata,
+    										VulReport.vul_status!=u'完成',
+    										VulReport.fix_date>VulReport.end_date,
+    										)
+
+	vul_report_code_list_unfinish = vul_report_code_yisrc_unfinish.all() + vul_report_code_timeout_unfinish.all()
+
+	if len(vul_report_code_list_unfinish) >= 1:
+		max_risk_unfinish = 0
+		for vul_report in vul_report_code_list_unfinish:
+			if vul_report[0].risk_score > max_risk_unfinish:
+				max_risk_unfinish = vul_report[0].risk_score
+				max_risk_vul_report_unfinish = vul_report[0]
+		asset_code_score_unfinish = 100 - max_risk_unfinish
+	else:
+		asset_code_score_unfinish = 100
+#----------目前暴露风险计算结束---------------
+#-----------比较两者安全值------
+
+	if asset_code_score_unfinish > asset_code_score_finish:
+		asset_code_score = asset_code_score_finish
+	else:
+		asset_code_score = asset_code_score_unfinish
+
+	return asset_code_score
+
+
+
+def get_asset_attack_score(domain,startDate,endDate):
+	query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
+															VulReport.vul_status!=u'未审核',
+															VulReport.related_vul_type!=u'输出文档',
+															VulReport.related_asset==domain,
+															VulReport.start_date>=startDate,
+															VulReport.start_date<=endDate,
+														)
+
+#--------攻击发现分的计算------
+
+#-----以前风险（完成漏洞）的计算---
+	vul_report_attack_list = query.filter(VulReport.attack_check==u'否',
+    										VulReport.vul_status==u'完成',
+    										).all()
+
+
+	if len(vul_report_attack_list) >= 1:
+
+		max_risk = 0
+		for vul_report in vul_report_attack_list:
+			if vul_report[0].risk_score > max_risk:
+				max_risk = vul_report[0].risk_score
+				max_risk_vul_report = vul_report[0]
+
+		days_count = (endDate - max_risk_vul_report.fix_date).days
+
+		asset_attack_score_finish = 100 - max_risk + days_count*0.3
+	else:
+		days_count = (endDate - startDate).days
+		asset_attack_score_finish = 35 + days_count*0.3
+#---------------------
+#-------目前暴露风险的计算------
+	vul_report_attack_list_unfinish = query.filter(VulReport.attack_check==u'否',
+    										VulReport.vul_status!=u'完成',
+    										).all()
+
+	if len(vul_report_attack_list_unfinish) >= 1:
+		max_risk_unfinish = 0
+		for vul_report in vul_report_attack_list_unfinish:
+			if vul_report[0].risk_score > max_risk_unfinish:
+				max_risk_unfinish = vul_report[0].risk_score
+				max_risk_vul_report_unfinish = vul_report[0]
+		asset_attack_score_unfinish = 100 - max_risk_unfinish
+	else:
+		asset_attack_score_unfinish = 100
+#----------目前暴露风险计算结束---------------
+#-----------比较两者安全值------
+
+	if asset_attack_score_unfinish > asset_attack_score_finish:
+		asset_attack_score = asset_attack_score_finish
+	else:
+		asset_attack_score = asset_attack_score_unfinish
+
+	return asset_attack_score
+
+
+
+def get_asset_sec_score(domain,startDate,endDate):
+	query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
+															VulReport.vul_status!=u'未审核',
+															VulReport.related_vul_type!=u'输出文档',
+															VulReport.related_asset==domain,
+															VulReport.start_date>=startDate,
+															VulReport.start_date<=endDate,
+														)
+
+	for vul_report in query.all():
+		if vul_report[0].related_vul_cata != u'代码层面' and vul_report[0].related_vul_cata != u'运维层面':
+			return 0
+		if vul_report[0].attack_check != u'是' and vul_report[0].attack_check != u'否':
+			return 0
+
+#--------安全分的计算------
+
+#-----以前风险（完成漏洞）的计算---
+	vul_report_risk_yisrc = query.filter(VulReport.attack_check==u'否',
+    										VulReport.vul_status==u'完成',
+    										VulReport.vul_source=='YISRC',
+    										)
+
+	vul_report_risk_timeout = query.filter(VulReport.attack_check==u'否',
+    										VulReport.vul_status==u'完成',
+    										VulReport.fix_date>VulReport.end_date,
+    										)
+
+	vul_report_risk_list = vul_report_risk_yisrc.all() + vul_report_risk_timeout.all()
+
+
+	if len(vul_report_risk_list) >= 1:
+
+		max_risk = 0
+		for vul_report in vul_report_risk_list:
+			if vul_report[0].risk_score > max_risk:
+				max_risk = vul_report[0].risk_score
+				max_risk_vul_report = vul_report[0]
+
+		days_count = (endDate - max_risk_vul_report.fix_date).days
+
+		asset_risk_score_finish = 100 - max_risk + days_count*0.3
+	else:
+		days_count = (endDate - startDate).days
+		asset_risk_score_finish = 35 + days_count*0.3
+#---------------------
+#-------目前暴露风险的计算------
+	vul_report_risk_yisrc_unfinish = query.filter(VulReport.attack_check==u'否',
+    										VulReport.vul_status!=u'完成',
+    										VulReport.vul_source=='YISRC',
+    										)
+
+	vul_report_risk_timeout_unfinish = query.filter(VulReport.attack_check==u'否',
+    										VulReport.vul_status!=u'完成',
+    										VulReport.fix_date>VulReport.end_date,
+    										)
+
+	vul_report_risk_list_unfinish = vul_report_risk_yisrc_unfinish.all() + vul_report_risk_timeout_unfinish.all()
+
+	if len(vul_report_risk_list_unfinish) >= 1:
+		max_risk_unfinish = 0
+		for vul_report in vul_report_risk_list_unfinish:
+			if vul_report[0].risk_score > max_risk_unfinish:
+				max_risk_unfinish = vul_report[0].risk_score
+				max_risk_vul_report_unfinish = vul_report[0]
+		asset_risk_score_unfinish = 100 - max_risk_unfinish
+	else:
+		asset_risk_score_unfinish = 100
+#----------目前暴露风险计算结束---------------
+#-----------比较两者安全值------
+
+	if asset_risk_score_unfinish > asset_risk_score_finish:
+		asset_sec_score = asset_risk_score_finish
+	else:
+		asset_sec_score = asset_risk_score_unfinish
+
+	return asset_sec_score
+
+
+

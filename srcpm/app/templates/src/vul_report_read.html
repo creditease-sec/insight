@@ -84,6 +84,18 @@
     {% endif %}
   {% endif %}
 
+  {% if current_user.can('src.vul_report_attack_check') %}
+    {% if vul_report.vul_status != '未审核' %}
+    <a href="{{ url_for('src.vul_report_attack_check', id=vul_report.id) }}"><button type="button" class="btn btn-danger btn-lg">提交攻击发现结果</button></a>
+    {% endif %}
+  {% endif %}
+
+  {% if current_user.can('src.vul_report_vul_cata') %}
+    {% if vul_report.vul_status != '未审核' %}
+    <a href="{{ url_for('src.vul_report_vul_cata', id=vul_report.id) }}"><button type="button" class="btn btn-danger btn-lg">提交漏洞层面</button></a>
+    {% endif %}
+  {% endif %}
+
   {% if current_user.is_authenticated %}
     <a href="{{ url_for('src.vul_report_log', id=vul_report.id) }}"><button type="button" class="btn btn-danger btn-lg">查看漏洞日志</button></a>
   {% endif %}

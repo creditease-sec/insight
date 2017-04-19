@@ -17,12 +17,13 @@ images = UploadSet('images', IMAGES)
 action_choices = [('',''), (u'录入',u'录入'), (u'提交',u'提交')]
 vul_type_level_choices = [('',''), (u'严重', u'严重'), (u'高危', u'高危'), (u'中危', u'中危'), (u'低危', u'低危')]
 source_choices = [('',''), (u'安全部', u'安全部'), (u'YISRC', u'YISRC'), (u'公众平台', u'公众平台'), (u'合作伙伴', u'合作伙伴')]
-
+vul_cata_choices = [('',''), (u'代码层面',u'代码层面'), (u'运维层面',u'运维层面')]
 
 
 class VulReportForm(Form):
 	title = StringField(u'漏洞标题')
 	related_asset = SelectField(u'关联资产')
+	related_vul_cata = SelectField(u'漏洞层面', choices=vul_cata_choices)
 	related_vul_type = SelectField(u'漏洞类型')
 	vul_self_rank = SelectField('Rank', choices=[(str(n),n) for n in range(0,21)])
 	vul_source = SelectField(u'漏洞来源', choices=source_choices)
@@ -40,6 +41,7 @@ class VulReportAdminForm(Form):
 	related_asset = StringField(u'关联资产')
 	related_asset_inout = StringField(u'内外网')
 	related_asset_status = StringField(u'资产状态')
+	related_vul_cata = StringField(u'漏洞层面')
 	related_vul_type = StringField(u'漏洞类型')
 	vul_self_rank = StringField(u'自评Rank')
 	vul_source = StringField(u'漏洞来源')
@@ -58,6 +60,7 @@ class VulReportAdminForm(Form):
 	start_date = StringField(u'通告日期')
 	end_date = StringField(u'结束日期')
 	fix_date = StringField(u'修复日期')
+	attack_check = StringField(u'攻击发现')
 	submit = SubmitField(u'提交')
 
 
@@ -71,6 +74,7 @@ class UploadImgForm(Form):
     submit = SubmitField('Submit')
 
 class VulReportReviewForm(Form):
+	related_vul_cata = SelectField(u'漏洞层面', choices=vul_cata_choices)
 	related_vul_type = SelectField(u'漏洞类型')
 	grant_rank = SelectField(u'Rank', choices=[(str(n),n) for n in range(0,21)])
 	start_date = DateField(u'通告日期')
@@ -93,4 +97,13 @@ class VulReportRetestResultForm(Form):
 	done_solution = TextAreaField(u'复测结果')
 	done_rank = SelectField(u'剩余Rank', choices=[(str(n),n) for n in range(0,21)])
 	end_date = DateField(u'限定修复日期')
+	submit = SubmitField(u'提交')
+
+
+class VulReportAttackForm(Form):
+	attack_check = SelectField(u'攻击发现', choices=[('',''), (u'是',u'是'), (u'否',u'否')])
+	submit = SubmitField(u'提交')
+
+class VulReportVulCataForm(Form):
+	related_vul_cata = SelectField(u'漏洞层面', choices=vul_cata_choices)
 	submit = SubmitField(u'提交')
