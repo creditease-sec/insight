@@ -1130,6 +1130,7 @@ def get_asset_code_score(domain,startDate,endDate,vul_cata=u'代码层面'):
 															VulReport.start_date<=endDate,
 														)
 
+
 #--------代码层面安全分的计算------
 
 #-----以前风险（完成漏洞）的计算---
@@ -1140,7 +1141,7 @@ def get_asset_code_score(domain,startDate,endDate,vul_cata=u'代码层面'):
 
 	vul_report_code_timeout = query.filter(VulReport.related_vul_cata==vul_cata,
     										VulReport.vul_status==u'完成',
-    										VulReport.fix_date>VulReport.end_date,
+    										endDate>VulReport.end_date,
     										)
 
 	vul_report_code_list = vul_report_code_yisrc.all() + vul_report_code_timeout.all()
@@ -1159,6 +1160,7 @@ def get_asset_code_score(domain,startDate,endDate,vul_cata=u'代码层面'):
 	else:
 		days_count = (endDate - startDate).days
 		asset_code_score_finish = 35 + days_count*0.3
+
 #---------------------
 #-------目前暴露风险的计算------
 	vul_report_code_yisrc_unfinish = query.filter(VulReport.related_vul_cata==vul_cata,
@@ -1168,7 +1170,7 @@ def get_asset_code_score(domain,startDate,endDate,vul_cata=u'代码层面'):
 
 	vul_report_code_timeout_unfinish = query.filter(VulReport.related_vul_cata==vul_cata,
     										VulReport.vul_status!=u'完成',
-    										VulReport.fix_date>VulReport.end_date,
+    										endDate>VulReport.end_date,
     										)
 
 	vul_report_code_list_unfinish = vul_report_code_yisrc_unfinish.all() + vul_report_code_timeout_unfinish.all()
@@ -1182,6 +1184,7 @@ def get_asset_code_score(domain,startDate,endDate,vul_cata=u'代码层面'):
 		asset_code_score_unfinish = 100 - max_risk_unfinish
 	else:
 		asset_code_score_unfinish = 100
+
 #----------目前暴露风险计算结束---------------
 #-----------比较两者安全值------
 
@@ -1306,7 +1309,7 @@ def get_asset_sec_score(domain,startDate,endDate):
 
 	vul_report_risk_timeout_unfinish = query.filter(VulReport.attack_check==u'否',
     										VulReport.vul_status!=u'完成',
-    										VulReport.fix_date>VulReport.end_date,
+    										endDate>VulReport.end_date,
     										)
 
 	vul_report_risk_list_unfinish = vul_report_risk_yisrc_unfinish.all() + vul_report_risk_timeout_unfinish.all()
