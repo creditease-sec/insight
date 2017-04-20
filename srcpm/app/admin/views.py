@@ -308,7 +308,6 @@ def assets_add():
 					department=form.department.data,
 					owner=form.owner.data,
 					sec_owner=form.sec_owner.data,
-					app_sec_score=float(form.app_sec_score.data),
 					status=form.status.data,
 					private_data=form.private_data.data,
 					count_private_data=form.count_private_data.data,
@@ -381,7 +380,6 @@ def assets_modify(id):
 		asset_get.department = form.department.data
 		asset_get.owner = form.owner.data
 		asset_get.sec_owner = form.sec_owner.data
-		asset_get.app_sec_score = float(form.app_sec_score.data)
 		asset_get.status = form.status.data
 		#asset_get.chkdate = form.chkdate.data
 		asset_get.private_data = form.private_data.data
@@ -404,7 +402,6 @@ def assets_modify(id):
 	form.department.data = asset_get.department
 	form.owner.data = asset_get.owner
 	form.sec_owner.data = asset_get.sec_owner
-	form.app_sec_score.data = asset_get.app_sec_score
 	form.status.data = asset_get.status
 	#form.chkdate.data = asset_get.chkdate
 	form.private_data.data = asset_get.private_data

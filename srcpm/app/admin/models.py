@@ -51,7 +51,6 @@ class Asset(db.Model):
 	department = db.Column(db.String(64))
 	owner = db.Column(db.String(600))
 	sec_owner = db.Column(db.String(600))
-	app_sec_score = db.Column(db.Float)
 	status = db.Column(db.String(64))
 	chkdate = db.Column(db.Date)
 	ps = db.Column(db.String(200))

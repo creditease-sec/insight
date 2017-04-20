@@ -32,7 +32,6 @@
          <th>部门</th>
          <th>负责人</th>
          <th>安全官</th>
-         <th>安全值</th>
          <th>状态</th>
          <th>检测时间</th>
       </tr>
@@ -56,11 +55,6 @@
          <td>{{ asset.owner }}</td>
          {% if asset.sec_owner %}
          <td>{{ asset.sec_owner }}</td>
-         {% else %}
-         <td></td>
-         {% endif %}
-         {% if asset.app_sec_score %}
-         <td>{{ asset.app_sec_score }}</td>
          {% else %}
          <td></td>
          {% endif %}

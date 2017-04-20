@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
-
+{% import "_macros.html" as macros %}
 
 {% block title %} 资产查看 {% endblock%}
 
@@ -9,7 +9,7 @@
 	<h1>资产查看</h1>
 </div>
 
-<form role="form" method='POST'>
+<form role="form" method='GET'>
 <div class="form-group">
    <label for="name"></label>
    <input type="text" class="form-control" name="opt" placeholder="请输入查询关键字">
@@ -30,7 +30,6 @@
          <th>业务线</th>
          <th>部门</th>
          <th>安全官</th>
-         <th>安全值</th>
          <th>状态</th>
          <th>检测时间</th>
          <th>安全分</th>
@@ -61,11 +60,6 @@
          {% else %}
          <td></td>
          {% endif %}
-         {% if asset.app_sec_score %}
-         <td>{{ asset.app_sec_score }}</td>
-         {% else %}
-         <td></td>
-         {% endif %}
          <td>{{ asset.status }}</td>
          {% if asset.chkdate %}
          <td>{{ moment(asset.chkdate).format('YYYY-MM-DD') }}</td>
@@ -78,5 +72,12 @@
    </tbody>
 </table
 </div>
+
+{% if pagination %}
+<div class="pagination">
+   {{ macros.pagination_widget(pagination, 'src.assets_read', opt) }}
+</div>
+{% endif %}
+
 {% endblock %}
 

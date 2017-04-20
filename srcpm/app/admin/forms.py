@@ -133,7 +133,6 @@ class AssetForm(Form):
 	department = SelectField(u'部门')
 	owner = StringField(u'负责人')
 	sec_owner = StringField(u'安全官')
-	app_sec_score = StringField(u'安全值')
 	status = SelectField(u'状态', choices=status_choices)
 	private_data = TextAreaField(u'敏感数据说明')
 	count_private_data = SelectField(u'敏感数据条数', choices=count_private_data_choice)

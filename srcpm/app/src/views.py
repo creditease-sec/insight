@@ -172,6 +172,7 @@ def upload_img():
 @src.route('/vul_report_list_read', methods=['GET', 'POST'])
 def vul_report_list_read():
 	opt = request.args.get('opt','all')
+
 	if current_user.is_authenticated:
 		if current_user.role_name==u'安全管理员' or current_user.role_name==u'超级管理员' or current_user.role_name==u'安全人员':
 			#query = VulReport.query
@@ -969,11 +970,16 @@ def vul_report_log(id):
 @permission_required('src.assets_read')
 def assets_read():
 	query = Asset.query
-	opt = request.form.get('opt','all')
+	opt = request.args.get('opt','all')
+	page = request.args.get('page', 1, type=int)
+
 	if opt=='all':
-		asset_result = query.order_by(-Asset.chkdate).all()
+		pagination = query.order_by(-Asset.chkdate).paginate(
+                        page, per_page=current_app.config['SRCPM_PER_PAGE'], error_out=False
+                        )
+		asset_result = pagination.items
 	else:
-		asset_result = query.filter(Asset.sysname.like("%" + opt + "%") 
+		pagination = query.filter(Asset.sysname.like("%" + opt + "%") 
 											| Asset.domain.like("%" + opt + "%")
 											| Asset.back_domain.like("%" + opt + "%")
 											| Asset.web_or_int.like("%" + opt + "%")
@@ -985,13 +991,19 @@ def assets_read():
 											| Asset.owner.like("%" + opt + "%")
 											| Asset.sec_owner.like("%" + opt + "%")
 											| Asset.status.like("%" + opt + "%")
-											).order_by(-Asset.chkdate)
+											).order_by(-Asset.chkdate).paginate(
+                        page, per_page=current_app.config['SRCPM_PER_PAGE'], error_out=False
+                        )
+		asset_result = pagination.items
 
 	asset_dict = {}
 	for asset in asset_result:
 		asset_sec_score = get_asset_sec_score(asset.domain, datetime.date(2017,1,1), datetime.date.today())
 		asset_dict.update({asset.domain: asset_sec_score})
-	return render_template('src/assets_read.html', asset_result=asset_result, asset_dict=asset_dict)
+	return render_template('src/assets_read.html', asset_result=asset_result,
+									pagination=pagination,
+									asset_dict=asset_dict,
+									opt=opt,)
 
 
 
@@ -1012,7 +1024,6 @@ def assets_add():
 					department=form.department.data,
 					owner=form.owner.data,
 					sec_owner=form.sec_owner.data,
-					app_sec_score=float(form.app_sec_score.data),
 					status=form.status.data,
 					private_data=form.private_data.data,
 					count_private_data=form.count_private_data.data,
@@ -1052,7 +1063,6 @@ def assets_modify(id):
 		asset_get.department = form.department.data
 		asset_get.owner = form.owner.data
 		asset_get.sec_owner = form.sec_owner.data
-		asset_get.app_sec_score = float(form.app_sec_score.data)
 		asset_get.status = form.status.data
 		#asset_get.chkdate = form.chkdate.data
 		asset_get.private_data = form.private_data.data
@@ -1075,7 +1085,6 @@ def assets_modify(id):
 	form.department.data = asset_get.department
 	form.owner.data = asset_get.owner
 	form.sec_owner.data = asset_get.sec_owner
-	form.app_sec_score.data = asset_get.app_sec_score
 	form.status.data = asset_get.status
 	#form.chkdate.data = asset_get.chkdate
 	form.private_data.data = asset_get.private_data

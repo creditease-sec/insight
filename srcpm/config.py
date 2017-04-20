@@ -25,6 +25,7 @@ class Config:
     REMEMBER_COOKIE_NAME = 'srcpm_session'
     #COOKIE_NAME = 'srcpm_session'
     #COOKIE_PATH = '/srcpm'
+    SRCPM_PER_PAGE = 10
 
 
     @staticmethod
