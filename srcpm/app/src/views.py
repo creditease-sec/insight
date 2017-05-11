@@ -1155,6 +1155,10 @@ def get_asset_code_score(domain,startDate,endDate,vul_cata=u'代码层面'):
 
 	vul_report_code_list = vul_report_code_yisrc.all() + vul_report_code_timeout.all()
 
+	#安全基准分值
+	days_count = (endDate - startDate).days
+	asset_code_score_finish = 35 + days_count*0.3
+
 	if len(vul_report_code_list) >= 1:
 
 		max_risk = 0
@@ -1165,10 +1169,13 @@ def get_asset_code_score(domain,startDate,endDate,vul_cata=u'代码层面'):
 
 		days_count = (endDate - max_risk_vul_report.fix_date).days
 
-		asset_code_score_finish = 100 - max_risk + days_count*0.3
-	else:
-		days_count = (endDate - startDate).days
-		asset_code_score_finish = 35 + days_count*0.3
+		asset_code_score_finish_now = 100 - max_risk + days_count*0.3
+
+		if asset_code_score_finish_now < asset_code_score_finish:
+			asset_code_score_finish = asset_code_score_finish_now
+
+	#else:
+	#	asset_code_score_finish = asset_code_score_init
 
 #---------------------
 #-------目前暴露风险的计算------
@@ -1222,6 +1229,10 @@ def get_asset_attack_score(domain,startDate,endDate):
     										VulReport.vul_status==u'完成',
     										).all()
 
+	#安全基准分
+	days_count = (endDate - startDate).days
+	asset_attack_score_finish = 35 + days_count*0.3
+
 
 	if len(vul_report_attack_list) >= 1:
 
@@ -1233,10 +1244,14 @@ def get_asset_attack_score(domain,startDate,endDate):
 
 		days_count = (endDate - max_risk_vul_report.fix_date).days
 
-		asset_attack_score_finish = 100 - max_risk + days_count*0.3
-	else:
-		days_count = (endDate - startDate).days
-		asset_attack_score_finish = 35 + days_count*0.3
+		asset_attack_score_finish_now = 100 - max_risk + days_count*0.3
+
+		if asset_attack_score_finish_now < asset_attack_score_finish:
+			asset_attack_score_finish = asset_attack_score_finish_now
+	#else:
+	#	days_count = (endDate - startDate).days
+	#	asset_attack_score_finish = 35 + days_count*0.3
+
 #---------------------
 #-------目前暴露风险的计算------
 	vul_report_attack_list_unfinish = query.filter(VulReport.attack_check==u'否',
@@ -1294,6 +1309,9 @@ def get_asset_sec_score(domain,startDate,endDate):
 
 	vul_report_risk_list = vul_report_risk_yisrc.all() + vul_report_risk_timeout.all()
 
+	#安全基准分
+	days_count = (endDate - startDate).days
+	asset_risk_score_finish = 35 + days_count*0.3
 
 	if len(vul_report_risk_list) >= 1:
 
@@ -1305,10 +1323,13 @@ def get_asset_sec_score(domain,startDate,endDate):
 
 		days_count = (endDate - max_risk_vul_report.fix_date).days
 
-		asset_risk_score_finish = 100 - max_risk + days_count*0.3
-	else:
-		days_count = (endDate - startDate).days
-		asset_risk_score_finish = 35 + days_count*0.3
+		asset_risk_score_finish_now = 100 - max_risk + days_count*0.3
+
+		if asset_risk_score_finish_now < asset_risk_score_finish:
+			asset_risk_score_finish = asset_risk_score_finish_now
+	#else:
+	#	days_count = (endDate - startDate).days
+	#	asset_risk_score_finish = 35 + days_count*0.3
 #---------------------
 #-------目前暴露风险的计算------
 	vul_report_risk_yisrc_unfinish = query.filter(VulReport.attack_check==u'否',
