@@ -16,9 +16,8 @@ class Config:
                 'chenlinshi@creditease.cn',
                 'jianchengren@creditease.cn',
                 'zhipengcheng@creditease.cn',
-                'shuoyupan@creditease.cn',
-                'zixiaozhao@creditease.cn',
                 'yanggao63@creditease.cn',
+                'zhaoyunxue@creditease.cn',
             ]
     #PERMANENT_SESSION_LIFETIME = 10
     REMEMBER_COOKIE_PATH = '/srcpm'
