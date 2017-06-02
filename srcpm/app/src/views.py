@@ -218,6 +218,33 @@ def vul_report_list_read():
 	return render_template('src/vul_report_list_read.html', vul_report_list_result=vul_report_list_result)
 
 
+
+@src.route('/vul_report_log_read', methods=['GET',])
+@login_required
+def vul_report_log_read():
+	opt = request.args.get('opt','all')
+	page = request.args.get('page', 1, type=int)
+
+	pagination = VulLog.query.order_by(-VulLog.time).paginate(
+                        page, per_page=current_app.config['SRCPM_PER_PAGE'], error_out=False
+                        )
+	vul_report_log_result = pagination.items
+
+	dict_vul_title = {}
+	for vul_log in vul_report_log_result:
+		vul_report_title = VulReport.query.get(vul_log.related_vul_id).title
+		dict_vul_title.update({vul_log.related_vul_id : vul_report_title})
+
+	
+	return render_template('src/vul_report_log_read.html', 
+							vul_report_log_result=vul_report_log_result, 
+							pagination=pagination,
+							opt=opt,
+							dict_vul_title=dict_vul_title,
+							)
+
+
+
 #-----------------------------------分用户漏洞管理---------------------------------------
 
 #未审核漏洞列表
