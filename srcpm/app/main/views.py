@@ -9,6 +9,11 @@ from datetime import datetime
 from datetime import date
 import json
 from ..decorators import permission_required
+from ..src.views import get_asset_sec_score
+from ..src.views import get_asset_code_score
+from ..src.views import get_asset_attack_score
+
+
 
 
 @main.route('/')
@@ -401,3 +406,123 @@ def compute_retest_time(author, vul_report_list_result):
         averge_time = 0
 
     return author, count, max_time, min_time, averge_time
+
+
+
+@main.route('/asset_sec_score_stat', methods=['GET','POST'])
+@main.route('/asset_sec_score_stat/<start_date>/<end_date>', methods=['GET','POST'])
+@permission_required('main.asset_sec_score_stat')
+def asset_sec_score_stat(start_date=0, end_date=0):
+    #opt = request.args.get('opt','all')
+    try:
+        startDate = date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
+        endDate = date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+    except:
+        startDate = date(2017,1,1)
+        endDate = date.today()
+
+    asset_list = Asset.query.filter(
+                                Asset.sec_owner!='',
+                                Asset.business_cata!='',
+                            ).all()
+
+    #print '--------------------len(asset_list)-----------'
+    asset_count = len(asset_list)
+    #print len(asset_list)
+
+
+    today = endDate
+    list_date = []
+    ing_date = getFirstDayOfMonth(today)
+    list_date.append(ing_date.strftime('%Y%m%d'))
+
+    for i in range(5):
+        ing_date = getFirstDayOfLastMonth(ing_date)
+        list_date.append(ing_date.strftime('%Y%m%d'))
+
+    list_date.reverse()
+    #print '----list_date------'
+    #print list_date
+
+    data_sec_score_all = []
+    data_code_score_all = []
+    data_ops_score_all = []
+    data_attack_score_all = []
+
+    for i_date in list_date:
+        endDate = date(int(i_date[0:4]), int(i_date[4:6]), int(i_date[6:8]))
+        (s,c,o,a) = get_asset_score_all(asset_list,startDate,endDate)
+        data_sec_score_all.append((str(i_date[4:6])+u'月',s))
+        data_code_score_all.append((str(i_date[4:6])+u'月',c))
+        data_ops_score_all.append((str(i_date[4:6])+u'月',o))
+        data_attack_score_all.append((str(i_date[4:6])+u'月',a))
+
+    #print '--------------------'
+    #print data_sec_score_all
+    #print data_code_score_all
+    #print data_ops_score_all
+    #print data_attack_score_all
+
+
+
+
+    #asset_code_score = get_asset_code_score(opt,startDate,endDate,u'代码层面')
+    
+    return render_template('asset_sec_score_stat.html',
+                            asset_count = asset_count, 
+                            data_sec_score_all=json.dumps(data_sec_score_all),
+                            data_code_score_all=json.dumps(data_code_score_all),
+                            data_ops_score_all=json.dumps(data_ops_score_all),
+                            data_attack_score_all=json.dumps(data_attack_score_all),
+                            )
+
+
+def get_asset_score_all(asset_list,startDate,endDate):
+    asset_sec_score_all = 0
+    asset_code_score_all = 0
+    asset_ops_score_all = 0
+    asset_attack_score_all = 0
+    for asset in asset_list:
+        asset_sec_score = get_asset_sec_score(asset.domain,startDate,endDate)
+        asset_sec_score_all += asset_sec_score
+
+        asset_code_score = get_asset_code_score(asset.domain,startDate,endDate,u'代码层面')
+        asset_code_score_all += asset_code_score
+
+        asset_ops_score = get_asset_code_score(asset.domain,startDate,endDate,u'运维层面')
+        asset_ops_score_all += asset_ops_score
+
+        asset_attack_score = get_asset_attack_score(asset.domain,startDate,endDate)
+        asset_attack_score_all += asset_attack_score
+
+    return (round(asset_sec_score_all,2),
+            round(asset_code_score_all,2),
+            round(asset_ops_score,2),
+            round(asset_attack_score_all,2),
+            )
+
+
+def getFirstDayOfLastMonth(v_date):
+    d = v_date
+    #c = calendar.Calendar()
+     
+    year = d.year
+    month = d.month
+     
+    if month == 1 :
+        month = 12
+        year -= 1
+    else :
+        month -= 1
+    return datetime(year,month,1)
+
+def getFirstDayOfMonth(v_date):
+    d = v_date
+    #c = calendar.Calendar()
+     
+    year = d.year
+    month = d.month
+
+    return datetime(year,month,1)
+
+

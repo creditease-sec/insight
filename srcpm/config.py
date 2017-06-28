@@ -15,7 +15,6 @@ class Config:
                 'shengliu1@creditease.cn',
                 'chenlinshi@creditease.cn',
                 'jianchengren@creditease.cn',
-                'zhipengcheng@creditease.cn',
                 'yanggao63@creditease.cn',
                 'zhaoyunxue@creditease.cn',
             ]
