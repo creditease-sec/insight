@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-from flask import render_template
+from flask import render_template, current_app
 from . import main
 import chartkick
 from .. import db
@@ -12,7 +12,9 @@ from ..decorators import permission_required
 from ..src.views import get_asset_sec_score
 from ..src.views import get_asset_code_score
 from ..src.views import get_asset_attack_score
-
+import os
+#from threading import Thread
+#import time
 
 
 
@@ -451,15 +453,34 @@ def asset_sec_score_stat(start_date=0, end_date=0):
 
     for i_date in list_date:
         endDate = date(int(i_date[0:4]), int(i_date[4:6]), int(i_date[6:8]))
-        (s,c,o,a) = get_asset_score_all(asset_list,startDate,endDate)
-        data_sec_score_all.append((str(i_date[4:6])+u'月',s))
-        data_code_score_all.append((str(i_date[4:6])+u'月',c))
-        data_ops_score_all.append((str(i_date[4:6])+u'月',o))
-        data_attack_score_all.append((str(i_date[4:6])+u'月',a))
+        file_exsit = os.path.isfile(endDate.strftime('%Y%m%d'))
+        #print '-------file_exsit-------'
+        if file_exsit:
+            with open(endDate.strftime('%Y%m%d')) as f:
+                list1 = f.read().split(',')
+                (s,c,o,a) = (float(list1[0]),float(list1[1]),float(list1[2]),float(list1[3]))
+                print '-----s,c,o,a------'
+                print str(i_date[4:6])+u'月'
+                print s,c,o,a
+            data_sec_score_all.append((str(i_date[4:6])+u'月',s))
+            data_code_score_all.append((str(i_date[4:6])+u'月',c))
+            data_ops_score_all.append((str(i_date[4:6])+u'月',o))
+            data_attack_score_all.append((str(i_date[4:6])+u'月',a))
 
-    #print '--------------------'
-    #print data_sec_score_all
-    #print data_code_score_all
+        else:
+            '''
+            app = current_app._get_current_object()
+            thr = Thread(target=async_get_asset_score_all, args=[app,asset_list,startDate,endDate])
+            thr.start()
+            return u'计算中'
+            '''
+            get_asset_score_all(asset_list,startDate,endDate)
+        #(s,c,o,a) = get_asset_score_all(asset_list,startDate,endDate)
+        
+
+    print '--------------------'
+    print data_sec_score_all
+    print data_code_score_all
     #print data_ops_score_all
     #print data_attack_score_all
 
@@ -475,7 +496,11 @@ def asset_sec_score_stat(start_date=0, end_date=0):
                             data_ops_score_all=json.dumps(data_ops_score_all),
                             data_attack_score_all=json.dumps(data_attack_score_all),
                             )
-
+'''
+def async_get_asset_score_all(app,asset_list,startDate,endDate):
+    with app.app_context():
+        get_asset_score_all(asset_list,startDate,endDate)
+'''
 
 def get_asset_score_all(asset_list,startDate,endDate):
     asset_sec_score_all = 0
@@ -495,11 +520,20 @@ def get_asset_score_all(asset_list,startDate,endDate):
         asset_attack_score = get_asset_attack_score(asset.domain,startDate,endDate)
         asset_attack_score_all += asset_attack_score
 
+    with open(endDate.strftime('%Y%m%d'),'w') as f:
+        f.write(
+                str(round(asset_sec_score_all,2))
+                +','+str(round(asset_code_score_all,2))
+                +','+str(round(asset_ops_score_all,2))
+                +','+str(round(asset_attack_score_all,2))
+            )
+'''
     return (round(asset_sec_score_all,2),
             round(asset_code_score_all,2),
             round(asset_ops_score,2),
             round(asset_attack_score_all,2),
             )
+'''
 
 
 def getFirstDayOfLastMonth(v_date):
