@@ -15,6 +15,7 @@ from ..src.views import get_asset_attack_score
 import os
 #from threading import Thread
 #import time
+import calendar
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -459,6 +460,9 @@ def asset_sec_score_stat(start_date=0, end_date=0):
     data_ops_score_all = []
     data_attack_score_all = []
 
+    data_sec_score_add_month = []
+
+    last_month = ()
     for i_date in list_date:
         endDate = date(int(i_date[0:4]), int(i_date[4:6]), int(i_date[6:8]))
         file_exsit = os.path.isfile('tmp/all_'+endDate.strftime('%Y%m%d'))
@@ -475,6 +479,16 @@ def asset_sec_score_stat(start_date=0, end_date=0):
             data_ops_score_all.append((str(i_date[4:6])+u'月',o))
             data_attack_score_all.append((str(i_date[4:6])+u'月',a))
 
+            now_month = (s,c,o,a)
+
+            if len(last_month):
+                year = int(i_date[0:4])
+                month = 12 if int(i_date[4:6])==1 else int(i_date[4:6])-1
+                days = calendar.monthrange(year,month)[1]
+                full_score = 0.3*days
+                data_sec_score_add_month.append((str(i_date[4:6])+u'月',round((now_month[0] - last_month[0])/full_score*100,2)))
+            last_month = now_month
+
         else:
             '''
             app = current_app._get_current_object()
@@ -484,13 +498,14 @@ def asset_sec_score_stat(start_date=0, end_date=0):
             '''
             get_asset_score_all(asset_list,startDate,endDate)
         #(s,c,o,a) = get_asset_score_all(asset_list,startDate,endDate)
-        
+
 
     #print '--------------------'
     #print data_sec_score_all
     #print data_code_score_all
     #print data_ops_score_all
     #print data_attack_score_all
+    #print data_sec_score_add_month
 
 
 
@@ -523,6 +538,7 @@ def asset_sec_score_stat(start_date=0, end_date=0):
                             data_ops_score_all=json.dumps(data_ops_score_all),
                             data_attack_score_all=json.dumps(data_attack_score_all),
                             data_domain_score=json.dumps(data_domain_score),
+                            data_sec_score_add_month=json.dumps(data_sec_score_add_month),
                             )
 '''
 def async_get_asset_score_all(app,asset_list,startDate,endDate):
