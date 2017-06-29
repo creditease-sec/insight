@@ -1,3 +1,5 @@
+tmp/
+tmp/*
 20*
 *.pyc
 */*.pyc

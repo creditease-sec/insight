@@ -15,6 +15,9 @@ from ..src.views import get_asset_attack_score
 import os
 #from threading import Thread
 #import time
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 
@@ -433,10 +436,15 @@ def asset_sec_score_stat(start_date=0, end_date=0):
     #print len(asset_list)
 
 
+    #后面计算每个应用的安全能力分使用
+    date_one = getFirstDayOfMonth(endDate)
+
+
     today = endDate
     list_date = []
     ing_date = getFirstDayOfMonth(today)
     list_date.append(ing_date.strftime('%Y%m%d'))
+
 
     for i in range(5):
         ing_date = getFirstDayOfLastMonth(ing_date)
@@ -453,15 +461,15 @@ def asset_sec_score_stat(start_date=0, end_date=0):
 
     for i_date in list_date:
         endDate = date(int(i_date[0:4]), int(i_date[4:6]), int(i_date[6:8]))
-        file_exsit = os.path.isfile(endDate.strftime('%Y%m%d'))
+        file_exsit = os.path.isfile('tmp/all_'+endDate.strftime('%Y%m%d'))
         #print '-------file_exsit-------'
         if file_exsit:
-            with open(endDate.strftime('%Y%m%d')) as f:
+            with open('tmp/all_'+endDate.strftime('%Y%m%d')) as f:
                 list1 = f.read().split(',')
                 (s,c,o,a) = (float(list1[0]),float(list1[1]),float(list1[2]),float(list1[3]))
-                print '-----s,c,o,a------'
-                print str(i_date[4:6])+u'月'
-                print s,c,o,a
+                #print '-----s,c,o,a------'
+                #print str(i_date[4:6])+u'月'
+                #print s,c,o,a
             data_sec_score_all.append((str(i_date[4:6])+u'月',s))
             data_code_score_all.append((str(i_date[4:6])+u'月',c))
             data_ops_score_all.append((str(i_date[4:6])+u'月',o))
@@ -478,9 +486,9 @@ def asset_sec_score_stat(start_date=0, end_date=0):
         #(s,c,o,a) = get_asset_score_all(asset_list,startDate,endDate)
         
 
-    print '--------------------'
-    print data_sec_score_all
-    print data_code_score_all
+    #print '--------------------'
+    #print data_sec_score_all
+    #print data_code_score_all
     #print data_ops_score_all
     #print data_attack_score_all
 
@@ -488,6 +496,25 @@ def asset_sec_score_stat(start_date=0, end_date=0):
 
 
     #asset_code_score = get_asset_code_score(opt,startDate,endDate,u'代码层面')
+
+
+
+    #-------------------计算每个应用的安全能力分排名 start----------------------
+    data_domain_score = {}
+    file_domain_date_one = os.path.isfile('tmp/domain_'+date_one.strftime('%Y%m%d'))
+    if file_domain_date_one:
+        with open('tmp/domain_'+date_one.strftime('%Y%m%d')) as f:
+            list_domain_score = f.readlines()
+        for domain_score in list_domain_score:
+            #print domain_score
+            domain = domain_score.split(',')[0]
+            sec_score = domain_score.split(',')[1]
+            data_domain_score.update({domain:float(sec_score)})
+
+
+    data_domain_score = sorted(data_domain_score.iteritems(), key=lambda d:d[1], reverse = False)
+
+#-------------------计算每个应用的安全能力分排名 end------------------------
     
     return render_template('asset_sec_score_stat.html',
                             asset_count = asset_count, 
@@ -495,6 +522,7 @@ def asset_sec_score_stat(start_date=0, end_date=0):
                             data_code_score_all=json.dumps(data_code_score_all),
                             data_ops_score_all=json.dumps(data_ops_score_all),
                             data_attack_score_all=json.dumps(data_attack_score_all),
+                            data_domain_score=json.dumps(data_domain_score),
                             )
 '''
 def async_get_asset_score_all(app,asset_list,startDate,endDate):
@@ -503,29 +531,42 @@ def async_get_asset_score_all(app,asset_list,startDate,endDate):
 '''
 
 def get_asset_score_all(asset_list,startDate,endDate):
+    asset_count = len(asset_list)
     asset_sec_score_all = 0
     asset_code_score_all = 0
     asset_ops_score_all = 0
     asset_attack_score_all = 0
+
+    if not os.path.exists('tmp'):
+        os.mkdir('tmp')
+    f_domain_score = open('tmp/domain_'+endDate.strftime('%Y%m%d'),'w')
     for asset in asset_list:
+        f_domain_score.write(asset.domain)
+
         asset_sec_score = get_asset_sec_score(asset.domain,startDate,endDate)
         asset_sec_score_all += asset_sec_score
+        f_domain_score.write(','+str(asset_sec_score))
+
 
         asset_code_score = get_asset_code_score(asset.domain,startDate,endDate,u'代码层面')
         asset_code_score_all += asset_code_score
+        f_domain_score.write(','+str(asset_code_score))
 
         asset_ops_score = get_asset_code_score(asset.domain,startDate,endDate,u'运维层面')
         asset_ops_score_all += asset_ops_score
+        f_domain_score.write(','+str(asset_ops_score))
 
         asset_attack_score = get_asset_attack_score(asset.domain,startDate,endDate)
         asset_attack_score_all += asset_attack_score
+        f_domain_score.write(','+str(asset_attack_score)+'\n')
+    f_domain_score.close()
 
-    with open(endDate.strftime('%Y%m%d'),'w') as f:
+    with open('tmp/all_'+endDate.strftime('%Y%m%d'),'w') as f:
         f.write(
-                str(round(asset_sec_score_all,2))
-                +','+str(round(asset_code_score_all,2))
-                +','+str(round(asset_ops_score_all,2))
-                +','+str(round(asset_attack_score_all,2))
+                str(round(asset_sec_score_all/asset_count,2))
+                +','+str(round(asset_code_score_all/asset_count,2))
+                +','+str(round(asset_ops_score_all/asset_count,2))
+                +','+str(round(asset_attack_score_all/asset_count,2))
             )
 '''
     return (round(asset_sec_score_all,2),
