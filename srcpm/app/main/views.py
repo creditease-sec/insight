@@ -527,7 +527,7 @@ def asset_sec_score_stat(start_date=0, end_date=0):
             data_domain_score.update({domain:float(sec_score)})
 
 
-    data_domain_score = sorted(data_domain_score.iteritems(), key=lambda d:d[1], reverse = False)
+    data_domain_score = sorted(data_domain_score.iteritems(), key=lambda d:d[1], reverse = False)[:30]
 
 #-------------------计算每个应用的安全能力分排名 end------------------------
     
@@ -617,3 +617,54 @@ def getFirstDayOfMonth(v_date):
     return datetime(year,month,1)
 
 
+
+@main.route('/month_every_asset_score', methods=['GET','POST'])
+@main.route('/month_every_asset_score/<end_date>', methods=['GET','POST'])
+@permission_required('main.month_every_asset_score')
+def month_every_asset_score(end_date=0):
+    #opt = request.args.get('opt','all')
+    try:
+        endDate = date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+    except:
+        endDate = date.today()
+
+    now_month = getFirstDayOfMonth(endDate)
+    last_month = getFirstDayOfLastMonth(endDate)
+
+
+    #-------------------计算每个应用的安全能力增长分排名 start----------------------
+    data_month_domain_score = {}
+    data_now_month_score = {}
+    data_last_month_score  = {}
+    file_domain_now_month = os.path.isfile('tmp/domain_'+now_month.strftime('%Y%m%d'))
+    file_domain_last_month = os.path.isfile('tmp/domain_'+last_month.strftime('%Y%m%d'))
+    if file_domain_now_month and file_domain_last_month:
+        with open('tmp/domain_'+now_month.strftime('%Y%m%d')) as f:
+            list_now_month_score = f.readlines()
+        for now_month_score in list_now_month_score:
+            #print domain_score
+            domain = now_month_score.split(',')[0]
+            sec_score = now_month_score.split(',')[1]
+            data_now_month_score.update({domain:float(sec_score)})
+
+        with open('tmp/domain_'+last_month.strftime('%Y%m%d')) as f:
+            list_last_month_score = f.readlines()
+        for last_month_score in list_last_month_score:
+            #print domain_score
+            domain = last_month_score.split(',')[0]
+            sec_score = last_month_score.split(',')[1]
+            data_last_month_score.update({domain:float(sec_score)})
+
+        for domain,score in data_now_month_score.items():
+            data_month_domain_score.update({ domain: round(score-data_last_month_score[domain],2) })
+    else:
+        data_month_domain_score = {}
+
+
+    data_month_domain_score = sorted(data_month_domain_score.iteritems(), key=lambda d:d[1], reverse = False)
+    data_month_domain_score = data_month_domain_score[:30]
+
+    return render_template('month_every_asset_score.html',
+                            data_month_domain_score=json.dumps(data_month_domain_score),
+                            month = last_month.strftime('%Y%m%d')+'--'+now_month.strftime('%Y%m%d'),
+                            )

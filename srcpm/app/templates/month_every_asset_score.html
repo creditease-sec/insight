@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block head %}
+{{ super() }}
+<script src="{{ url_for('main.static', filename='highcharts.js') }}"></script>
+<script src="{{ url_for('main.static', filename='chartkick.js') }}"></script>
+{% endblock %}
+
+
+{% block title %} 每月应用安全能力仪表盘 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>每月应用安全能力仪表盘</h1>
+    <h3> {{ month }}</h3>
+</div>
+
+
+
+    <div style="width:90%">
+    <h3>应用安全能力每月排名</h3>
+                <div>
+                 <!--   {% bar_chart data_vul_type %}  -->
+                {% line_chart data_month_domain_score with style="width:200px; height:20px;" %}
+                </div>
+    </div>
+
+
+
+{% endblock %}
+

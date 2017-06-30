@@ -56,6 +56,7 @@ perm_choices = [('admin.index',u'管理后台－首页'),        #管理后台�
 				('main.index_count',u'MAIN-漏洞报告统计'),		#MAIN-漏洞报告统计
 				('main.index_stats_time',u'MAIN-漏洞处理时间统计'),		#MAIN-漏洞报告统计
 				('main.asset_sec_score_stat',u'MAIN-应用安全能力仪表盘'),		#MAIN-应用安全能力仪表盘
+				('main.month_every_asset_score',u'MAIN-每月应用安全能力'),		#MAIN-每月应用安全能力仪表盘
                 ('drops.manager',u'SRC－知识库管理'),        #SRC－知识库管理
 				]
 
