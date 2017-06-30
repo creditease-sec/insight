@@ -28,6 +28,35 @@
     </div>
 
 
+    <div style="width:90%">
+    <h3>代码安全能力每月排名</h3>
+                <div>
+                 <!--   {% bar_chart data_vul_type %}  -->
+                {% line_chart data_month_code_score with style="width:200px; height:20px;" %}
+                </div>
+    </div>
+
+
+
+    <div style="width:90%">
+    <h3>运维安全能力每月排名</h3>
+                <div>
+                 <!--   {% bar_chart data_vul_type %}  -->
+                {% line_chart data_month_ops_score with style="width:200px; height:20px;" %}
+                </div>
+    </div>
+
+
+
+    <div style="width:90%">
+    <h3>攻击响应能力每月排名</h3>
+                <div>
+                 <!--   {% bar_chart data_vul_type %}  -->
+                {% line_chart data_month_attack_score with style="width:200px; height:20px;" %}
+                </div>
+    </div>
+
+
 
 {% endblock %}
 

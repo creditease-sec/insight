@@ -634,6 +634,10 @@ def month_every_asset_score(end_date=0):
 
     #-------------------计算每个应用的安全能力增长分排名 start----------------------
     data_month_domain_score = {}
+    data_month_code_score = {}
+    data_month_ops_score = {}
+    data_month_attack_score = {}
+
     data_now_month_score = {}
     data_last_month_score  = {}
     file_domain_now_month = os.path.isfile('tmp/domain_'+now_month.strftime('%Y%m%d'))
@@ -645,7 +649,10 @@ def month_every_asset_score(end_date=0):
             #print domain_score
             domain = now_month_score.split(',')[0]
             sec_score = now_month_score.split(',')[1]
-            data_now_month_score.update({domain:float(sec_score)})
+            code_score = now_month_score.split(',')[2]
+            ops_score = now_month_score.split(',')[3]
+            attack_score = now_month_score.split(',')[4]
+            data_now_month_score.update({domain:(float(sec_score),float(code_score),float(ops_score),float(attack_score))})
 
         with open('tmp/domain_'+last_month.strftime('%Y%m%d')) as f:
             list_last_month_score = f.readlines()
@@ -653,18 +660,44 @@ def month_every_asset_score(end_date=0):
             #print domain_score
             domain = last_month_score.split(',')[0]
             sec_score = last_month_score.split(',')[1]
-            data_last_month_score.update({domain:float(sec_score)})
+            code_score = last_month_score.split(',')[2]
+            ops_score = last_month_score.split(',')[3]
+            attack_score = last_month_score.split(',')[4]
+            data_last_month_score.update({domain:(float(sec_score),float(code_score),float(ops_score),float(attack_score))})
 
+        year = last_month.year
+        month = last_month.month
+        days = calendar.monthrange(year,month)[1]
+        full_score = 0.3*days
         for domain,score in data_now_month_score.items():
-            data_month_domain_score.update({ domain: round(score-data_last_month_score[domain],2) })
+            data_month_domain_score.update({ domain: round((score[0]-data_last_month_score[domain][0])/full_score*100,2) })
+            data_month_code_score.update({ domain: round((score[1]-data_last_month_score[domain][1])/full_score*100,2) })
+            data_month_ops_score.update({ domain: round((score[2]-data_last_month_score[domain][2])/full_score*100,2) })
+            data_month_attack_score.update({ domain: round((score[3]-data_last_month_score[domain][3])/full_score*100,2) })
     else:
         data_month_domain_score = {}
+        data_month_code_score = {}
+        data_month_ops_score = {}
+        data_month_attack_score = {}
 
 
     data_month_domain_score = sorted(data_month_domain_score.iteritems(), key=lambda d:d[1], reverse = False)
     data_month_domain_score = data_month_domain_score[:30]
 
+    data_month_code_score = sorted(data_month_code_score.iteritems(), key=lambda d:d[1], reverse = False)
+    data_month_code_score = data_month_code_score[:30]
+
+    data_month_ops_score = sorted(data_month_ops_score.iteritems(), key=lambda d:d[1], reverse = False)
+    data_month_ops_score = data_month_ops_score[:30]
+
+    data_month_attack_score = sorted(data_month_attack_score.iteritems(), key=lambda d:d[1], reverse = False)
+    data_month_attack_score = data_month_attack_score[:30]
+
+
     return render_template('month_every_asset_score.html',
                             data_month_domain_score=json.dumps(data_month_domain_score),
+                            data_month_code_score=json.dumps(data_month_code_score),
+                            data_month_ops_score=json.dumps(data_month_ops_score),
+                            data_month_attack_score=json.dumps(data_month_attack_score),
                             month = last_month.strftime('%Y%m%d')+'--'+now_month.strftime('%Y%m%d'),
                             )

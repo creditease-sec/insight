@@ -27,9 +27,28 @@
 		</div>
 
 		<div class="navbar-collapse collapse">
+            <!--
 			<ul class="nav navbar-nav">
 				<li><a href="{{ url_for('main.index') }}">主页</a></li>
 			</ul>
+            -->
+
+           
+            <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            仪表盘 <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('main.index') }}">漏洞数据分析</a></li>
+                            <li><a href="{{ url_for('main.asset_sec_score_stat') }}">应用安全能力分析</a></li>
+                            
+                            <li><a href="{{ url_for('main.month_every_asset_score') }}">每月应用安全能力分析</a></li>
+                        </ul>
+                    </li>
+            </ul>
+
+
 
 
             {% if current_user.can('main.index_count') %}
