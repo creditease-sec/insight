@@ -1520,3 +1520,39 @@ def get_asset_sec_score(domain,startDate,endDate):
 
 
 
+
+
+#-------初始化创建时间，更新时间-------
+'''
+@src.route('/asset_date_update', methods=['GET','POST'])
+def asset_date_update():
+	vul_list = VulReport.query.all()
+
+	#init_date = datetime.date(2017,1,1)
+	for vul in vul_list:
+		asset = Asset.query.filter_by(domain=vul.related_asset).first()
+		if asset:
+			#asset.create_date = datetime.date(2017,7,1)
+			if asset.update_date:
+				if (vul.start_date - asset.update_date).days > 0:
+					asset.update_date = vul.start_date
+			else:
+				pass
+		else:
+			print 'asset is not exsit!'
+			print vul.related_asset,vul.title
+
+	asset_list = Asset.query.all()
+	for asset in asset_list:
+		if asset.chkdate:
+			if asset.update_date:
+				if (asset.chkdate - asset.update_date).days > 0:
+					asset.update_date = asset.chkdate
+					print 'update chkdate> update_date'
+					print asset.domain
+			else:
+				asset.update_date = asset.chkdate
+				print 'update chkdate ,no update_date'
+
+	return 'OK'
+'''

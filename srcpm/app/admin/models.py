@@ -53,6 +53,8 @@ class Asset(db.Model):
 	sec_owner = db.Column(db.String(600))
 	status = db.Column(db.String(64))
 	chkdate = db.Column(db.Date)
+	create_date = db.Column(db.Date)
+	update_date = db.Column(db.Date)
 	ps = db.Column(db.String(200))
 	private_data = db.Column(db.Text)
 	count_private_data = db.Column(db.String(100))
