@@ -515,11 +515,20 @@ def asset_sec_score_stat(start_date=0, end_date=0):
 
 
     #-------------------计算每个应用的安全能力分排名 start----------------------
+    data_score_lv_count = {
+                            u'一级安全能力' : 0,
+                            u'二级安全能力' : 0,
+                            u'三级安全能力' : 0,
+                            u'四级安全能力' : 0,
+                            u'五级安全能力' : 0,
+                        }
+
     data_domain_score = {}
     file_domain_date_one = os.path.isfile('tmp/domain_'+date_one.strftime('%Y%m%d'))
     if file_domain_date_one:
         with open('tmp/domain_'+date_one.strftime('%Y%m%d')) as f:
             list_domain_score = f.readlines()
+        
         for domain_score in list_domain_score:
             #print domain_score
             domain = domain_score.split(',')[0]
@@ -527,18 +536,32 @@ def asset_sec_score_stat(start_date=0, end_date=0):
             data_domain_score.update({domain:float(sec_score)})
 
 
+            if float(sec_score)<=25:
+                data_score_lv_count[u'一级安全能力'] += 1
+            elif 25<float(sec_score)<=50:
+                data_score_lv_count[u'二级安全能力'] += 1
+            elif 50<float(sec_score)<=75:
+                data_score_lv_count[u'三级安全能力'] += 1
+            elif 75<float(sec_score)<100:
+                data_score_lv_count[u'四级安全能力'] += 1
+            elif float(sec_score)>=100:
+                data_score_lv_count[u'五级安全能力'] += 1
+
+
     data_domain_score = sorted(data_domain_score.iteritems(), key=lambda d:d[1], reverse = False)[:30]
 
 #-------------------计算每个应用的安全能力分排名 end------------------------
     
     return render_template('asset_sec_score_stat.html',
-                            asset_count = asset_count, 
+                            asset_count = asset_count,
+                            month = date_one.strftime('%Y%m%d'), 
                             data_sec_score_all=json.dumps(data_sec_score_all),
                             data_code_score_all=json.dumps(data_code_score_all),
                             data_ops_score_all=json.dumps(data_ops_score_all),
                             data_attack_score_all=json.dumps(data_attack_score_all),
                             data_domain_score=json.dumps(data_domain_score),
                             data_sec_score_add_month=json.dumps(data_sec_score_add_month),
+                            data_score_lv_count=json.dumps(data_score_lv_count),
                             )
 '''
 def async_get_asset_score_all(app,asset_list,startDate,endDate):
