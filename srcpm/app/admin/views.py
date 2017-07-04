@@ -339,7 +339,7 @@ def assets_add_ajax():
 def assets_read():
 	opt = request.form.get('opt','all')
 	if opt=='all':
-		asset_result = Asset.query.order_by(-Asset.chkdate).all()
+		asset_result = Asset.query.order_by(-Asset.update_date).all()
 	else:
 		asset_result = Asset.query.filter(Asset.sysname.like("%" + opt + "%") 
 											| Asset.domain.like("%" + opt + "%")
@@ -353,7 +353,7 @@ def assets_read():
 											| Asset.owner.like("%" + opt + "%")
 											| Asset.sec_owner.like("%" + opt + "%")
 											| Asset.status.like("%" + opt + "%")
-											).order_by(-Asset.chkdate)
+											).order_by(-Asset.update_date)
 	return render_template('admin/assets_read.html', asset_result=asset_result)
 
 

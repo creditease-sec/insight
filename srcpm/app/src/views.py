@@ -1009,7 +1009,7 @@ def assets_read():
 	page = request.args.get('page', 1, type=int)
 
 	if opt=='all':
-		pagination = query.order_by(-Asset.chkdate).paginate(
+		pagination = query.order_by(-Asset.update_date).paginate(
                         page, per_page=current_app.config['SRCPM_PER_PAGE'], error_out=False
                         )
 		asset_result = pagination.items
@@ -1026,7 +1026,7 @@ def assets_read():
 											| Asset.owner.like("%" + opt + "%")
 											| Asset.sec_owner.like("%" + opt + "%")
 											| Asset.status.like("%" + opt + "%")
-											).order_by(-Asset.chkdate).paginate(
+											).order_by(-Asset.update_date).paginate(
                         page, per_page=current_app.config['SRCPM_PER_PAGE'], error_out=False
                         )
 		asset_result = pagination.items
