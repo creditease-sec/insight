@@ -8,6 +8,7 @@ from ..src.models import VulReport
 from .. import db
 from . import admin
 from ..decorators import permission_required
+import datetime
 
 
 """
@@ -313,7 +314,10 @@ def assets_add():
 					count_private_data=form.count_private_data.data,
 					down_time=form.down_time.data,
 					secure_level=form.secure_level.data,
-					ps=form.ps.data)
+					ps=form.ps.data,
+					#create_date=datetime.date.today(),
+					#update_date=datetime.date.today(),
+					)
 		db.session.add(a)
 		flash(u'资产 %s 添加成功' %form.domain.data)
 		return redirect(url_for('admin.assets_add'))
@@ -387,6 +391,11 @@ def assets_modify(id):
 		asset_get.down_time = form.down_time.data
 		asset_get.secure_level = form.secure_level.data
 		asset_get.ps = form.ps.data
+		if asset_get.update_date:
+			asset_get.update_date = datetime.date.today()
+		#else:
+		#	asset_get.create_date = datetime.date.today()
+		#	asset_get.update_date = datetime.date.today()
 		flash(u'资产更新成功')
 		return redirect(url_for('admin.assets_read'))
 	form.sysname.data = asset_get.sysname

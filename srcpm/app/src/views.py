@@ -605,6 +605,13 @@ def vul_report_review(id):
 
 		flash(u'漏洞报告审核成功')
 
+		#更新资产更新时间
+		if asset_get.update_date:
+			asset_get.update_date = vul_report_rv.start_date
+		else:
+			asset_get.create_date = vul_report_rv.start_date
+			asset_get.update_date = vul_report_rv.start_date
+
 		#发送审核后的漏洞通告邮件
 		if vul_report_rv.related_vul_type == u'输出文档':
 			vul_report_rv.vul_status = u'完成'
@@ -1057,7 +1064,10 @@ def assets_add():
 					count_private_data=form.count_private_data.data,
 					down_time=form.down_time.data,
 					secure_level=form.secure_level.data,
-					ps=form.ps.data)
+					ps=form.ps.data,
+					#create_date=datetime.date.today(),
+					#update_date=datetime.date.today(),
+					)
 		db.session.add(a)
 		flash(u'资产 %s 添加成功' %form.domain.data)
 		return redirect(url_for('src.assets_add'))
@@ -1098,6 +1108,11 @@ def assets_modify(id):
 		asset_get.down_time = form.down_time.data
 		asset_get.secure_level = form.secure_level.data
 		asset_get.ps = form.ps.data
+		if asset_get.update_date:
+			asset_get.update_date = datetime.date.today()
+		#else:
+		#	asset_get.create_date = datetime.date.today()
+		#	asset_get.update_date = datetime.date.today()
 		flash(u'资产更新成功')
 		return redirect(url_for('src.assets_read'))
 	form.sysname.data = asset_get.sysname
