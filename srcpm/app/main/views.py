@@ -1,17 +1,18 @@
 #-*- coding:utf-8 -*-
-from flask import render_template, current_app
+from flask import render_template, current_app, request
 from . import main
 import chartkick
 from .. import db
-from ..admin.models import VulType, Asset
+from ..admin.models import VulType, Asset, AssetScore
 from ..src.models import VulReport, VulLog
-from datetime import datetime
-from datetime import date
+#from datetime import datetime
+#from datetime import date
+import datetime
 import json
 from ..decorators import permission_required
-from ..src.views import get_asset_sec_score
-from ..src.views import get_asset_code_score
-from ..src.views import get_asset_attack_score
+from ..src.views import date_asset_sec_score
+#from ..src.views import get_asset_code_score
+#from ..src.views import get_asset_attack_score
 import os
 #from threading import Thread
 #import time
@@ -22,15 +23,18 @@ sys.setdefaultencoding('utf-8')
 
 
 
+
+
+
 @main.route('/')
 @main.route('/<start_date>/<end_date>')
 def index(start_date=0, end_date=0):
     try:
-        startDate = datetime.strptime(start_date, '%Y%m%d')
-        endDate = datetime.strptime(end_date, '%Y%m%d')
+        startDate = datetime.datetime.strptime(start_date, '%Y%m%d')
+        endDate = datetime.datetime.strptime(end_date, '%Y%m%d')
     except:
-        startDate = datetime(2015,1,1)
-        endDate = datetime(2099,1,1)
+        startDate = datetime.datetime(2015,1,1)
+        endDate = datetime.datetime(2099,1,1)
 
 
     #-----------------漏洞类型数量统计-------------------
@@ -118,7 +122,7 @@ def index(start_date=0, end_date=0):
                                                     VulReport.start_date >= startDate,
                                                     VulReport.start_date <= endDate,
                                                     VulReport.vul_status != u'完成',
-                                                    date.today() > VulReport.end_date,
+                                                    datetime.date.today() > VulReport.end_date,
                                                     VulReport.related_vul_type != u'输出文档',
                                                 ).group_by( VulReport.related_asset )
     list_count_related_asset_timeout_unfinish = query.all()
@@ -208,11 +212,11 @@ def index(start_date=0, end_date=0):
 @permission_required('main.index_count')
 def index_count(start_date=0, end_date=0):
     try:
-        startDate = datetime.strptime(start_date, '%Y%m%d')
-        endDate = datetime.strptime(end_date, '%Y%m%d')
+        startDate = datetime.datetime.strptime(start_date, '%Y%m%d')
+        endDate = datetime.datetime.strptime(end_date, '%Y%m%d')
     except:
-        startDate = datetime(2015,1,1)
-        endDate = datetime(2099,1,1)
+        startDate = datetime.datetime(2015,1,1)
+        endDate = datetime.datetime(2099,1,1)
 
 
     query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
@@ -231,7 +235,7 @@ def index_count(start_date=0, end_date=0):
             if vul_asset[0].fix_date > vul_asset[0].end_date:
                 vul_asset[0].timeout = u'逾期'
         else:
-            if date.today() > vul_asset[0].end_date:
+            if datetime.date.today() > vul_asset[0].end_date:
                 vul_asset[0].timeout = u'逾期'
 
         if vul_asset[1].domain not in list_asset:
@@ -261,11 +265,11 @@ def index_count(start_date=0, end_date=0):
 @permission_required('main.index_stats_time')
 def index_stats_time(start_date=0, end_date=0):
     try:
-        startDate = datetime.strptime(start_date, '%Y%m%d')
-        endDate = datetime.strptime(end_date, '%Y%m%d')
+        startDate = datetime.datetime.strptime(start_date, '%Y%m%d')
+        endDate = datetime.datetime.strptime(end_date, '%Y%m%d')
     except:
-        startDate = datetime(2015,1,1)
-        endDate = datetime(2099,1,1)
+        startDate = datetime.datetime(2015,1,1)
+        endDate = datetime.datetime(2099,1,1)
 
     #计算所有漏洞的已知悉时间
     query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
@@ -414,31 +418,36 @@ def compute_retest_time(author, vul_report_list_result):
     return author, count, max_time, min_time, averge_time
 
 
-
+"""
 @main.route('/asset_sec_score_stat', methods=['GET','POST'])
 @main.route('/asset_sec_score_stat/<start_date>/<end_date>', methods=['GET','POST'])
 @permission_required('main.asset_sec_score_stat')
 def asset_sec_score_stat(start_date=0, end_date=0):
     #opt = request.args.get('opt','all')
     try:
-        startDate = date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
-        endDate = date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+        startDate = datetime.date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
+        endDate = datetime.date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
     except:
-        startDate = date(2017,1,1)
-        endDate = date.today()
+        startDate = datetime.date(2017,1,1)
+        endDate = datetime.date.today()
+
+
+
+
+    #后面计算每个应用的安全能力分使用
+    date_one = getFirstDayOfMonth(endDate)
+
 
     asset_list = Asset.query.filter(
                                 Asset.sec_owner!='',
                                 Asset.business_cata!='',
+                                Asset.create_date!='',
+                                Asset.create_date<date_one,
                             ).all()
 
     #print '--------------------len(asset_list)-----------'
     asset_count = len(asset_list)
     #print len(asset_list)
-
-
-    #后面计算每个应用的安全能力分使用
-    date_one = getFirstDayOfMonth(endDate)
 
 
     today = endDate
@@ -455,6 +464,7 @@ def asset_sec_score_stat(start_date=0, end_date=0):
     #print '----list_date------'
     #print list_date
 
+    data_asset_count_all = []
     data_sec_score_all = []
     data_code_score_all = []
     data_ops_score_all = []
@@ -464,13 +474,13 @@ def asset_sec_score_stat(start_date=0, end_date=0):
 
     last_month = ()
     for i_date in list_date:
-        endDate = date(int(i_date[0:4]), int(i_date[4:6]), int(i_date[6:8]))
+        endDate = datetime.date(int(i_date[0:4]), int(i_date[4:6]), int(i_date[6:8]))
         file_exsit = os.path.isfile('tmp/all_'+endDate.strftime('%Y%m%d'))
         #print '-------file_exsit-------'
         if file_exsit:
             with open('tmp/all_'+endDate.strftime('%Y%m%d')) as f:
                 list1 = f.read().split(',')
-                (s,c,o,a) = (float(list1[0]),float(list1[1]),float(list1[2]),float(list1[3]))
+                (s,c,o,a,l) = (float(list1[0]),float(list1[1]),float(list1[2]),float(list1[3]),int(list1[4]))
                 #print '-----s,c,o,a------'
                 #print str(i_date[4:6])+u'月'
                 #print s,c,o,a
@@ -478,8 +488,9 @@ def asset_sec_score_stat(start_date=0, end_date=0):
             data_code_score_all.append((str(i_date[4:6])+u'月',c))
             data_ops_score_all.append((str(i_date[4:6])+u'月',o))
             data_attack_score_all.append((str(i_date[4:6])+u'月',a))
+            data_asset_count_all.append((str(i_date[4:6])+u'月',l))
 
-            now_month = (s,c,o,a)
+            now_month = (s,c,o,a,l)
 
             if len(last_month):
                 year = int(i_date[0:4])
@@ -496,6 +507,12 @@ def asset_sec_score_stat(start_date=0, end_date=0):
             thr.start()
             return u'计算中'
             '''
+            asset_list = Asset.query.filter(
+                                Asset.sec_owner!='',
+                                Asset.business_cata!='',
+                                Asset.create_date!='',
+                                Asset.create_date<endDate,
+                            ).all()
             get_asset_score_all(asset_list,startDate,endDate)
         #(s,c,o,a) = get_asset_score_all(asset_list,startDate,endDate)
 
@@ -554,7 +571,8 @@ def asset_sec_score_stat(start_date=0, end_date=0):
     
     return render_template('asset_sec_score_stat.html',
                             asset_count = asset_count,
-                            month = date_one.strftime('%Y%m%d'), 
+                            month = date_one.strftime('%Y%m%d'),
+                            data_asset_count_all=json.dumps(data_asset_count_all),
                             data_sec_score_all=json.dumps(data_sec_score_all),
                             data_code_score_all=json.dumps(data_code_score_all),
                             data_ops_score_all=json.dumps(data_ops_score_all),
@@ -563,12 +581,11 @@ def asset_sec_score_stat(start_date=0, end_date=0):
                             data_sec_score_add_month=json.dumps(data_sec_score_add_month),
                             data_score_lv_count=json.dumps(data_score_lv_count),
                             )
-'''
-def async_get_asset_score_all(app,asset_list,startDate,endDate):
-    with app.app_context():
-        get_asset_score_all(asset_list,startDate,endDate)
-'''
+"""
 
+
+
+"""
 def get_asset_score_all(asset_list,startDate,endDate):
     asset_count = len(asset_list)
     asset_sec_score_all = 0
@@ -606,16 +623,12 @@ def get_asset_score_all(asset_list,startDate,endDate):
                 +','+str(round(asset_code_score_all/asset_count,2))
                 +','+str(round(asset_ops_score_all/asset_count,2))
                 +','+str(round(asset_attack_score_all/asset_count,2))
+                +','+str(asset_count)
             )
-'''
-    return (round(asset_sec_score_all,2),
-            round(asset_code_score_all,2),
-            round(asset_ops_score,2),
-            round(asset_attack_score_all,2),
-            )
-'''
+"""
 
-
+"""
+获取前一个月的第一天
 def getFirstDayOfLastMonth(v_date):
     d = v_date
     #c = calendar.Calendar()
@@ -628,8 +641,10 @@ def getFirstDayOfLastMonth(v_date):
         year -= 1
     else :
         month -= 1
-    return datetime(year,month,1)
+    return datetime.datetime(year,month,1)
 
+
+#获取当前月的第一天
 def getFirstDayOfMonth(v_date):
     d = v_date
     #c = calendar.Calendar()
@@ -637,19 +652,19 @@ def getFirstDayOfMonth(v_date):
     year = d.year
     month = d.month
 
-    return datetime(year,month,1)
+    return datetime.datetime(year,month,1)
+"""
 
-
-
+"""
 @main.route('/month_every_asset_score', methods=['GET','POST'])
 @main.route('/month_every_asset_score/<end_date>', methods=['GET','POST'])
 @permission_required('main.month_every_asset_score')
 def month_every_asset_score(end_date=0):
     #opt = request.args.get('opt','all')
     try:
-        endDate = date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+        endDate = datetime.date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
     except:
-        endDate = date.today()
+        endDate = datetime.date.today()
 
     now_month = getFirstDayOfMonth(endDate)
     last_month = getFirstDayOfLastMonth(endDate)
@@ -724,3 +739,588 @@ def month_every_asset_score(end_date=0):
                             data_month_attack_score=json.dumps(data_month_attack_score),
                             month = last_month.strftime('%Y%m%d')+'--'+now_month.strftime('%Y%m%d'),
                             )
+"""
+
+
+@main.route('/asset_score_stat', methods=['GET','POST'])
+@main.route('/asset_score_stat/<start_date>/<end_date>', methods=['GET','POST'])
+def asset_score_stat(start_date='20170101',end_date=datetime.date.today):
+    #opt = request.args.get('opt','all')
+    try:
+        startDate = datetime.date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
+        endDate = datetime.date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+    except:
+        startDate = datetime.date(2017,1,1)
+        endDate = datetime.date.today()
+
+    #最后一天的应用安全分记录
+    last_asset_score = AssetScore.query.filter(AssetScore.score_cata==u'应用安全能力').order_by(-AssetScore.id).limit(1).first()
+
+    #计算时间段
+    if last_asset_score:
+        last_date = last_asset_score.score_date
+        if last_date < datetime.date.today():
+            date_asset_sec_score('sec')
+        if last_date < endDate:
+            endDate = last_date
+    else:
+        date_asset_sec_score('sec')
+
+
+
+    #应用的平均分排名
+    query = db.session.query(AssetScore.domain,db.func.avg(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'应用安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= startDate,
+                                                    AssetScore.score_date <= endDate,   
+                                                    ).group_by(
+                                                        AssetScore.domain
+                                                        ).order_by(db.func.avg(AssetScore.score))
+
+
+    list_asset_score = query.all()
+    #for asset in list_asset_score:
+    #    print asset[0],round(asset[1],2)
+
+    #应用的最低分排名
+    query = db.session.query(AssetScore.domain,db.func.min(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'应用安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= startDate,
+                                                    AssetScore.score_date <= endDate,   
+                                                    ).group_by(
+                                                        AssetScore.domain
+                                                        ).order_by(db.func.min(AssetScore.score))
+    list_asset_min_score = query.all()
+
+
+    #应用的每周安全最低分
+    list_asset_week_min_score = []
+    for start,end in date_range(startDate,endDate,7):
+        #print start.strftime('%Y%m%d'),end.strftime('%Y%m%d')
+        query = db.session.query(db.func.min(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'应用安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= start,
+                                                    AssetScore.score_date <= end,   
+                                                    )
+        list_asset_week_min_score.append((end.strftime('%Y%m%d')+' ',query.first()))
+
+
+    #-------------------计算应用安全能力分布 start----------------------
+    data_score_lv_count = {
+                            u'一级安全能力' : 0,
+                            u'二级安全能力' : 0,
+                            u'三级安全能力' : 0,
+                            u'四级安全能力' : 0,
+                            u'五级安全能力' : 0,
+                        }
+
+    for domain_score in list_asset_score:
+        #print domain_score
+        domain = domain_score[0]
+        sec_score = domain_score[1]
+
+
+        if float(sec_score)<=25:
+            data_score_lv_count[u'一级安全能力'] += 1
+        elif 25<float(sec_score)<=50:
+            data_score_lv_count[u'二级安全能力'] += 1
+        elif 50<float(sec_score)<=75:
+            data_score_lv_count[u'三级安全能力'] += 1
+        elif 75<float(sec_score)<100:
+            data_score_lv_count[u'四级安全能力'] += 1
+        elif float(sec_score)>=100:
+            data_score_lv_count[u'五级安全能力'] += 1    
+
+
+    return render_template('asset_score_stat.html',
+                            startDate=startDate,
+                            endDate=endDate,
+                            asset_count=len(list_asset_score),
+                            list_asset_score=json.dumps(list_asset_score[:30]),
+                            list_asset_min_score=json.dumps(list_asset_min_score[:30]),
+                            list_asset_week_min_score=json.dumps(list_asset_week_min_score),
+                            data_score_lv_count = json.dumps(data_score_lv_count),
+                            )
+
+
+def date_range(start_date,end_date,n):
+    #start_date = start_date-datetime.timedelta(1)
+    while start_date+datetime.timedelta(n) < end_date:
+        week_date = start_date+datetime.timedelta(n)
+        r_start_date = start_date
+        start_date = week_date
+        yield r_start_date,week_date-datetime.timedelta(1)
+
+
+
+@main.route('/asset_code_score_stat', methods=['GET','POST'])
+@main.route('/asset_code_score_stat/<start_date>/<end_date>', methods=['GET','POST'])
+def asset_code_score_stat(start_date='20170101',end_date=datetime.date.today):
+    #opt = request.args.get('opt','all')
+    try:
+        startDate = datetime.date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
+        endDate = datetime.date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+    except:
+        startDate = datetime.date(2017,1,1)
+        endDate = datetime.date.today()
+
+    #最后一天的应用安全分记录
+    last_asset_code_score = AssetScore.query.filter(AssetScore.score_cata==u'代码安全能力').order_by(-AssetScore.id).limit(1).first()
+
+    #计算时间段
+    if last_asset_code_score:
+        last_date = last_asset_code_score.score_date
+        if last_date < datetime.date.today():
+            date_asset_sec_score('code')
+        if last_date < endDate:
+            endDate = last_date
+    else:
+        date_asset_sec_score('code')
+
+
+
+    #应用的平均代码安全分排名
+    query = db.session.query(AssetScore.domain,db.func.avg(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'代码安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= startDate,
+                                                    AssetScore.score_date <= endDate,   
+                                                    ).group_by(
+                                                        AssetScore.domain
+                                                        ).order_by(db.func.avg(AssetScore.score))
+
+
+    list_asset_code_score = query.all()
+    #for asset in list_asset_score:
+    #    print asset[0],round(asset[1],2)
+
+    #应用的最低代码安全分排名
+    query = db.session.query(AssetScore.domain,db.func.min(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'代码安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= startDate,
+                                                    AssetScore.score_date <= endDate,   
+                                                    ).group_by(
+                                                        AssetScore.domain
+                                                        ).order_by(db.func.min(AssetScore.score))
+    list_asset_min_code_score = query.all()
+
+
+    #应用的每周代码安全最低分
+    list_asset_week_min_code_score = []
+    for start,end in date_range(startDate,endDate,7):
+        #print start.strftime('%Y%m%d'),end.strftime('%Y%m%d')
+        query = db.session.query(db.func.min(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'代码安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= start,
+                                                    AssetScore.score_date <= end,   
+                                                    )
+        list_asset_week_min_code_score.append((end.strftime('%Y%m%d')+' ',query.first()))
+
+
+    #-------------------计算代码安全能力分布 start----------------------
+    data_code_score_lv_count = {
+                            u'一级安全能力' : 0,
+                            u'二级安全能力' : 0,
+                            u'三级安全能力' : 0,
+                            u'四级安全能力' : 0,
+                            u'五级安全能力' : 0,
+                        }
+
+    for domain_score in list_asset_code_score:
+        #print domain_score
+        domain = domain_score[0]
+        code_score = domain_score[1]
+
+
+        if float(code_score)<=25:
+            data_code_score_lv_count[u'一级安全能力'] += 1
+        elif 25<float(code_score)<=50:
+            data_code_score_lv_count[u'二级安全能力'] += 1
+        elif 50<float(code_score)<=75:
+            data_code_score_lv_count[u'三级安全能力'] += 1
+        elif 75<float(code_score)<100:
+            data_code_score_lv_count[u'四级安全能力'] += 1
+        elif float(code_score)>=100:
+            data_code_score_lv_count[u'五级安全能力'] += 1    
+
+
+    return render_template('asset_code_score_stat.html',
+                            startDate=startDate,
+                            endDate=endDate,
+                            asset_count=len(list_asset_code_score),
+                            list_asset_code_score=json.dumps(list_asset_code_score[:30]),
+                            list_asset_min_code_score=json.dumps(list_asset_min_code_score[:30]),
+                            list_asset_week_min_code_score=json.dumps(list_asset_week_min_code_score),
+                            data_code_score_lv_count = json.dumps(data_code_score_lv_count),
+                            )
+
+
+
+@main.route('/asset_ops_score_stat', methods=['GET','POST'])
+@main.route('/asset_ops_score_stat/<start_date>/<end_date>', methods=['GET','POST'])
+def asset_ops_score_stat(start_date='20170101',end_date=datetime.date.today):
+    #opt = request.args.get('opt','all')
+    try:
+        startDate = datetime.date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
+        endDate = datetime.date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+    except:
+        startDate = datetime.date(2017,1,1)
+        endDate = datetime.date.today()
+
+    #最后一天的应用安全分记录
+    last_asset_ops_score = AssetScore.query.filter(AssetScore.score_cata==u'运维安全能力').order_by(-AssetScore.id).limit(1).first()
+
+    #计算时间段
+    if last_asset_ops_score:
+        last_date = last_asset_ops_score.score_date
+        if last_date < datetime.date.today():
+            date_asset_sec_score('ops')
+        if last_date < endDate:
+            endDate = last_date
+    else:
+        date_asset_sec_score('ops')
+
+
+
+    #应用的平均代码安全分排名
+    query = db.session.query(AssetScore.domain,db.func.avg(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'运维安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= startDate,
+                                                    AssetScore.score_date <= endDate,   
+                                                    ).group_by(
+                                                        AssetScore.domain
+                                                        ).order_by(db.func.avg(AssetScore.score))
+
+
+    list_asset_ops_score = query.all()
+    #for asset in list_asset_score:
+    #    print asset[0],round(asset[1],2)
+
+    #应用的最低代码安全分排名
+    query = db.session.query(AssetScore.domain,db.func.min(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'运维安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= startDate,
+                                                    AssetScore.score_date <= endDate,   
+                                                    ).group_by(
+                                                        AssetScore.domain
+                                                        ).order_by(db.func.min(AssetScore.score))
+    list_asset_min_ops_score = query.all()
+
+
+    #应用的每周代码安全最低分
+    list_asset_week_min_ops_score = []
+    for start,end in date_range(startDate,endDate,7):
+        #print start.strftime('%Y%m%d'),end.strftime('%Y%m%d')
+        query = db.session.query(db.func.min(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'运维安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= start,
+                                                    AssetScore.score_date <= end,   
+                                                    )
+        list_asset_week_min_ops_score.append((end.strftime('%Y%m%d')+' ',query.first()))
+
+
+    #-------------------计算代码安全能力分布 start----------------------
+    data_ops_score_lv_count = {
+                            u'一级安全能力' : 0,
+                            u'二级安全能力' : 0,
+                            u'三级安全能力' : 0,
+                            u'四级安全能力' : 0,
+                            u'五级安全能力' : 0,
+                        }
+
+    for domain_score in list_asset_ops_score:
+        #print domain_score
+        domain = domain_score[0]
+        ops_score = domain_score[1]
+
+
+        if float(ops_score)<=25:
+            data_ops_score_lv_count[u'一级安全能力'] += 1
+        elif 25<float(ops_score)<=50:
+            data_ops_score_lv_count[u'二级安全能力'] += 1
+        elif 50<float(ops_score)<=75:
+            data_ops_score_lv_count[u'三级安全能力'] += 1
+        elif 75<float(ops_score)<100:
+            data_ops_score_lv_count[u'四级安全能力'] += 1
+        elif float(ops_score)>=100:
+            data_ops_score_lv_count[u'五级安全能力'] += 1    
+
+
+    return render_template('asset_ops_score_stat.html',
+                            startDate=startDate,
+                            endDate=endDate,
+                            asset_count=len(list_asset_ops_score),
+                            list_asset_ops_score=json.dumps(list_asset_ops_score[:30]),
+                            list_asset_min_ops_score=json.dumps(list_asset_min_ops_score[:30]),
+                            list_asset_week_min_ops_score=json.dumps(list_asset_week_min_ops_score),
+                            data_ops_score_lv_count = json.dumps(data_ops_score_lv_count),
+                            )
+
+
+
+@main.route('/asset_attack_score_stat', methods=['GET','POST'])
+@main.route('/asset_attack_score_stat/<start_date>/<end_date>', methods=['GET','POST'])
+def asset_attack_score_stat(start_date='20170101',end_date=datetime.date.today):
+    #opt = request.args.get('opt','all')
+    try:
+        startDate = datetime.date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
+        endDate = datetime.date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+    except:
+        startDate = datetime.date(2017,1,1)
+        endDate = datetime.date.today()
+
+    #最后一天的攻击响应分记录
+    last_asset_attack_score = AssetScore.query.filter(AssetScore.score_cata==u'攻击响应分').order_by(-AssetScore.id).limit(1).first()
+
+    #最后一天的总风险分记录
+    last_asset_risk_score = AssetScore.query.filter(AssetScore.score_cata==u'总风险分').order_by(-AssetScore.id).limit(1).first()
+
+    #计算时间段
+    if last_asset_attack_score:
+        last_date = last_asset_attack_score.score_date
+        if last_date < datetime.date.today():
+            date_asset_sec_score('attack')
+        if last_date < endDate:
+            endDate = last_date
+    else:
+        date_asset_sec_score('attack')
+
+
+    #计算时间段
+    if last_asset_risk_score:
+        last_date = last_asset_risk_score.score_date
+        if last_date < datetime.date.today():
+            date_asset_sec_score('risk')
+        if last_date < endDate:
+            endDate = last_date
+    else:
+        date_asset_sec_score('risk')
+
+
+
+   
+
+    #应用的攻击响应分排名
+    query = db.session.query(AssetScore.domain,db.func.sum(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'攻击响应分',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= startDate,
+                                                    AssetScore.score_date <= endDate,   
+                                                    ).group_by(
+                                                        AssetScore.domain
+                                                        ).order_by(-db.func.sum(AssetScore.score))
+    list_asset_sum_attack_score = query.all()
+
+
+    #应用的每周攻击响应总分
+    list_asset_week_sum_attack_score = []
+    #应用的每周风险总分
+    list_asset_week_sum_risk_score = []
+    #应用每周攻击响应分／风险总分 占比
+    list_asset_week_sum_attack_percent_score = []
+    for start,end in date_range(startDate,endDate,7):
+        #print start.strftime('%Y%m%d'),end.strftime('%Y%m%d')
+        query_attack = db.session.query(db.func.sum(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'攻击响应分',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= start,
+                                                    AssetScore.score_date <= end,   
+                                                    )
+        list_asset_week_sum_attack_score.append((end.strftime('%Y%m%d')+' ',query_attack.first()))
+
+        #应用的每周风险总分
+        query_risk = db.session.query(db.func.sum(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'总风险分',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= start,
+                                                    AssetScore.score_date <= end,   
+                                                    )
+        list_asset_week_sum_risk_score.append((end.strftime('%Y%m%d')+' ',query_risk.first()))
+
+        #应用每周攻击响应分／风险总分 占比
+        if query_attack.first()[0] and query_risk.first()[0]:
+            attack_percent = round(float(query_attack.first()[0])/float(query_risk.first()[0])*100,2)
+            list_asset_week_sum_attack_percent_score.append((end.strftime('%Y%m%d')+' ',attack_percent))
+
+
+    #应用的每周风险总分
+    list_asset_week_sum_risk_score = []
+    for start,end in date_range(startDate,endDate,7):
+        query = db.session.query(db.func.sum(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'总风险分',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= start,
+                                                    AssetScore.score_date <= end,   
+                                                    )
+        list_asset_week_sum_risk_score.append((end.strftime('%Y%m%d')+' ',query.first()))
+
+
+    #漏洞类型-攻击响应排名
+    dict_vul_type_attack_percent = {}
+    #dict_vul_type_risk = {}
+    dict_vul_type_attack = {}
+    
+    query_vul_type_attack = db.session.query(VulReport.related_vul_type, db.func.count(VulReport.related_vul_type)).filter(
+                                                    VulReport.related_vul_type != u'输出文档',
+                                                    VulReport.start_date >= startDate,
+                                                    VulReport.start_date <= endDate,
+                                                    VulReport.attack_check == u'是',
+                                                    ).group_by(
+                                                        VulReport.related_vul_type
+                                                        ).order_by(
+                                                            -db.func.count(VulReport.related_vul_type)
+                                                            )
+    print 'dict_vul_type_attack'
+    for k,v in query_vul_type_attack:
+        dict_vul_type_attack.update({k:v})
+
+
+    query_vul_type_risk = db.session.query(VulReport.related_vul_type, db.func.count(VulReport.related_vul_type)).filter(
+                                                    VulReport.related_vul_type != u'输出文档',
+                                                    VulReport.start_date >= startDate,
+                                                    VulReport.start_date <= endDate,
+                                                    ).group_by(
+                                                        VulReport.related_vul_type
+                                                        ).order_by(
+                                                            -db.func.count(VulReport.related_vul_type)
+                                                            )
+    for k,v in query_vul_type_risk:
+        if dict_vul_type_attack.has_key(k):
+            attack_percent = round(float(dict_vul_type_attack[k])/float(v)*100,2)
+        else:
+            attack_percent = -v
+        #print attack_percent
+        #attack_percent = dict_vul_type_attack[k]/v if dict_vul_type_attack.has_key(k) else 0
+        #attack_percent = round(attack_percent*100,2)
+        
+        dict_vul_type_attack_percent.update({k:attack_percent})
+        list_vul_type_attack_percent = sorted(dict_vul_type_attack_percent.iteritems(), key=lambda d:d[1], reverse = True)    
+
+
+
+
+    return render_template('asset_attack_score_stat.html',
+                            startDate=startDate,
+                            endDate=endDate,
+                            asset_count=len(list_asset_sum_attack_score),
+                            #list_asset_attack_score=json.dumps(list_asset_attack_score[:30]),
+                            list_asset_sum_attack_score=json.dumps(list_asset_sum_attack_score[:30]),
+                            list_asset_week_sum_attack_score=json.dumps(list_asset_week_sum_attack_score),
+                            list_asset_week_sum_risk_score=json.dumps(list_asset_week_sum_risk_score),
+                            list_asset_week_sum_attack_percent_score=json.dumps(list_asset_week_sum_attack_percent_score),
+                            list_vul_type_attack_percent=json.dumps(list_vul_type_attack_percent),
+                            )
+
+
+"""
+@main.route('/asset_risk_score_stat', methods=['GET','POST'])
+@main.route('/asset_risk_score_stat/<start_date>/<end_date>', methods=['GET','POST'])
+def asset_risk_score_stat(start_date='20170101',end_date=datetime.date.today):
+    #opt = request.args.get('opt','all')
+    try:
+        startDate = datetime.date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
+        endDate = datetime.date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+    except:
+        startDate = datetime.date(2017,1,1)
+        endDate = datetime.date.today()
+
+    #最后一天的总风险分记录
+    last_asset_risk_score = AssetScore.query.filter(AssetScore.score_cata==u'总风险分').order_by(-AssetScore.id).limit(1).first()
+
+    #计算时间段
+    if last_asset_risk_score:
+        last_date = last_asset_risk_score.score_date
+        if last_date < datetime.date.today():
+            date_asset_sec_score('risk')
+        if last_date < endDate:
+            endDate = last_date
+    else:
+        date_asset_sec_score('risk')
+
+
+
+    #应用的平均风险分排名
+    query = db.session.query(AssetScore.domain,db.func.avg(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'总风险分',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= startDate,
+                                                    AssetScore.score_date <= endDate,   
+                                                    ).group_by(
+                                                        AssetScore.domain
+                                                        ).order_by(db.func.avg(AssetScore.score))
+
+
+    list_asset_risk_score = query.all()
+    #for asset in list_asset_score:
+    #    print asset[0],round(asset[1],2)
+
+    #应用的最低风险分排名
+    query = db.session.query(AssetScore.domain,db.func.min(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'总风险分',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= startDate,
+                                                    AssetScore.score_date <= endDate,   
+                                                    ).group_by(
+                                                        AssetScore.domain
+                                                        ).order_by(db.func.min(AssetScore.score))
+    list_asset_min_risk_score = query.all()
+
+
+    #应用的每周风险总分
+    list_asset_week_sum_risk_score = []
+    for start,end in date_range(startDate,endDate,7):
+        print start.strftime('%Y%m%d'),end.strftime('%Y%m%d')
+        query = db.session.query(db.func.sum(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'总风险分',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.score_date >= start,
+                                                    AssetScore.score_date <= end,   
+                                                    )
+        list_asset_week_sum_risk_score.append((end.strftime('%Y%m%d')+' ',query.first()))
+
+
+    #-------------------计算总风险分能力分布 start----------------------
+    data_risk_score_lv_count = {
+                            u'一级安全能力' : 0,
+                            u'二级安全能力' : 0,
+                            u'三级安全能力' : 0,
+                            u'四级安全能力' : 0,
+                            u'五级安全能力' : 0,
+                        }
+
+    for domain_score in list_asset_risk_score:
+        #print domain_score
+        domain = domain_score[0]
+        risk_score = domain_score[1]
+
+
+        if float(risk_score)<=25:
+            data_risk_score_lv_count[u'一级安全能力'] += 1
+        elif 25<float(risk_score)<=50:
+            data_risk_score_lv_count[u'二级安全能力'] += 1
+        elif 50<float(risk_score)<=75:
+            data_risk_score_lv_count[u'三级安全能力'] += 1
+        elif 75<float(risk_score)<100:
+            data_risk_score_lv_count[u'四级安全能力'] += 1
+        elif float(risk_score)>=100:
+            data_risk_score_lv_count[u'五级安全能力'] += 1    
+
+
+    return render_template('asset_risk_score_stat.html',
+                            startDate=startDate,
+                            endDate=endDate,
+                            asset_count=len(list_asset_risk_score),
+                            list_asset_risk_score=json.dumps(list_asset_risk_score[:30]),
+                            list_asset_min_risk_score=json.dumps(list_asset_min_risk_score[:30]),
+                            list_asset_week_sum_risk_score=json.dumps(list_asset_week_sum_risk_score),
+                            data_risk_score_lv_count = json.dumps(data_risk_score_lv_count),
+                            )
+"""

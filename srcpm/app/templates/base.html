@@ -41,9 +41,10 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="{{ url_for('main.index') }}">漏洞数据分析</a></li>
-                            <li><a href="{{ url_for('main.asset_sec_score_stat') }}">应用安全能力分析</a></li>
-                            
-                            <li><a href="{{ url_for('main.month_every_asset_score') }}">每月应用安全能力分析</a></li>
+                            <li><a href="{{ url_for('main.asset_score_stat') }}">应用安全能力分析</a></li>
+                            <li><a href="{{ url_for('main.asset_code_score_stat') }}">代码安全能力分析</a></li>
+                            <li><a href="{{ url_for('main.asset_ops_score_stat') }}">运维安全能力分析</a></li>
+                            <li><a href="{{ url_for('main.asset_attack_score_stat') }}">攻击响应能力分析</a></li>
                         </ul>
                     </li>
             </ul>
@@ -60,9 +61,6 @@
                         <ul class="dropdown-menu">
                             <li><a href="{{ url_for('main.index_count') }}">漏洞报告统计</a></li>
                             <li><a href="{{ url_for('main.index_stats_time') }}">漏洞处理时间统计</a></li>
-                            <li><a href="{{ url_for('main.asset_sec_score_stat') }}">应用安全能力仪表盘</a></li>
-                            
-                            <li><a href="{{ url_for('main.month_every_asset_score') }}">每月应用安全能力仪表盘</a></li>
                         </ul>
                     </li>
             </ul>

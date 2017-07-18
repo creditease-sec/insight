@@ -31,9 +31,9 @@
          <th>Rank</th>
          <th>风险等级</th>
          <th>剩余风险</th>
-          <th>通告时间</th>
-          <th>结束时间</th>
-          <th>修复时间</th>
+         <th>通告时间</th>
+         <th>结束时间</th>
+         <th>修复时间</th>
          <th>漏洞状态</th>
          <th>是否逾期</th>
       </tr>
@@ -48,7 +48,12 @@
          <td>{{ vul_report[0].related_vul_type }}</td>
          <td>{{ vul_report[1].department }}</td>
          <td>{{ vul_report[1].owner }}</td>
+
+         {% if vul_report[0].grant_rank %}
          <td>{{ vul_report[0].grant_rank }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
 
          {% if 0 < vul_report[0].risk_score <= 25 %}
             <td>低</td>
@@ -60,7 +65,11 @@
             <td>严重</td>
          {% endif %}
 
+         {% if vul_report[0].residual_risk_score %}
          <th>{{ vul_report[0].residual_risk_score }}</th>
+         {% else %}
+         <td>0</td>
+         {% endif %}  
          
          {% if vul_report[0].start_date %}
          <td>{{ moment(vul_report[0].start_date).format('YYYY-MM-DD') }}</td>
@@ -80,8 +89,18 @@
          <td></td>
          {% endif %}
 
+         {% if vul_report[0].vul_status %}
          <td>{{ vul_report[0].vul_status }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
+
+         {% if vul_report[0].timeout %}
          <td>{{ vul_report[0].timeout }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
+
       </tr>
     {% endfor %}
    </tbody>

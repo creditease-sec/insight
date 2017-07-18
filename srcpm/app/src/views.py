@@ -6,7 +6,7 @@ from .forms import VulReportForm, UploadImgForm, VulReportReviewForm, VulReportA
 from .forms import VulReportDevFinishForm, VulReportRetestResultForm, VulReportSendEmailForm
 from .forms import VulReportAttackForm, VulReportVulCataForm
 from .models import VulReport, VulLog
-from ..admin.models import Asset, User, Depart
+from ..admin.models import Asset, User, Depart, AssetScore
 from ..admin.forms import AssetForm
 from .. import db
 import datetime
@@ -685,6 +685,14 @@ def vul_report_known(id):
 							)
 			db.session.add(vul_log)
 			flash(u'已知悉提交成功!')
+			#更新资产创建时间和更新时间
+			asset_get = Asset.query.filter_by(domain=vul_report.related_asset).first()
+			if asset_get.update_date:
+				asset_get.update_date = datetime.date.today()
+			else:
+				asset_get.create_date = datetime.date.today()
+				asset_get.update_date = datetime.date.today()
+
 		else:
 			abort(403)
 	else:
@@ -723,6 +731,16 @@ def vul_report_dev_finish(id):
 						)
 		db.session.add(vul_log)
 		flash(u'申请测试提交成功！')
+
+		#更新资产时间
+		asset_get = Asset.query.filter_by(domain=vul_report_df.related_asset)
+		if asset_get.update_date:
+			asset_get.update_date = datetime.date.today()
+		else:
+			asset_get.create_date = datetime.date.today()
+			asset_get.update_date = datetime.date.today()
+
+
 		email_dict = get_email_dict(id)
 		#成功申请复测后，发送提醒邮件给漏洞相关人员
 		to_email_list = email_dict['owner']
@@ -849,6 +867,14 @@ def vul_report_retest_result(id):
 						)
 		db.session.add(vul_log)
 		flash(u'复测结果提交成功！')
+
+		#更新资产创建时间和更新时间
+		if asset_get.update_date:
+			asset_get.update_date = datetime.date.today()
+		else:
+			asset_get.create_date = datetime.date.today()
+			asset_get.update_date = datetime.date.today()
+
 		email_dict = get_email_dict(id)
 		to_email_list = email_dict['owner']
 		to_email_list.append(email_dict['department_manager'])
@@ -1033,7 +1059,19 @@ def assets_read():
 
 	asset_dict = {}
 	for asset in asset_result:
-		asset_sec_score = get_asset_sec_score(asset.domain, datetime.date(2017,1,1), datetime.date.today())
+		#asset_sec_score = get_asset_sec_score(asset.domain, datetime.date(2017,1,1), datetime.date.today())
+		query = db.session.query(db.func.avg(AssetScore.score)).filter(
+                                                    AssetScore.score_cata == u'应用安全能力',
+                                                    AssetScore.score != -1,
+                                                    AssetScore.domain == asset.domain,
+                                                    #AssetScore.score_date >= startDate,
+                                                    #AssetScore.score_date <= endDate,   
+                                                    )
+		if query.first()[0]:
+			#print query.first()[0]
+			asset_sec_score = round(float(query.first()[0]),2)
+		else:
+			asset_sec_score = 0
 		asset_dict.update({asset.domain: asset_sec_score})
 	return render_template('src/assets_read.html', asset_result=asset_result,
 									pagination=pagination,
@@ -1277,20 +1315,323 @@ def asset_sec_score(start_date=0, end_date=0):
 		startDate = datetime.date(2017,1,1)
 		endDate = datetime.date.today()
 
-	asset_code_score = get_asset_code_score(opt,startDate,endDate,u'代码层面')
-	asset_ops_score = get_asset_code_score(opt,startDate,endDate,u'运维层面')
-	asset_attack_score = get_asset_attack_score(opt,startDate,endDate)
-	asset_sec_score = get_asset_sec_score(opt,startDate,endDate)
+	#asset_code_score = get_asset_code_score(opt,startDate,endDate,u'代码层面')
+	#asset_ops_score = get_asset_code_score(opt,startDate,endDate,u'运维层面')
+	#asset_attack_score = get_asset_attack_score(opt,startDate,endDate)
+	#asset_sec_score = get_asset_sec_score(opt,startDate,endDate)
+
+	#单个域名的应用安全能力
+	query = db.session.query(AssetScore.score_date, AssetScore.score).filter(
+														AssetScore.domain == opt,
+														AssetScore.score_cata == u'应用安全能力',
+                                                    	AssetScore.score != -1,
+                                                   		AssetScore.score_date >= startDate,
+                                                    	AssetScore.score_date <= endDate,
+														).order_by(AssetScore.score_date)
+
+	asset_score = query.all()
+	asset_score = map(f, asset_score)
+
+	#单个域名的代码安全能力
+	query = db.session.query(AssetScore.score_date, AssetScore.score).filter(
+														AssetScore.domain == opt,
+														AssetScore.score_cata == u'代码安全能力',
+                                                    	AssetScore.score != -1,
+                                                   		AssetScore.score_date >= startDate,
+                                                    	AssetScore.score_date <= endDate,
+														).order_by(AssetScore.score_date)
+
+	asset_code_score = query.all()
+	asset_code_score = map(f, asset_code_score)
+
+
+	#单个域名的运维安全能力
+	query = db.session.query(AssetScore.score_date, AssetScore.score).filter(
+														AssetScore.domain == opt,
+														AssetScore.score_cata == u'运维安全能力',
+                                                    	AssetScore.score != -1,
+                                                   		AssetScore.score_date >= startDate,
+                                                    	AssetScore.score_date <= endDate,
+														).order_by(AssetScore.score_date)
+
+	asset_ops_score = query.all()
+	asset_ops_score = map(f, asset_ops_score)
+
+
+	#单个域名的攻击响应分
+	query = db.session.query(AssetScore.score_date, AssetScore.score).filter(
+														AssetScore.domain == opt,
+														AssetScore.score_cata == u'攻击响应分',
+                                                    	AssetScore.score != -1,
+                                                   		AssetScore.score_date >= startDate,
+                                                    	AssetScore.score_date <= endDate,
+														).order_by(AssetScore.score_date)
+
+	asset_attack_score = query.all()
+	asset_attack_score = map(f, asset_attack_score)
+
+
 	return render_template('src/asset_sec_score.html', 
-							asset_code_score=asset_code_score,
-							asset_ops_score=asset_ops_score,
-							asset_attack_score=asset_attack_score,
-							asset_sec_score=asset_sec_score,
+							#asset_code_score=asset_code_score,
+							#asset_ops_score=asset_ops_score,
+							#asset_attack_score=asset_attack_score,
+							startDate=startDate,
+                            endDate=endDate,
+							asset_score=json.dumps(asset_score[-60:]),
+							asset_code_score=json.dumps(asset_code_score[-60:]),
+							asset_ops_score=json.dumps(asset_ops_score[-60:]),
+							asset_attack_score=json.dumps(asset_attack_score[-60:]),
 							)
 
 
+def f(x):
+	return x[0].strftime('%Y%m%d')+u'日', x[1]
 
 
+#--------------------------------新思路计算安全分------------------------
+
+#资产每天的安全分
+def get_date_asset_sec_score(domain,score_date):
+    asset = Asset.query.filter_by(domain=domain).first()
+    #print asset.domain
+    if (asset.status==u'线上' and asset.create_date <= score_date) or (asset.status==u'下线' and asset.create_date <= score_date <= asset.update_date):
+    	vul_report_finish_list = VulReport.query.filter(VulReport.related_asset==domain,
+                                                VulReport.vul_status!=u'未审核',
+                                                VulReport.related_vul_type!=u'输出文档',
+                                                VulReport.related_asset_status==u'线上',
+                                                VulReport.start_date<=score_date,
+                                                VulReport.vul_status==u'完成',
+                                                VulReport.fix_date>=score_date,
+                                                VulReport.attack_check==u'否',
+                                                ).all()
+    	vul_report_unfinish_list = VulReport.query.filter(VulReport.related_asset==domain,
+                                                VulReport.vul_status!=u'未审核',
+                                                VulReport.related_vul_type!=u'输出文档',
+                                                VulReport.related_asset_status==u'线上',
+                                                VulReport.start_date<=score_date,
+                                                VulReport.vul_status!=u'完成',
+                                                VulReport.attack_check==u'否',
+                                                ).all()
+    	vul_report_list = vul_report_finish_list + vul_report_unfinish_list
+
+        score = float(100)
+        if len(vul_report_list)>0:
+            for vul_report in vul_report_list:
+            	#print 'risk_score:',vul_report.risk_score
+                vul_score = 100-vul_report.risk_score
+                #print 'vul_score:',vul_score
+                if vul_score < score:
+                    score = vul_score
+                    #print 'score:',score
+            return score
+        else:
+            return 100
+
+    else:
+        return -1
+
+
+
+
+
+#资产每天的代码安全分
+def get_date_asset_code_score(domain,score_date,vul_cata=u'代码层面'):
+    asset = Asset.query.filter_by(domain=domain).first()
+    #print asset.domain
+    if (asset.status==u'线上' and asset.create_date <= score_date) or (asset.status==u'下线' and asset.create_date <= score_date <= asset.update_date):
+        vul_report_finish_list = VulReport.query.filter(VulReport.related_asset==domain,
+                                                VulReport.vul_status!=u'未审核',
+                                                VulReport.related_vul_type!=u'输出文档',
+                                                VulReport.related_asset_status==u'线上',
+                                                VulReport.related_vul_cata==vul_cata,
+                                                VulReport.start_date<=score_date,
+                                                VulReport.vul_status==u'完成',
+                                                VulReport.fix_date>=score_date,
+                                                ).all()
+        vul_report_unfinish_list = VulReport.query.filter(VulReport.related_asset==domain,
+                                                VulReport.vul_status!=u'未审核',
+                                                VulReport.related_vul_type!=u'输出文档',
+                                                VulReport.related_asset_status==u'线上',
+                                                VulReport.related_vul_cata==vul_cata,
+                                                VulReport.start_date<=score_date,
+                                                VulReport.vul_status!=u'完成',
+                                                ).all()
+        vul_report_list = vul_report_finish_list + vul_report_unfinish_list
+
+        score = float(100)
+        if len(vul_report_list)>0:
+            for vul_report in vul_report_list:
+            	#print 'risk_score:',vul_report.risk_score
+                vul_score = 100-vul_report.risk_score
+                #print 'vul_score:',vul_score
+                if vul_score < score:
+                    score = vul_score
+                    #print 'score:',score
+            return score
+        else:
+            return 100
+
+    else:
+        return -1
+
+
+#资产每天的攻击响应分
+def get_date_asset_attack_score(domain,score_date):
+	asset = Asset.query.filter_by(domain=domain).first()
+
+	if (asset.status==u'线上' and asset.create_date <= score_date) or (asset.status==u'下线' and asset.create_date <= score_date <= asset.update_date):
+		vul_report_finish_list_attack_yes = VulReport.query.filter(VulReport.related_asset==domain,
+        										VulReport.vul_status!=u'未审核',
+                                                VulReport.related_vul_type!=u'输出文档',
+                                                VulReport.related_asset_status==u'线上',
+                                                VulReport.start_date<=score_date,
+                                                VulReport.vul_status==u'完成',
+                                                VulReport.fix_date>=score_date,
+                                                VulReport.attack_check==u'是',
+                                                ).all()
+		vul_report_unfinish_list_attack_yes = VulReport.query.filter(VulReport.related_asset==domain,
+        										VulReport.vul_status!=u'未审核',
+                                                VulReport.related_vul_type!=u'输出文档',
+                                                VulReport.related_asset_status==u'线上',
+                                                VulReport.start_date<=score_date,
+                                                VulReport.vul_status!=u'完成',
+                                                VulReport.attack_check==u'是',
+                                                ).all()
+		vul_report_list_attack_yes = vul_report_finish_list_attack_yes + vul_report_unfinish_list_attack_yes
+
+
+		risk_attack_yes = float(0)
+		if len(vul_report_list_attack_yes)>0:
+			for report in vul_report_list_attack_yes:
+				risk_attack_yes += report.risk_score
+			return risk_attack_yes
+		else:
+			return 0
+	else:
+		return -1
+
+
+#资产每天的风险分,不考虑攻击响应能力
+def get_date_asset_risk_score(domain,score_date):
+	asset = Asset.query.filter_by(domain=domain).first()
+
+	if (asset.status==u'线上' and asset.create_date <= score_date) or (asset.status==u'下线' and asset.create_date <= score_date <= asset.update_date):
+		vul_report_finish_list = VulReport.query.filter(VulReport.related_asset==domain,
+                                                VulReport.vul_status!=u'未审核',
+                                                VulReport.related_vul_type!=u'输出文档',
+                                                VulReport.related_asset_status==u'线上',
+                                                VulReport.start_date<=score_date,
+                                                VulReport.vul_status==u'完成',
+                                                VulReport.fix_date>=score_date,
+                                                ).all()
+		vul_report_unfinish_list = VulReport.query.filter(VulReport.related_asset==domain,
+                                                VulReport.vul_status!=u'未审核',
+                                                VulReport.related_vul_type!=u'输出文档',
+                                                VulReport.related_asset_status==u'线上',
+                                                VulReport.start_date<=score_date,
+                                                VulReport.vul_status!=u'完成',
+                                                ).all()
+		vul_report_list = vul_report_finish_list + vul_report_unfinish_list
+
+		risk_all = float(0)
+		if len(vul_report_list)>0:
+			for vul_report in vul_report_list:
+				risk_all += vul_report.risk_score
+			return risk_all
+		else:
+			return 0
+	else:
+		return -1
+
+
+#@src.route('/date_asset_sec_score', methods=['GET','POST'])
+#def date_asset_sec_score():
+#	opt = request.args.get('opt','sec')
+def date_asset_sec_score(opt='sec'):
+	#print 'current_user.email'
+	#print current_user.email
+	if current_user.is_authenticated:
+		if current_user.role_name != u'超级管理员':
+			return
+	else:
+		return
+	score_cata = u'应用安全能力'
+	if opt=='code':
+		score_cata = u'代码安全能力'
+	elif opt=='ops':
+		score_cata = u'运维安全能力'
+	elif opt=='risk':
+		score_cata = u'总风险分'
+	elif opt=='attack':
+		score_cata = u'攻击响应分'
+
+	startDate = datetime.date(2017,1,1)
+	endDate = datetime.date.today()
+
+	asset_list = Asset.query.filter(
+                                Asset.sec_owner!='',
+                                Asset.business_cata!='',
+                                Asset.create_date!='',
+                            ).all()
+
+	last_asset_score = AssetScore.query.filter(AssetScore.score_cata==score_cata).order_by(-AssetScore.id).limit(1).first()
+	
+	if last_asset_score:
+		last_date = last_asset_score.score_date
+		last_date_score_list = AssetScore.query.filter(AssetScore.score_date==last_date,
+														AssetScore.score_cata==score_cata).all()
+
+		count_last_date = len(last_date_score_list)
+		#print 'asset count: ', len(asset_list)
+		#print 'lastdate: ', last_date
+		#print 'count_last_date: ', count_last_date
+
+		if count_last_date != len(asset_list):
+			for asset_score in last_date_score_list:
+				db.session.delete(asset_score)
+				db.session.commit()
+			startDate = last_date
+		else:
+			startDate = last_date+datetime.timedelta(1)
+
+	for i in date_range(startDate, endDate):
+		for asset in asset_list:
+
+		#print i.strftime('%Y%m%d'),':',get_date_asset_code_score('www.creditease.cn',i,vul_cata=u'代码层面')
+			if opt=='sec':
+				score = get_date_asset_sec_score(asset.domain,i)
+			elif opt=='code':
+				score = get_date_asset_code_score(asset.domain,i,vul_cata=u'代码层面')
+			elif opt=='ops':
+				score = get_date_asset_code_score(asset.domain,i,vul_cata=u'运维层面')
+			elif opt=='risk':
+				score = get_date_asset_risk_score(asset.domain,i)
+			elif opt=='attack':
+				score = get_date_asset_attack_score(asset.domain,i)
+			#print '%s,%s,%s' %(asset.domain,i.strftime('%Y%m%d'),score)
+
+			asset_score = AssetScore(domain=asset.domain,
+							score_date=i,
+							score_cata=score_cata,
+							score=score,
+							)
+			db.session.add(asset_score)
+			db.session.commit()
+	return 'OK'
+
+
+
+
+def date_range(start_date,end_date):
+    for n in range(int((end_date-start_date).days)):
+        yield start_date+datetime.timedelta(n)
+
+####-----end----------------------------------------------
+####-----end----------------------------------------------
+
+"""以前思路安全分"""
+
+"""
 def get_asset_code_score(domain,startDate,endDate,vul_cata=u'代码层面'):
 	query = db.session.query(VulReport, Asset).filter(VulReport.related_asset==Asset.domain,
 															VulReport.vul_status!=u'未审核',
@@ -1533,12 +1874,12 @@ def get_asset_sec_score(domain,startDate,endDate):
 
 	return asset_sec_score
 
+"""
 
 
-
-
+"""
 #-------初始化创建时间，更新时间-------
-'''
+
 @src.route('/asset_date_update', methods=['GET','POST'])
 def asset_date_update():
 	vul_list = VulReport.query.all()
@@ -1549,14 +1890,20 @@ def asset_date_update():
 		if asset:
 			#asset.create_date = datetime.date(2017,7,1)
 			if asset.update_date:
-				if (vul.start_date - asset.update_date).days > 0:
-					asset.update_date = vul.start_date
+				if vul.fix_date and (vul.fix_date - asset.update_date).days > 0:
+					asset.update_date = vul.fix_date
 			else:
 				pass
 		else:
 			print 'asset is not exsit!'
 			print vul.related_asset,vul.title
 
+
+	return 'OK'
+"""
+
+
+'''
 	asset_list = Asset.query.all()
 	for asset in asset_list:
 		if asset.chkdate:
@@ -1568,6 +1915,7 @@ def asset_date_update():
 			else:
 				asset.update_date = asset.chkdate
 				print 'update chkdate ,no update_date'
-
-	return 'OK'
 '''
+
+
+

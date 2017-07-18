@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block head %}
+{{ super() }}
+<script src="{{ url_for('main.static', filename='highcharts.js') }}"></script>
+<script src="{{ url_for('main.static', filename='chartkick.js') }}"></script>
+{% endblock %}
+
+
+{% block title %} 攻击响应能力仪表盘 {% endblock%}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>攻击响应能力仪表盘</h1>
+    <h3>统计时段: {{ startDate }} 至 {{ endDate }}</h3>
+    <h3>覆盖资产数量: {{ asset_count }} 个</h3>
+</div>
+    
+
+    <div style="width:90%">
+    <h3>攻击响应能力分布</h3>
+                <div>
+                    {% line_chart list_vul_type_attack_percent %}  
+                 <!--   {% bar_chart data_vul_type %}  -->
+                <!--    {% line_chart data_vul_type with style="width:200px; height:20px;" %} -->
+                </div>
+    </div>
+
+
+
+    <div style="width:90%">
+    <h3>攻击响应分排名</h3>
+                <div>
+                    {% line_chart list_asset_sum_attack_score %}  
+                 <!--   {% bar_chart data_vul_type %}  -->
+                <!--    {% line_chart data_vul_type with style="width:200px; height:20px;" %} -->
+                </div>
+    </div>
+
+    
+
+    <div style="width:90%">
+    <h3>每周攻击响应总分</h3>
+                <div>
+                    {% line_chart list_asset_week_sum_attack_score %}  
+                 <!--   {% bar_chart data_vul_type %}  -->
+                <!--    {% line_chart data_vul_type with style="width:200px; height:20px;" %} -->
+                </div>
+    </div>
+
+    <div style="width:90%">
+    <h3>每周应用风险总分</h3>
+                <div>
+                    {% line_chart list_asset_week_sum_risk_score %}  
+                 <!--   {% bar_chart data_vul_type %}  -->
+                <!--    {% line_chart data_vul_type with style="width:200px; height:20px;" %} -->
+                </div>
+    </div>
+
+
+    <div style="width:90%">
+    <h3>每周攻击响应-总风险分占比</h3>
+                <div>
+                    {% line_chart list_asset_week_sum_attack_percent_score %}  
+                 <!--   {% bar_chart data_vul_type %}  -->
+                <!--    {% line_chart data_vul_type with style="width:200px; height:20px;" %} -->
+                </div>
+    </div>  
+
+
+
+
+
+
+
+{% endblock %}
+

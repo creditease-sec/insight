@@ -61,6 +61,16 @@ class Asset(db.Model):
 	down_time = db.Column(db.String(100))
 	secure_level = db.Column(db.String(64))
 
+
+class AssetScore(db.Model):
+	__tablename__ = 'asset_scores'
+	id = db.Column(db.Integer, primary_key = True)
+	domain = db.Column(db.String(64), index=True)
+	score_date = db.Column(db.Date, index=True)
+	score_cata = db.Column(db.String(100), index=True)
+	score = db.Column(db.Float)
+
+
 class VulType(db.Model):
 	__tablename__ = 'vul_types'
 	id = db.Column(db.Integer, primary_key = True)
