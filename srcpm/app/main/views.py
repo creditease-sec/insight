@@ -1172,6 +1172,8 @@ def asset_attack_score_stat(start_date='20170101',end_date=datetime.date.today):
                                                     VulReport.related_vul_type != u'输出文档',
                                                     VulReport.start_date >= startDate,
                                                     VulReport.start_date <= endDate,
+                                                    VulReport.related_asset_status == u'线上',
+                                                    #VulReport.related_asset_inout == u'外网',
                                                     VulReport.attack_check == u'是',
                                                     ).group_by(
                                                         VulReport.related_vul_type
@@ -1187,6 +1189,8 @@ def asset_attack_score_stat(start_date='20170101',end_date=datetime.date.today):
                                                     VulReport.related_vul_type != u'输出文档',
                                                     VulReport.start_date >= startDate,
                                                     VulReport.start_date <= endDate,
+                                                    VulReport.related_asset_status == u'线上',
+                                                    #VulReport.related_asset_inout == u'外网',
                                                     ).group_by(
                                                         VulReport.related_vul_type
                                                         ).order_by(
