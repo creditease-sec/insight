@@ -1180,7 +1180,7 @@ def asset_attack_score_stat(start_date='20170101',end_date=datetime.date.today):
                                                         ).order_by(
                                                             -db.func.count(VulReport.related_vul_type)
                                                             )
-    print 'dict_vul_type_attack'
+
     for k,v in query_vul_type_attack:
         dict_vul_type_attack.update({k:v})
 

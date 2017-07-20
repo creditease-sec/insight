@@ -1548,8 +1548,6 @@ def get_date_asset_risk_score(domain,score_date):
 #def date_asset_sec_score():
 #	opt = request.args.get('opt','sec')
 def date_asset_sec_score(opt='sec'):
-	#print 'current_user.email'
-	#print current_user.email
 	if current_user.is_authenticated:
 		if current_user.role_name != u'超级管理员':
 			return
@@ -1617,6 +1615,66 @@ def date_asset_sec_score(opt='sec'):
 							)
 			db.session.add(asset_score)
 			db.session.commit()
+
+	max_days = db.session.query(db.func.count(AssetScore.score_date)).filter(
+																		AssetScore.score_cata==score_cata,
+																	).group_by(
+																		AssetScore.domain,
+																	).order_by(
+																		-db.func.count(AssetScore.score_date)
+																	).first()[0]
+
+
+	query = db.session.query(AssetScore.domain,db.func.count(AssetScore.score_date)).filter(
+																		AssetScore.score_cata==score_cata,
+																	).group_by(
+																		AssetScore.domain,
+																	).order_by(
+																		db.func.count(AssetScore.score_date)
+																	).first()
+	domain = query[0]
+	min_days = query[1]
+
+
+	if min_days != max_days:
+		asset_score_get = AssetScore.query.filter_by(domain=domain, score_cata=score_cata)
+		if asset_score_get.first():
+			#删除不足天的相应类型的分数
+			for asset_score in asset_score_get.all():
+				db.session.delete(asset_score)
+				db.session.commit()
+
+
+
+		#重新生成从20170101到现在的相应类型的分数
+		asset_get = Asset.query.filter(
+                                Asset.sec_owner!='',
+                                Asset.business_cata!='',
+                                Asset.create_date!='',
+                                Asset.domain==domain,
+                            ).first()
+		if asset_get:
+			for i in date_range(datetime.date(2017,1,1), endDate):
+				if opt=='sec':
+					score = get_date_asset_sec_score(domain,i)
+				elif opt=='code':
+					score = get_date_asset_code_score(domain,i,vul_cata=u'代码层面')
+				elif opt=='ops':
+					score = get_date_asset_code_score(domain,i,vul_cata=u'运维层面')
+				elif opt=='risk':
+					score = get_date_asset_risk_score(domain,i)
+				elif opt=='attack':
+					score = get_date_asset_attack_score(domain,i)
+			#print '%s,%s,%s' %(asset.domain,i.strftime('%Y%m%d'),score)
+
+				asset_score = AssetScore(domain=domain,
+								score_date=i,
+								score_cata=score_cata,
+								score=score,
+								)
+				db.session.add(asset_score)
+				db.session.commit()
+
 	return 'OK'
 
 
