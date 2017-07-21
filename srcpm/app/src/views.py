@@ -733,7 +733,7 @@ def vul_report_dev_finish(id):
 		flash(u'申请测试提交成功！')
 
 		#更新资产时间
-		asset_get = Asset.query.filter_by(domain=vul_report_df.related_asset)
+		asset_get = Asset.query.filter_by(domain=vul_report_df.related_asset).first()
 		if asset_get.update_date:
 			asset_get.update_date = datetime.date.today()
 		else:
