@@ -335,7 +335,7 @@ def vul_notify_list():
 		if department_list:
 			vul_report_list = []
 			for department in department_list:
-				vul_report_list = [] + query.filter(Asset.department==department.department).all()
+				vul_report_list += query.filter(Asset.department==department.department).all()
 		else:
 			vul_report_list = query.filter(Asset.owner.like("%" + current_user.email + "%")).all()
 	return render_template('src/vul_notify_list.html', vul_report_list=vul_report_list, opt_label=opt_label)
@@ -394,7 +394,7 @@ def vul_processing_list():
 		if department_list:
 			vul_report_list = []
 			for department in department_list:
-				vul_report_list = [] + query.filter(Asset.department==department.department).all()
+				vul_report_list += query.filter(Asset.department==department.department).all()
 		else:
 			query = query.filter(Asset.owner.like("%" + current_user.email + "%"))
 			vul_report_list = query.all()
@@ -455,7 +455,7 @@ def vul_processing_noalert_list():
 		if department_list:
 			vul_report_list = []
 			for department in department_list:
-				vul_report_list = [] + query.filter(Asset.department==department.department).all()
+				vul_report_list += query.filter(Asset.department==department.department).all()
 		else:
 			query = query.filter(Asset.owner.like("%" + current_user.email + "%"))
 			vul_report_list = query.all()
@@ -496,7 +496,7 @@ def vul_retest_list():
 		if department_list:
 			vul_report_list = []
 			for department in department_list:
-				vul_report_list = [] + query.filter(Asset.department==department.department).all()
+				vul_report_list += query.filter(Asset.department==department.department).all()
 		else:
 			vul_report_list = query.filter(Asset.owner.like("%" + current_user.email + "%")).all()
 
@@ -536,7 +536,7 @@ def vul_finished_list():
 		if department_list:
 			vul_report_list = []
 			for department in department_list:
-				vul_report_list = [] + query.filter(Asset.department==department.department).all()
+				vul_report_list += query.filter(Asset.department==department.department).all()
 		else:
 			vul_report_list = query.filter(Asset.owner.like("%" + current_user.email + "%")).all()
 	return render_template('src/vul_finished_list.html', vul_report_list=vul_report_list, opt_label=opt_label)

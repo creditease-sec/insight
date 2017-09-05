@@ -13,10 +13,12 @@ class Config:
     UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
     CC_EMAIL = ['jianfangli@creditease.cn',
                 'shengliu1@creditease.cn',
-                'chenlinshi@creditease.cn',
                 'jianchengren@creditease.cn',
+                'xilewu@creditease.cn',
+                'xingyugao@creditease.cn',
                 'yanggao63@creditease.cn',
                 'zhaoyunxue@creditease.cn',
+                'baoyingzhao@creditease.cn',
             ]
     #PERMANENT_SESSION_LIFETIME = 10
     REMEMBER_COOKIE_PATH = '/srcpm'
@@ -34,7 +36,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SRCPM_ADMIN = os.environ.get('SRCPM_ADMIN') or '75065472@qq.com'
-    SRCPM_MAIL_SENDER = '信息系统安全部 <sec_creditease@sina.com>'
+    SRCPM_MAIL_SENDER = '安全部 <sec_creditease@sina.com>'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         ''
     MAIL_SERVER = 'smtp.sina.com'
@@ -68,7 +70,7 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     SRCPM_ADMIN = os.environ.get('SRCPM_ADMIN') or 'it.sec@creditease.cn'
-    SRCPM_MAIL_SENDER = '信息系统安全部 <it.sec@creditease.cn>'
+    SRCPM_MAIL_SENDER = '安全部 <it.sec@creditease.cn>'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         ''
     MAIL_SERVER = '10.160.192.8'

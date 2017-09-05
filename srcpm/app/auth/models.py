@@ -43,7 +43,7 @@ class LoginUser(UserMixin, db.Model):
 			if department_list:
 				vul_report_list = []
 				for department in department_list:
-					vul_report_list = [] + query.filter(Asset.department==department.department).all()
+					vul_report_list += query.filter(Asset.department==department.department).all()
 			else:
 				vul_report_list = query.filter(Asset.owner.like("%" + self.email + "%")).all()
 			count = len(vul_report_list)
