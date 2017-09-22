@@ -22,7 +22,93 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
+@main.route('/depart_risk_stat', methods=['GET','POST'])
+@main.route('/depart_risk_stat/<start_date>/<end_date>', methods=['GET','POST'])
+def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
+    try:
+        startDate = datetime.date(int(start_date[0:4]), int(start_date[4:6]), int(start_date[6:8]))
+        endDate = datetime.date(int(end_date[0:4]), int(end_date[4:6]), int(end_date[6:8]))
+    except:
+        startDate = datetime.date(2017,1,1)
+        endDate = datetime.date.today()
 
+    #---------------部门外网资产数量-------------------
+    #部门外网资产：资产为‘外网’，且状态为‘线上’，且分配了‘安全官’
+    depart_asset_stat = db.session.query( Asset.department, db.func.count(Asset.department) ).filter(
+                                                                            Asset.in_or_out == u'外网',
+                                                                            Asset.status == u'线上',
+                                                                            Asset.sec_owner != '',
+                                                                        ).group_by(
+                                                                            Asset.department
+                                                                            ).order_by(-db.func.count(Asset.department)).all()
+    #print depart_asset_stat
+    count_asset = 0
+    for i in depart_asset_stat:
+        count_asset += i[1]
+
+
+    #---------------部门外网漏洞数量--------------------
+    #部门外网漏洞数量：外网资产，且漏洞报告状态为‘线上’
+    data_department_vul = db.session.query( Asset.department, db.func.count(Asset.department)).filter(
+                                                                            Asset.in_or_out == u'外网',
+                                                                            Asset.status == u'线上',
+                                                                            Asset.sec_owner != '',
+                                                                            VulReport.related_asset == Asset.domain,
+                                                                            VulReport.start_date >= startDate,
+                                                                            VulReport.start_date <= endDate,
+                                                                            VulReport.related_asset_status == u'线上',
+                                                                            VulReport.related_vul_type != u'输出文档',
+                                                                        ).group_by(
+                                                                            Asset.department
+                                                                        ).order_by(-db.func.count(Asset.department)).all()
+    count_vul = 0
+    for j in data_department_vul:
+        count_vul += j[1]
+    
+
+
+    #-------------部门外网风险累计-------------------
+    #部门外网资产漏洞报告风险*修复时长
+
+    data_department_vul_list = db.session.query( Asset.department, VulReport.id, VulReport.risk_score, VulReport.start_date, VulReport.fix_date).filter(
+                                                                            Asset.in_or_out == u'外网',
+                                                                            Asset.status == u'线上',
+                                                                            Asset.sec_owner != '',
+                                                                            VulReport.related_asset == Asset.domain,
+                                                                            VulReport.start_date >= startDate,
+                                                                            VulReport.start_date <= endDate,
+                                                                            VulReport.related_asset_status == u'线上',
+                                                                            VulReport.related_vul_type != u'输出文档',
+                                                                        ).all()
+    data_department_risk = {}
+    risk_all = 0
+    for vul in data_department_vul_list:
+        if (vul[4] is not None) and (vul[4] <= endDate):
+            days = ((vul[4]-vul[3]).days + 1)
+        else:
+            days = (endDate-vul[3]).days + 1
+        risk = days * vul[2]
+        risk_all += risk
+        if data_department_risk.has_key(vul[0]):
+            data_department_risk[vul[0]] += risk
+        else:
+            data_department_risk.update({vul[0]: risk})
+    
+    data_department_risk = sorted(data_department_risk.iteritems(), key=lambda d:d[1], reverse = True)        
+    
+
+
+
+    return render_template('depart_risk_stat.html',
+                            startDate = startDate,
+                            endDate = endDate,
+                            count_asset = count_asset,
+                            count_vul = count_vul,
+                            risk_all = risk_all,
+                            data_department_vul = json.dumps(data_department_vul, encoding='utf-8', indent=4),
+                            depart_asset_stat = json.dumps(depart_asset_stat, encoding='utf-8', indent=4),
+                            data_department_risk = json.dumps(data_department_risk, encoding='utf-8', indent=4),
+                        )
 
 
 
