@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block head %}
+{{ super() }}
+<script src="{{ url_for('main.static', filename='highcharts.js') }}"></script>
+<script src="{{ url_for('main.static', filename='chartkick.js') }}"></script>
+{% endblock %}
+
+
+{% block title %} 漏洞管理平台 {% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>各部门外网风险统计</h1>
+    <h3>统计时段: {{ startDate }} 至 {{ endDate }}</h3>
+    <h3>外网资产数量：{{ count_asset }}</h3>
+    <h3>外网漏洞数量：{{ count_vul }}</h3>
+    <h3>外网总风险：<font color="red">{{ risk_all }} ≈≈ {{ risk_all * 16 }} 元损失</font></h3>
+</div>
+
+    <div style="width:90%">
+    <h3>部门外网风险值</h3>
+                <div>
+                    {% column_chart data_department_risk %}
+                </div>
+    </div>
+
+
+    <legend></legend>
+
+
+    <div style="width:90%">
+    <h3>部门外网漏洞数量</h3>
+                <div>
+                    {% column_chart data_department_vul %}
+                </div>
+    </div>
+
+
+    <legend></legend>
+
+    <div style="width:90%">
+    <h3>部门外网资产数量</h3>
+                <div>
+                    {% column_chart depart_asset_stat %}
+                </div>
+    </div>
+
+
+    <legend></legend>
+
+
+
+<!--
+
+{% column_chart data_vul_type with min=400 max=1000 %}
+
+{% bar_chart data_vul_type %}
+
+{% area_chart data_vul_type %}
+-->
+
+{% endblock %}
