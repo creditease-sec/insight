@@ -1,5 +1,7 @@
 欢迎来到 漏洞管理平台!
 
+漏洞标题：{{ vul_report_rv.title }}
+
 新漏洞链接:
 
 {{ url_for('src.vul_report_read', id=vul_report_rv.id, _external=True) }}
