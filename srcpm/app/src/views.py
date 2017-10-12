@@ -962,7 +962,7 @@ def get_email_dict(vul_report_id):
 	#author_get = User.query.filter_by(name=vul_report_get.author).first()
 	asset_get = Asset.query.filter_by(domain=vul_report_get.related_asset).first()
 	department_get = Depart.query.filter_by(department=asset_get.department).first()
-	owner_list = asset_get.owner.split(';')
+	owner_list = asset_get.owner.lower().split(';')
 	"""
 	email_dict = [(user_get.name, user_get.email),
 				(department_get.leader, department_get.email),
