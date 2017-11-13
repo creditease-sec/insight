@@ -474,11 +474,11 @@ def compute_retest_time(author, vul_report_list_result):
                     vul_retest_time_end = vul_log.time
                     vul_retest_time = (vul_retest_time_end - vul_retest_time_start).seconds
                     # 如果超过14个小时，认为是下班后申请，减去晚上休息时间14个小时。
-                    if 223200 > vul_retest_time > 50400:
-                        vul_retest_time -= 50400
+                    #if 223200 > vul_retest_time > 50400:
+                    #    vul_retest_time -= 50400
                     # 如果超过2天，认为是周末，减去62个小时，24+24+14=62
-                    elif vul_retest_time >= 223200:
-                        vul_retest_time -= 223200
+                    #elif vul_retest_time >= 223200:
+                    #    vul_retest_time -= 223200
                     vul_retest_time_list.append(vul_retest_time)
 
     count = len(vul_retest_time_list)
