@@ -14,15 +14,19 @@
 <div class="page-header">
 	<h1>各部门外网风险统计</h1>
     <h3>统计时段: {{ startDate }} 至 {{ endDate }}</h3>
-    <h3>外网资产数量：{{ count_asset }}</h3>
-    <h3>外网漏洞数量：{{ count_vul }}</h3>
-    <h3>外网总风险：<font color="red">{{ risk_all }} ≈≈ {{ risk_all * 16 }} 元损失</font></h3>
+    <!--<h3>外网资产数量：{{ count_asset }}</h3>
+    <h3>之前外网漏洞未修复数量：{{ count_vul_old_unfinish }}</h3>
+    <h3>之前外网漏洞完成修复数量：{{ count_vul_old_finished }}</h3>
+    <h3>新增外网漏洞数量：{{ count_vul_new }}</h3> -->
+    
+
+<!--    <h3>外网总风险：<font color="red">{{ risk_all }} ≈≈ {{ risk_all * 16 }} 元损失</font></h3> -->
 </div>
 
     <div style="width:90%">
-    <h3>部门外网风险值</h3>
+    <h3>部门外网风险值  <font color="red">{{ risk_all }} ≈≈ {{ risk_all * 16 }} 元损失</font></h3>
                 <div>
-                    {% column_chart data_department_risk %}
+                    {% column_chart data_department_risk_all %}
                 </div>
     </div>
 
@@ -31,7 +35,18 @@
 
 
     <div style="width:90%">
-    <h3>部门外网漏洞数量</h3>
+    <h3>部门外网新增风险值  <font color="red">{{ risk_all_new }} ≈≈ {{ risk_all_new * 16 }} 元损失</font></h3>
+                <div>
+                    {% column_chart data_department_risk_new %}
+                </div>
+    </div>
+
+
+    <legend></legend>
+
+
+    <div style="width:90%">
+    <h3>部门外网新增漏洞数量  {{ count_vul_new }} 个</h3>
                 <div>
                     {% column_chart data_department_vul %}
                 </div>
@@ -41,7 +56,17 @@
     <legend></legend>
 
     <div style="width:90%">
-    <h3>部门外网资产数量</h3>
+    <h3>部门外网漏洞数量  {{ count_vul_new + count_vul_old_unfinish +  count_vul_old_finished }} 个, 包括历史漏洞修复 {{ count_vul_old_finished }} 个,历史漏洞未修复 {{ count_vul_old_unfinish }} 个,新增漏洞 {{ count_vul_new }} 个</h3>
+                <div>
+                    {% column_chart data_department_vul_count_all %}
+                </div>
+    </div>
+
+
+    <legend></legend>
+
+    <div style="width:90%">
+    <h3>部门外网资产数量  {{ count_asset }} 个</h3>
                 <div>
                     {% column_chart depart_asset_stat %}
                 </div>
