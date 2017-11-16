@@ -48,7 +48,7 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
 
 
     #---------------部门外网漏洞数量--------------------
-    #部门外网漏洞数量：外网资产，且漏洞报告状态为‘线上’
+    #部门外网漏洞数量：外网资产，且漏洞报告状态为‘线上’,指定时间段内新增加的漏洞报告
     data_department_vul = db.session.query( Asset.department, db.func.count(Asset.department)).filter(
                                                                             Asset.in_or_out == u'外网',
                                                                             Asset.status == u'线上',
@@ -65,7 +65,7 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
     #for j in data_department_vul:
     #    count_vul += j[1]
     
-
+    #在统计时间段之前发现，至今还没有修复的漏洞
     data_department_vul_unfinish = db.session.query( Asset.department, db.func.count(Asset.department)).filter(
                                                                             Asset.in_or_out == u'外网',
                                                                             Asset.status == u'线上',
@@ -79,6 +79,7 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                                                                             Asset.department
                                                                         ).order_by(-db.func.count(Asset.department)).all()
 
+    #在统计时间段之前发现，至今已修复的漏洞（包括统计时间段内修复的，和统计时间段之后修复的）
     data_department_vul_finished = db.session.query( Asset.department, db.func.count(Asset.department)).filter(
                                                                             Asset.in_or_out == u'外网',
                                                                             Asset.status == u'线上',
@@ -86,7 +87,7 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                                                                             VulReport.related_asset == Asset.domain,
                                                                             VulReport.start_date < startDate,
                                                                             VulReport.fix_date >= startDate,
-                                                                            VulReport.fix_date <= endDate,
+                                                                            #VulReport.fix_date <= endDate,
                                                                             VulReport.related_asset_status == u'线上',
                                                                             VulReport.related_vul_type != u'输出文档',
                                                                         ).group_by(
@@ -116,6 +117,7 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
     #-------------部门外网风险累计-------------------
     #部门外网资产漏洞报告风险*修复时长
 
+    #统计时间段内新增加的漏洞
     data_department_vul_list = db.session.query( Asset.department, VulReport.id, VulReport.risk_score, VulReport.start_date, VulReport.fix_date).filter(
                                                                             Asset.in_or_out == u'外网',
                                                                             Asset.status == u'线上',
@@ -128,6 +130,7 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                                                                         ).all()
     count_vul_new = len(data_department_vul_list)
 
+    #统计时间段之前发现的漏洞，至今还没有修复的
     data_department_vul_list_2 = db.session.query( Asset.department, VulReport.id, VulReport.risk_score, VulReport.start_date, VulReport.fix_date).filter(
                                                                             Asset.in_or_out == u'外网',
                                                                             Asset.status == u'线上',
@@ -141,6 +144,7 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
     count_vul_old_unfinish = len(data_department_vul_list_2)
     #print count_vul_old_unfinish,u'个之前未修复漏洞'
 
+    #统计时间段之前发现的漏洞，至今已修复的漏洞（包括在统计时间段内修复的，和统计时间段之后修复的）
     data_department_vul_list_3 = db.session.query( Asset.department, VulReport.id, VulReport.risk_score, VulReport.start_date, VulReport.fix_date).filter(
                                                                             Asset.in_or_out == u'外网',
                                                                             Asset.status == u'线上',
@@ -148,13 +152,14 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                                                                             VulReport.related_asset == Asset.domain,
                                                                             VulReport.start_date < startDate,
                                                                             VulReport.fix_date >= startDate,
-                                                                            VulReport.fix_date <= endDate,
+                                                                            #VulReport.fix_date <= endDate,
                                                                             VulReport.related_asset_status == u'线上',
                                                                             VulReport.related_vul_type != u'输出文档',
                                                                         ).all()
     count_vul_old_finished = len(data_department_vul_list_3)
     #print count_vul_old_finished,u'个之前漏洞当月修复'
 
+    #统计时间段内新增漏洞产生的风险值计算
     data_department_risk_new = {}
     risk_all_new = 0
     for vul in data_department_vul_list:
@@ -170,7 +175,7 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
             data_department_risk_new.update({vul[0]: risk})
     
 
-    
+    #统计时间段内产生的总风险值计算（包括统计时间段内新增漏洞产生的风险，统计时间段之前产生的漏洞至今未修复的，统计时间段之前产生的漏洞在统计开始日期后已修复的）
     data_department_risk_all = data_department_risk_new.copy()
     risk_all = risk_all_new
     #data_department_risk = {}
@@ -184,8 +189,8 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
             #print vul[1]
             days = ((vul[4]-startDate).days + 1)
             #print days,u'天'
-        elif (vul[4] is None):
-            #print u'======================之前未修复================='
+        elif (vul[4] is None) or (vul[4] > endDate):
+            #print u'======================之前漏洞未修复，和之前漏洞在统计时间段后修复的================='
             #print vul[0]
             #print vul[1]
             days = (endDate - startDate).days + 1
