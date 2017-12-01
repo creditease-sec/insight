@@ -467,12 +467,12 @@ def index_count(start_date=0, end_date=0):
 @main.route('/index_stats_time/')
 @main.route('/index_stats_time/<start_date>/<end_date>')
 @permission_required('main.index_stats_time')
-def index_stats_time(start_date=0, end_date=0):
+def index_stats_time(start_date='20171101', end_date='20990101'):
     try:
         startDate = datetime.datetime.strptime(start_date, '%Y%m%d')
         endDate = datetime.datetime.strptime(end_date, '%Y%m%d')
     except:
-        startDate = datetime.datetime(2015,1,1)
+        startDate = datetime.datetime(2017,1,1)
         endDate = datetime.datetime(2099,1,1)
 
     #计算所有漏洞的已知悉时间
