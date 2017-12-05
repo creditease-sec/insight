@@ -161,19 +161,21 @@
                             {{ current_user.email.split('@')[0] }} <b class="caret"></b>
                         </a>
                     	<ul class="dropdown-menu">
+                            {% if current_user.email.split('@')[0] == 'srcadmin' %}
                         	<li><a href="{{ url_for('auth.change_password') }}">修改密码</a></li>
-                        	<li><a href="{{ url_for('auth.logout') }}">退出</a></li>
+                            {% endif %}
+                        	<li><a href="{{ url_for('auth.logout_sso') }}">退出</a></li>
                     	</ul>
 					</li>
 				{% else %}
                     <ul class="nav navbar-nav navbar-left">
                     <li class="dropdown">
-                        <a href="{{ url_for('auth.login_ldap') }}" class="dropdown-toggle" data-toggle="dropdown">
+                        <a href="{{ url_for('auth.login_sso') }}" class="dropdown-toggle" data-toggle="dropdown">
                             登录 <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="{{ url_for('auth.login_ldap') }}">LDAP登录</a></li>
-                            <li><a href="{{ url_for('auth.login') }}">旧版登录</a></li>
+                            <li><a href="{{ url_for('auth.login_sso') }}">SSO登录</a></li>
+                            <li><a href="{{ url_for('auth.login_admin') }}">Admin登录</a></li>
                         </ul>
                     </li>
             </ul>
