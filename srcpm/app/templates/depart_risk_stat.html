@@ -56,7 +56,7 @@
     <legend></legend>
 
     <div style="width:90%">
-    <h3>部门外网漏洞数量  {{ count_vul_new + count_vul_old_unfinish +  count_vul_old_finished }} 个, 包括历史漏洞修复 {{ count_vul_old_finished }} 个,历史漏洞未修复 {{ count_vul_old_unfinish }} 个,新增漏洞 {{ count_vul_new }} 个</h3>
+    <h3>部门外网漏洞数量  {{ count_vul_new + count_vul_old_unfinish +  count_vul_old_finished }} 个, 包括历史漏洞修复 {{ count_vul_old_finished }} 个,历史漏洞未修复 {{ count_vul_old_unfinish }} 个,新增漏洞 {{ count_vul_new }} 个,其中修复 {{ count_vul_new_finished }} 个,未修复 {{ count_vul_new_unfinish }} 个</h3>
                 <div>
                     {% column_chart data_department_vul_count_all %}
                 </div>

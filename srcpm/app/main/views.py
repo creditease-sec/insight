@@ -130,6 +130,36 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                                                                         ).all()
     count_vul_new = len(data_department_vul_list)
 
+    #统计时间段内新增加的漏洞,未完成修复的
+    data_department_vul_list_unfinish = db.session.query( Asset.department, VulReport.id, VulReport.risk_score, VulReport.start_date, VulReport.fix_date).filter(
+                                                                            Asset.in_or_out == u'外网',
+                                                                            Asset.status == u'线上',
+                                                                            Asset.sec_owner != '',
+                                                                            VulReport.related_asset == Asset.domain,
+                                                                            VulReport.start_date >= startDate,
+                                                                            VulReport.start_date <= endDate,
+                                                                            VulReport.fix_date == None,
+                                                                            VulReport.related_asset_status == u'线上',
+                                                                            VulReport.related_vul_type != u'输出文档',
+                                                                        ).all()
+    count_vul_new_unfinish = len(data_department_vul_list_unfinish)
+
+
+    #统计时间段内新增加的漏洞,完成修复的
+    data_department_vul_list_finished = db.session.query( Asset.department, VulReport.id, VulReport.risk_score, VulReport.start_date, VulReport.fix_date).filter(
+                                                                            Asset.in_or_out == u'外网',
+                                                                            Asset.status == u'线上',
+                                                                            Asset.sec_owner != '',
+                                                                            VulReport.related_asset == Asset.domain,
+                                                                            VulReport.start_date >= startDate,
+                                                                            VulReport.start_date <= endDate,
+                                                                            VulReport.fix_date != None,
+                                                                            VulReport.related_asset_status == u'线上',
+                                                                            VulReport.related_vul_type != u'输出文档',
+                                                                        ).all()
+    count_vul_new_finished = len(data_department_vul_list_finished)
+
+
     #统计时间段之前发现的漏洞，至今还没有修复的
     data_department_vul_list_2 = db.session.query( Asset.department, VulReport.id, VulReport.risk_score, VulReport.start_date, VulReport.fix_date).filter(
                                                                             Asset.in_or_out == u'外网',
@@ -217,6 +247,8 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                             endDate = endDate,
                             count_asset = count_asset,
                             count_vul_new = count_vul_new,
+                            count_vul_new_unfinish = count_vul_new_unfinish,
+                            count_vul_new_finished = count_vul_new_finished,
                             count_vul_old_unfinish = count_vul_old_unfinish,
                             count_vul_old_finished = count_vul_old_finished,
                             risk_all_new = risk_all_new,
