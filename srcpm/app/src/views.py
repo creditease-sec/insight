@@ -671,6 +671,7 @@ def vul_report_review_ajax(id):
 	return jsonify(risk_score=str(risk_score), end_date=end_date.strftime('%Y-%m-%d'))
 
 
+#新漏洞点击“已知悉”发送请求，状态变更为“修复中”
 @src.route('/vul_report_known/<id>')
 @permission_required('src.vul_report_known')
 def vul_report_known(id):
@@ -678,6 +679,8 @@ def vul_report_known(id):
 	if current_user.is_authenticated:
 		email_dict = get_email_dict(id)
 		if (current_user.email in email_dict['owner']) or (current_user.email == email_dict['department_manager']):
+			if vul_report.vul_status != u'已通告':
+				return render_template('src/vul_report_read.html', vul_report=vul_report)
 			vul_report.vul_status = u'修复中'
 			vul_log = VulLog(related_vul_id=id,
 							related_user_email=current_user.email,
