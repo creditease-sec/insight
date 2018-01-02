@@ -589,8 +589,40 @@ def vul_report_review(id):
 	vul_report_rv = VulReport.query.get_or_404(id)
 	#author_get = User.query.filter_by(name=vul_report_rv.author).first()
 	asset_get = Asset.query.filter_by(domain=vul_report_rv.related_asset).first()
-	email_dict = get_email_dict(id)
 
+	#----------------添加漏洞审核时资产各字段是否填写的判断----------------
+	asset_error_flag = 0
+	if asset_get.department == '':
+		flash(u'资产%s部门不能为空!' %asset_get.domain)
+		asset_error_flag = 1
+	else:
+		department_get = Depart.query.filter_by(department=asset_get.department).first()
+		if department_get.email == '':
+			flash(u'资产%s部门负责人不能为空!' %asset_get.domain)
+			asset_error_flag = 1
+
+	if asset_get.owner == '':
+		flash(u'资产%s负责人不能为空!' %asset_get.domain)
+		asset_error_flag = 1
+
+	if asset_get.in_or_out == '':
+		flash(u'资产%s内外网不能为空!' %asset_get.domain)
+		asset_error_flag = 1
+
+	if asset_get.level == '':
+		flash(u'资产%s重要程度不能为空!' %asset_get.domain)
+		asset_error_flag = 1
+
+	if asset_get.status == '':
+		flash(u'资产%s状态不能为空!' %asset_get.domain)
+		asset_error_flag = 1
+
+	
+	if asset_error_flag == 1:
+		return redirect(url_for('src.assets_read',opt=asset_get.domain))
+
+
+	email_dict = get_email_dict(id)
 	#Post提交审核完成，发送通告邮件
 	if form.validate_on_submit():
 		vul_report_rv.related_vul_cata = form.related_vul_cata.data
