@@ -8,8 +8,8 @@ from app.auth.models import LoginUser
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
-
 app = create_app(os.getenv('SrcPM_CONFIG') or 'default')
+app.debug = False
 manager = Manager(app)
 migrate = Migrate(app, db, compare_type=True)
 
@@ -23,8 +23,9 @@ if os.path.exists('.env'):
 """
 
 
+
 def make_shell_context():
-	return dict(app=app, db=db, Asset=Asset, LoginUser=LoginUser)
+    return dict(app=app, db=db, Asset=Asset, LoginUser=LoginUser)
 manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
@@ -36,5 +37,5 @@ def test():
 	unittest.TextTestRunner(verbosity=2).run(tests)
 
 
-if __name__ == '__main__':
-	manager.run()
+if __name__ == '__main__':   
+    manager.run()

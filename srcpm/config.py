@@ -11,13 +11,7 @@ class Config:
     PER_PAGE = 10
     UPLOAD_EXCEL_FOLDER = os.path.join(basedir, 'app/static/upload/excel/')
     UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
-    CC_EMAIL = ['jianfangli@creditease.cn',
-                'shengliu1@creditease.cn',
-                'jianchengren@creditease.cn',
-                'xilewu@creditease.cn',
-                'xingyugao@creditease.cn',
-                'yanggao63@creditease.cn',
-                'zhaoyunxue@creditease.cn',
+    CC_EMAIL = ['it.websec.list@creditease.cn',
                 'baoyingzhao@creditease.cn',
             ]
     #PERMANENT_SESSION_LIFETIME = 10
@@ -45,20 +39,6 @@ class DevelopmentConfig(Config):
     MAIL_USERNAME = os.environ.get(
         'MAIL_USERNAME') or 'sec_creditease@sina.com'
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or ''
-
-
-"""
-	SCHEDULER_VIEWS_ENABLED = True
-
-	JOBS = [
-        {
-            'id': 'job1',
-            'func': 'app.src.views:weekly_mail',
-            'trigger': 'interval',
-            'seconds': 10,
-        }
-    ]
-"""
 
 
 class TestingConfig(Config):

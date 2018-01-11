@@ -19,10 +19,8 @@ from sqlalchemy import or_
 from ..auth.models import LoginUser
 from . import src
 
-"""
-def weekly_mail():
-	print 'a simple cron job start at', datetime.datetime.now()
-"""
+
+
 
 #-------------漏洞报告模块------------------------------------------------------------------------------
 
