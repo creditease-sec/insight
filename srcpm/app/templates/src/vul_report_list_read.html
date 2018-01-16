@@ -68,10 +68,16 @@
             <td>高</td>
          {% elif 75 < vul_report[0].risk_score <= 100 %}
             <td>严重</td>
+         {% else %}
+         <td></td>
          {% endif %}
 
+         {% if vul_report[0].residual_risk_score %}
          <th>{{ vul_report[0].residual_risk_score }}</th>
-         
+         {% else %}
+         <td></td>
+         {% endif %}
+
          {% if vul_report[0].start_date %}
          <td>{{ moment(vul_report[0].start_date).format('YYYY-MM-DD') }}</td>
          {% else %}

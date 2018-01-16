@@ -44,9 +44,21 @@
          <td>{{ vul_report[0].id }}</td>
          <td>{{ vul_report[1].sysname }}</td>
          <td>{{ vul_report[0].related_asset }}</td>
+
+         {% if vul_report[0].related_asset_status %}
          <td>{{ vul_report[0].related_asset_status }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
+
          <td>{{ vul_report[0].related_vul_type }}</td>
+
+         {% if vul_report[1].department %}
          <td>{{ vul_report[1].department }}</td>
+         {% else %}
+         <td></td>
+         {% endif %}
+
          <td>{{ vul_report[1].owner }}</td>
 
          {% if vul_report[0].grant_rank %}
@@ -63,6 +75,8 @@
             <td>高</td>
          {% elif 75 < vul_report[0].risk_score <= 100 %}
             <td>严重</td>
+         {% else %}
+         <td></td>
          {% endif %}
 
          {% if vul_report[0].residual_risk_score %}
