@@ -34,7 +34,6 @@
          <th>检测时间</th>
          <th>创建时间</th>
          <th>更新时间</th>
-         <th>安全分</th>
       </tr>
    </thead>
    <tbody>
@@ -81,7 +80,6 @@
          <td></td>
          {% endif %}
 
-         <td><a href="{{ url_for('src.asset_sec_score', opt=asset.domain) }}" target="_blank">{{ asset_dict[asset.domain] }}</td>
       </tr>
     {% endfor %}
    </tbody>

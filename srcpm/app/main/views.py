@@ -8,7 +8,6 @@ from ..src.models import VulReport, VulLog
 import datetime
 import json
 from ..decorators import permission_required
-from ..src.views import date_asset_sec_score
 import os
 import calendar
 import sys
@@ -646,16 +645,5 @@ def compute_retest_time(author, vul_report_list_result):
         averge_time = 0
 
     return author, count, max_time, min_time, averge_time
-
-
-
-
-def date_range(start_date,end_date,n):
-    #start_date = start_date-datetime.timedelta(1)
-    while start_date+datetime.timedelta(n) < end_date:
-        week_date = start_date+datetime.timedelta(n)
-        r_start_date = start_date
-        start_date = week_date
-        yield r_start_date,week_date-datetime.timedelta(1)
 
 
