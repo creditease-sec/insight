@@ -1090,25 +1090,8 @@ def assets_read():
                         )
 		asset_result = pagination.items
 
-	asset_dict = {}
-	for asset in asset_result:
-		#asset_sec_score = get_asset_sec_score(asset.domain, datetime.date(2017,1,1), datetime.date.today())
-		query = db.session.query(db.func.avg(AssetScore.score)).filter(
-                                                    AssetScore.score_cata == u'应用安全能力',
-                                                    AssetScore.score != -1,
-                                                    AssetScore.domain == asset.domain,
-                                                    #AssetScore.score_date >= startDate,
-                                                    #AssetScore.score_date <= endDate,   
-                                                    )
-		if query.first()[0]:
-			#print query.first()[0]
-			asset_sec_score = round(float(query.first()[0]),2)
-		else:
-			asset_sec_score = 0
-		asset_dict.update({asset.domain: asset_sec_score})
 	return render_template('src/assets_read.html', asset_result=asset_result,
 									pagination=pagination,
-									asset_dict=asset_dict,
 									opt=opt,)
 
 
