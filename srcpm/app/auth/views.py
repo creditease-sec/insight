@@ -53,100 +53,7 @@ def login_ldap():
     return render_template('auth/login_ldap.html', form=form)
 """
 
-@auth.route('/login_admin', methods=['GET','POST'])
-def login_admin():
-    form = LoginForm()
-    if form.validate_on_submit():
-        username = form.email.data.split('@')[0]
-        password = form.password.data
 
-        lg_user = LoginUser.query.filter_by(email=form.email.data).first()
-
-        # 超级管理员登录判定方法
-        if username=='srcadmin' and lg_user.verify_password(form.password.data):
-            login_user(lg_user, form.remember_me.data)
-            #防止任意URL跳转到其它网站
-            if request.args.get('next') is not None and ('//' in request.args.get('next')):
-                return redirect(url_for('main.index'))
-
-            return redirect(request.args.get('next') or url_for('main.index'))
-        # 不是超级管理员登录
-        else:
-            flash(u'用户名或密码错误')
-
-    return render_template('auth/login_admin.html', form=form)
-
-
-@auth.route('/login_sso', methods=['GET','POST'])
-def login_sso():
-    systemCode = 'srcpm'
-    #sso_host="http://10.100.138.183:6060"
-    sso_host="http://permission.creditease.corp"
-    uid = ''
-    next = ''
-    if request.args:
-        if 'uid' in request.args:
-            uid = request.args['uid']
-            #print 'uid = %s' %uid
-        elif 'next' in request.args:
-            next = request.args['next']
-            #print 'next = %s' %next
-
-    if uid != '':
-        sso_getinfo_url=sso_host+"/sso/getUserinfo.html?ticket="+uid+"&syscode="+systemCode+"&noPermission=true"
-        response_sso = requests.get(sso_getinfo_url, verify=False)
-        #print response_sso.headers
-        #print response_sso.text
-        if response_sso.status_code == 200:
-            try:
-                userinfo=json.loads(response_sso.text)
-            #print userinfo
-            #print userinfo['userinfo']['username'],userinfo['userinfo']['realname']
-                email = userinfo['userinfo']['username']
-                username=userinfo['userinfo']['username'].split('@')[0]
-                realname=userinfo['userinfo']['realname']
-            except:
-                uid = ''
-
-            if uid != '':
-                #print email,username,realname
-                lg_user = LoginUser.query.filter_by(email=email).first()
-                if lg_user:
-                    #print 'login OK'
-                    login_user(lg_user)
-                else:
-                    lg_user = LoginUser(email=email,
-                                        username=username,
-                                        password='sso_@8#2$3',
-                                        confirmed=True,
-                                        role_name=u'普通用户',
-                                        )
-                    db.session.add(lg_user)
-                    db.session.commit()
-                    login_user(lg_user)
-                return redirect(url_for('main.index'))
-        else:
-            uid = ''
-
-    if uid=='':
-        returnURL = url_for('auth.login_sso', _external=True)
-        #print 'returnURL = %s' %returnURL
-        sso_login_url=sso_host+"/sso/login.html?systemCode="+systemCode+"&ReturnURL="+returnURL
-        #print 'sso_login_url = %s' %sso_login_url
-        return redirect(sso_login_url)
-
-@auth.route('/logout_sso')
-@login_required
-def logout_sso():
-    logout_user()
-
-    sso_host="http://permission.creditease.corp"
-    #sso_host = 'http://10.100.138.183:6060'
-    sso_logout_url = sso_host + '/sso/logout.html'
-    #flash(u'您已成功退出')
-    return redirect(sso_logout_url)
-
-"""
 @auth.route('/login', methods=['GET','POST'])
 def login():
 	form = LoginForm()
@@ -161,9 +68,9 @@ def login():
 			return redirect(request.args.get('next') or url_for('main.index'))
 		flash(u'用户名或密码错误')
 	return render_template('auth/login.html', form=form)
-"""
 
-"""
+
+
 @auth.route('/logout')
 @login_required
 def logout():
@@ -184,7 +91,7 @@ def register():
 		flash(u'确认邮件已发送至您的邮箱，请到邮箱确认.')
 		return redirect(url_for('main.index'))
 	return render_template('auth/register.html', form=form)
-"""
+
 
 @auth.route('/confirm/<token>')
 @login_required
