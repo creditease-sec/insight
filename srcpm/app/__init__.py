@@ -15,7 +15,7 @@ db = SQLAlchemy()
 mail = Mail()
 login_manager = LoginManager()
 login_manager.session_protection = 'basic'
-login_manager.login_view = 'auth.login_sso'
+login_manager.login_view = 'auth.login'
 pagedown = PageDown()
 moment = Moment()
 

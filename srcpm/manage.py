@@ -8,19 +8,14 @@ from app.auth.models import LoginUser
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
+# 使用指定配置初始化创建flask app
 app = create_app(os.getenv('SrcPM_CONFIG') or 'default')
+# 关闭flask app debug 模式
 app.debug = False
+# Flask-Script扩展为Flask程序添加了一个命令行解析器，并自带了一组常用选项，它还支持自定义命令
 manager = Manager(app)
 migrate = Migrate(app, db, compare_type=True)
 
-"""
-if os.path.exists('.env'):
-    print 'Importing environment from .env...'
-    for line in open('.env'):
-        var = line.strip().split('=')
-        if len(var) == 2:
-            os.environ[var[0]] = var[1]
-"""
 
 
 
