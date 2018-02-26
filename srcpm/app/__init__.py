@@ -9,19 +9,23 @@ from flask_pagedown import PageDown
 from flask_moment import Moment
 import datetime
 
-
+""" 各组件初始化 """
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 mail = Mail()
 login_manager = LoginManager()
+# session安全保护级别设置
 login_manager.session_protection = 'basic'
+# 默认登录入口
 login_manager.login_view = 'auth.login'
 pagedown = PageDown()
 moment = Moment()
 
 
+""" 根据配置选项创建Flask APP """
 def create_app(config_name):
     app = Flask(__name__)
+    # 使用chartkick配合falsk画报表
     app.jinja_env.add_extension("chartkick.ext.charts")
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
@@ -33,6 +37,7 @@ def create_app(config_name):
     pagedown.init_app(app)
     moment.init_app(app)
 
+    """ 按照功能模块来组织蓝图 """
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint, url_prefix='/srcpm')
 
