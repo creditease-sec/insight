@@ -10,16 +10,7 @@ from . import admin
 from ..decorators import permission_required
 import datetime
 
-
-"""
-@admin.route('/login', methods=['GET','POST'])
-@admin.route('/', methods=['GET','POST'])
-@permission_required('admin.index')
-def login():
-	form = LoginForm()
-	return render_template('admin/login.html', form=form)
-"""
-
+''' 管理后台首页 '''
 @admin.route('/')
 @admin.route('/index')
 @permission_required('admin.index')
@@ -27,8 +18,7 @@ def index():
 	return render_template('admin/index.html')
 
 
-#------用户查看－－－－－－
-
+''' 用户查看页面 '''
 @admin.route('/login_user_read', methods=['GET', 'POST'])
 @permission_required('admin.login_user_read')
 def login_user_read():
@@ -41,8 +31,8 @@ def login_user_read():
 													)
 	return render_template('admin/login_user_read.html', login_user_result=login_user_result)
 
-#-------人员手动点击关联---------
 
+''' 用户查看页面，点击关联接口请求，根据注册用户邮箱账号和手工录入的人员表进行关联，获取人员真实姓名 '''
 @admin.route('/login_user_related/<id>')
 @permission_required('admin.login_user_related')
 def login_user_related(id):
@@ -53,8 +43,8 @@ def login_user_related(id):
 		db.session.add(lg_user_get)
 	return redirect(url_for('admin.login_user_read'))
 
-#------用户角色修改－－－－－－
 
+''' 用户角色修改页面请求 '''
 @admin.route('/login_user_modify/<id>', methods=['GET', 'POST'])
 @permission_required('admin.login_user_modify')
 def login_user_modify(id):
@@ -68,8 +58,7 @@ def login_user_modify(id):
 	return render_template('admin/login_user_modify.html', form=form, id = lg_user_get.id)
 
 
-#-------用户删除---------
-
+''' 用户角色修改页面，用户删除功能请求 '''
 @admin.route('/login_user_delete/<id>')
 @permission_required('admin.login_user_delete')
 def login_user_delete(id):
@@ -80,7 +69,7 @@ def login_user_delete(id):
 
 
 #-------角色模块--------
-
+''' 角色增加页面 '''
 @admin.route('/role_add', methods=['GET','POST'])
 @permission_required('admin.role_add')
 def role_add():
@@ -93,6 +82,7 @@ def role_add():
 	return render_template('admin/role_add.html', form=form)
 
 
+''' 角色查看页面 '''
 @admin.route('/role_read', methods=['GET', 'POST'])
 @permission_required('admin.role_read')
 def role_read():
@@ -105,11 +95,12 @@ def role_read():
 
 
 #设置默认角色
+''' 角色查看页面，将角色设为默认功能请求 '''
 @admin.route('/role_modify/<id>')
 @permission_required('admin.role_modify')
 def role_modify(id):
 	role = Role.query.get_or_404(id)
-	#由false变为true
+	#如果不是默认角色，则角色的default属性由false变为true
 	if not role.default:
 		role_true = Role.query.filter_by(default=True).first()
 		if role_true is not None:
@@ -119,7 +110,7 @@ def role_modify(id):
 		role.default = True
 		db.session.add(role)
 		flash(u'角色 %s 修改为默认角色' %role.role_name)
-	#由true变为false
+	#如果是默认角色，则角色的default属性由true变为false
 	else:
 		role.default = False
 		db.session.add(role)
@@ -127,18 +118,21 @@ def role_modify(id):
 	return redirect(url_for('admin.role_read'))
 
 
+''' 角色权限修改页面 '''
 @admin.route('/perm_modify/<role_name>', methods=['GET', 'POST'])
 @permission_required('admin.perm_modify')
 def perm_modify(role_name):
 	form = PermissionForm()
 	role_perm = Permission.query.filter_by(role_name=role_name)
 	if form.validate_on_submit():
+		# 如果数据库中该角色的权限记录为空，则直接添加权限记录到数据库中
 		if role_perm.first() is None:
 			for h_p in form.have_perm.data:
 				permission = Permission(role_name=role_name,
 										have_perm=h_p)
 				db.session.add(permission)
 				flash(u'权限 %s 添加成功' %h_p)
+		# 如果数据库中该角色的权限记录不为空，则先删除数据库中的权限记录，再添加新提交的权限记录到数据库中
 		else:
 			for r_p_del in role_perm:
 				db.session.delete(r_p_del)
@@ -149,7 +143,7 @@ def perm_modify(role_name):
 				flash(u'权限 %s 添加成功' %h_p_update)
 		return redirect(url_for('admin.perm_modify', role_name=role_name))
 
-	#GET请求，先查询角色的权限，放置在form表单中，显示在页面上
+	# GET请求，先查询角色的权限，放置在form表单中，显示在页面上
 	form.have_perm.data=[]
 	for r_p in role_perm:
 		form.have_perm.data.append(r_p.have_perm)
@@ -157,6 +151,7 @@ def perm_modify(role_name):
 
 
 #先删除角色权限、再删除角色
+''' 删除权限和角色功能请求，在角色权限修改页面 '''
 @admin.route('/role_perm_delete/<role_name>')
 @permission_required('admin.role_perm_delete')
 def role_perm_delete(role_name):
@@ -174,6 +169,7 @@ def role_perm_delete(role_name):
 
 #---------------Deaprts and Users--------------
 
+''' 部门增加页面 '''
 @admin.route('/depart_add', methods=['GET', 'POST'])
 @permission_required('admin.depart_add')
 def depart_add():
@@ -188,6 +184,7 @@ def depart_add():
 	return render_template('admin/depart_add.html', form=form)
 
 
+''' 部门查看页面 '''
 @admin.route('/depart_read', methods=['GET', 'POST'])
 @permission_required('admin.depart_read')
 def depart_read():
@@ -202,13 +199,15 @@ def depart_read():
 	return render_template('admin/depart_read.html', depart_result=depart_result)
 
 
+''' 部门修改页面 '''
 @admin.route('/depart_modify/<id>', methods=['GET', 'POST'])
 @permission_required('admin.depart_modify')
 def depart_modify(id):
 	form = DepartForm()
 	depart_get = Depart.query.get_or_404(id)
 	if form.validate_on_submit():
-		#depart_get.department = form.department.data
+		# 部门名称不可以修改，后台不接收，修改无效
+		# depart_get.department = form.department.data
 		depart_get.leader = form.leader.data
 		depart_get.email = form.email.data
 		flash(u'部门更新成功')
@@ -218,6 +217,7 @@ def depart_modify(id):
 	form.email.data = depart_get.email
 	return render_template('admin/depart_modify.html', form=form, id = depart_get.id)
 
+''' 部门删除功能请求，在部门修改页面 '''
 @admin.route('/depart_delete/<id>')
 @permission_required('admin.depart_delete')
 def depart_delete(id):
@@ -226,8 +226,13 @@ def depart_delete(id):
 	flash(u'删除部门成功')
 	return redirect(url_for('admin.depart_read'))
 
-#－－－－－－－User模块－－－－－－－－－－－－－－－－－－－－－－
 
+#－－－－－－－User模块－－－－－－－－－－－－－－－－－－－－－－
+''' 此模块人员为手工录入人员信息，主要为了保证公司邮箱账号、真实姓名和部门的关联正确性，
+用于在注册用户查看页面对注册用户和录入人员信息进行手动关联，实际此功能未使用。
+'''
+
+''' 人员增加页面 '''
 @admin.route('/user_add', methods=['GET', 'POST'])
 @permission_required('admin.user_add')
 def user_add():
@@ -243,6 +248,7 @@ def user_add():
 	return render_template('admin/user_add.html', form=form)
 
 
+''' 人员查看页面 '''
 @admin.route('/user_read', methods=['GET', 'POST'])
 @permission_required('admin.user_read')
 def user_read():
@@ -256,12 +262,13 @@ def user_read():
 											)
 	return render_template('admin/user_read.html', user_result=user_result)
 
-#设置人员到员工的关联
+#设置注册用户到录入员工信息的关联
 def user_to_login_user(user):
 	lg_user = LoginUser.query.filter_by(email=user.email).first()
 	if lg_user:
 		lg_user.related_name = user.name
 
+''' 人员修改页面 '''
 @admin.route('/user_modify/<id>', methods=['GET', 'POST'])
 @permission_required('admin.user_modify')
 def user_modify(id):
@@ -281,6 +288,8 @@ def user_modify(id):
 	form.email.data = user_get.email
 	return render_template('admin/user_modify.html', form=form, id = user_get.id)
 
+
+''' 人员删除页面 '''
 @admin.route('/user_delete/<id>')
 @permission_required('admin.user_delete')
 def user_delete(id):
@@ -292,6 +301,7 @@ def user_delete(id):
 
 #------------资产模块、漏洞类型模块--------------------------------------------------------------------------
 
+''' 资产增加页面 '''
 @admin.route('/assets_add', methods=['GET', 'POST'])
 @permission_required('admin.assets_add')
 def assets_add():
@@ -323,6 +333,8 @@ def assets_add():
 		return redirect(url_for('admin.assets_add'))
 	return render_template('admin/assets_add.html', form=form)
 
+
+''' 资产增加ajax,获取部门下的人员、邮箱列表 '''
 @admin.route('/assets_add_ajax', methods=['GET','POST'])
 @permission_required('admin.assets_add_ajax')
 def assets_add_ajax():
@@ -334,6 +346,7 @@ def assets_add_ajax():
 	return jsonify(opt_list)
 
 
+''' 资产查看页面 '''
 @admin.route('/assets_read', methods=['GET', 'POST'])
 @permission_required('admin.assets_read')
 def assets_read():
@@ -357,6 +370,7 @@ def assets_read():
 	return render_template('admin/assets_read.html', asset_result=asset_result)
 
 
+''' 资产修改页面 '''
 @admin.route('/assets_modify/<id>', methods=['GET', 'POST'])
 @permission_required('admin.assets_modify')
 def assets_modify(id):
@@ -420,6 +434,8 @@ def assets_modify(id):
 	form.ps.data = asset_get.ps
 	return render_template('admin/assets_modify.html', form=form, id = asset_get.id)
 
+
+''' 资产删除功能请求，在资产修改页面 '''
 @admin.route('/assets_delete/<id>')
 @permission_required('admin.assets_delete')
 def assets_delete(id):
@@ -430,9 +446,9 @@ def assets_delete(id):
 
 
 
+''' ------------------漏洞类型模块--------------------- '''
 
-
-
+''' 漏洞类型增加页面 '''
 @admin.route('/vul_type_add', methods=['GET', 'POST'])
 @permission_required('admin.vul_type_add')
 def vul_type_add():
@@ -445,6 +461,7 @@ def vul_type_add():
 	return render_template('admin/vul_type_add.html', form=form)
 
 
+''' 漏洞类型查看页面 '''
 @admin.route('/vul_type_read', methods=['GET', 'POST'])
 @permission_required('admin.vul_type_read')
 def vul_type_read():
@@ -456,6 +473,7 @@ def vul_type_read():
 	return render_template('admin/vul_type_read.html', vul_type_result=vul_type_result)
 
 
+''' 漏洞类型修改页面 '''
 @admin.route('/vul_type_modify/<id>', methods=['GET', 'POST'])
 @permission_required('admin.vul_type_modify')
 def vul_type_modify(id):
@@ -468,6 +486,7 @@ def vul_type_modify(id):
 	form.vul_type.data = vul_type_get.vul_type
 	return render_template('admin/vul_type_modify.html', form=form, id = vul_type_get.id)
 
+''' 漏洞类型删除功能请求，在漏洞类型修改页面 '''
 @admin.route('/vul_type_delete/<id>')
 @permission_required('admin.vul_type_delete')
 def vul_type_delete(id):
@@ -475,10 +494,4 @@ def vul_type_delete(id):
 	db.session.delete(vul_type_del)
 	flash(u'删除漏洞类型成功')
 	return redirect(url_for('admin.vul_type_read'))
-
-
-
-
-
-
 
