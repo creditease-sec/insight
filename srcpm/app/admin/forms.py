@@ -8,6 +8,7 @@ from flask import request
 from .models import User, Depart, Role, Asset, VulType
 
 
+''' 权限接口和功能菜单对应表 '''
 perm_choices = [('admin.index',u'管理后台－首页'),        #管理后台－首页
 				('admin.login_user_read', u'管理后台－用户查看'),        #管理后台－用户查看
 				('admin.login_user_related', u'管理后台－用户关联'),        #管理后台－用户关联
@@ -60,7 +61,7 @@ perm_choices = [('admin.index',u'管理后台－首页'),        #管理后台�
                 ('drops.manager',u'SRC－知识库管理'),        #SRC－知识库管理
 				]
 
-
+''' 下拉选项 '''
 area_choices = [('',''), (u'外网', u'外网'), (u'内网', u'内网')]
 status_choices = [('',''), (u'线上', u'线上'), (u'上线前', u'上线前'),(u'下线', u'下线')]
 level_choices = [('',''), (u'一级', u'一级'), (u'二级', u'二级'), (u'三级', u'三级'), (u'其它', u'其它')]
@@ -68,6 +69,8 @@ secure_level_choices = [('',''), (u'安全一级', u'安全一级'), (u'安全�
 count_private_data_choice = [('',''), (u'几十条', u'几十条'), (u'几百条', u'几百条'), (u'几千条', u'几千条'), (u'几万条及以上', u'几万条及以上')]
 down_time_choice = [('',''), (u'几分钟', u'几分钟'), (u'几十分钟', u'几十分钟'), (u'几小时', u'几小时'), (u'几天', u'几天')]
 
+
+''' 登录提交表单 '''
 class LoginForm(Form):
 	email = StringField('Email', validators=[Required(),
 											Length(1, 64), Email()])
@@ -75,33 +78,37 @@ class LoginForm(Form):
 	remember_me = BooleanField('Keep me logged in')
 	submit = SubmitField('Log In')
 
+''' 新建角色提交表单 '''
 class RoleForm(Form):
 	role_name = StringField(u'角色名称', validators=[Required(),Length(1,64)])
 	submit = SubmitField(u'提交')
 
+''' 权限选择提交表单 '''
 class PermissionForm(Form):
 	have_perm = SelectMultipleField(u'权限列表', choices=perm_choices)
 	submit = SubmitField(u'提交')
 
-
+''' 部门信息提交表单 '''
 class DepartForm(Form):
 	department = StringField(u'部门', validators=[Required(), Length(1, 64)])
 	leader = StringField(u'部门经理')
 	email = StringField(u'邮件')
 	submit = SubmitField(u'提交')
 
+	# 如果不是做部门信息修改提交，则验证部门名称是否已存在，已存在则提示。
 	def validate_department(self, field):
 		if request.endpoint[:19] != 'admin.depart_modify':
 			if Depart.query.filter_by(department=field.data).first():
 				raise ValidationError(u'部门已经存在')
 
-
+''' 用户信息提交表单 '''
 class UserForm(Form):
 	name = StringField(u'姓名', validators=[Required(), Length(1, 64)])
 	email = StringField(u'邮件', validators=[Email()])
 	department = SelectField(u'部门')
 	submit = SubmitField(u'提交')
 
+	# 如果不是做用户信息修改提交，则验证邮箱是否已存在，已存在则提示。
 	def validate_email(self, field):
 		if request.endpoint[:17] != 'admin.user_modify':
 			if User.query.filter_by(email=field.data).first():
@@ -109,19 +116,21 @@ class UserForm(Form):
 
 	def __init__(self, *args, **kwargs):
 		super(UserForm, self).__init__(*args, **kwargs)
+		# 初始化表单时，从后台数据库读取部门列表供选择
 		self.department.choices = [('', '')] + [(dpt.department, dpt.department) for dpt in Depart.query.all()]
 
-
+''' 用户对应角色提交表单 '''
 class UserRoleForm(Form):
 	role_name = SelectField(u'角色')
 	submit = SubmitField(u'提交')
 
 	def __init__(self, *args, **kwargs):
 		super(UserRoleForm, self).__init__(*args, **kwargs)
+		# 初始化表单时，从后台数据库读取角色列表供选择
 		self.role_name.choices = [('', '')] + [(r.role_name, r.role_name) for r in Role.query.all()]
 
 
-
+''' 资产提交表单 '''
 class AssetForm(Form):
 	sysname = StringField(u'系统名称')
 	domain = StringField(u'系统域名', validators=[Required(), Length(1, 64)])
@@ -143,6 +152,7 @@ class AssetForm(Form):
 	ps = TextField(u'说明')
 	submit = SubmitField(u'提交')
 
+	''' 验证域名是否存在 '''
 	def validate_domain(self, field):
 		if (request.endpoint[:19] != 'admin.assets_modify') and (request.endpoint[:17] != 'src.assets_modify'):
 			if Asset.query.filter_by(domain=field.data).first():
@@ -150,13 +160,17 @@ class AssetForm(Form):
 
 	def __init__(self, *args, **kwargs):
 		super(AssetForm, self).__init__(*args, **kwargs)
+		# 初始化表单时，从后台数据库读取部门列表供选择
 		self.department.choices = [('', '')] + [(dpt.department, dpt.department) for dpt in Depart.query.all()]
 		#self.owner.choices = [('', '')] + [(user.email, user.name) for user in User.query.filter_by(department=u'信息系统安全部')]
 
+
+''' 漏洞类型提交表单 '''
 class VulTypeForm(Form):
 	vul_type = StringField(u'漏洞类型')
 	submit = SubmitField(u'提交')
 
+	''' 验证漏洞类型是否已存在 '''
 	def validate_domain(self, field):
 		if request.endpoint[:18] != 'src.vul_type_modify':
 			if VulType.query.filter_by(domain=field.data).first():

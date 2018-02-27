@@ -3,7 +3,7 @@ from flask import render_template, current_app, request
 from . import main
 import chartkick
 from .. import db
-from ..admin.models import VulType, Asset, AssetScore
+from ..admin.models import VulType, Asset
 from ..src.models import VulReport, VulLog
 import datetime
 import json

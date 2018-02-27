@@ -6,7 +6,7 @@ from .forms import VulReportForm, UploadImgForm, VulReportReviewForm, VulReportA
 from .forms import VulReportDevFinishForm, VulReportRetestResultForm, VulReportSendEmailForm
 from .forms import VulReportAttackForm, VulReportVulCataForm
 from .models import VulReport, VulLog
-from ..admin.models import Asset, User, Depart, AssetScore
+from ..admin.models import Asset, User, Depart
 from ..admin.forms import AssetForm
 from .. import db
 import datetime
