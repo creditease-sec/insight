@@ -6,6 +6,7 @@ from .models import LoginUser
 import re
 
 
+''' 登录提交表单 '''
 class LoginForm(Form):
     email = StringField(u'邮箱', validators=[Required(), 
                                     Length(1, 64), Email()])

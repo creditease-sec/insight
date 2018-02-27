@@ -70,14 +70,6 @@ count_private_data_choice = [('',''), (u'几十条', u'几十条'), (u'几百条
 down_time_choice = [('',''), (u'几分钟', u'几分钟'), (u'几十分钟', u'几十分钟'), (u'几小时', u'几小时'), (u'几天', u'几天')]
 
 
-''' 登录提交表单 '''
-class LoginForm(Form):
-	email = StringField('Email', validators=[Required(),
-											Length(1, 64), Email()])
-	password = PasswordField('Password', validators=[Required()])
-	remember_me = BooleanField('Keep me logged in')
-	submit = SubmitField('Log In')
-
 ''' 新建角色提交表单 '''
 class RoleForm(Form):
 	role_name = StringField(u'角色名称', validators=[Required(),Length(1,64)])

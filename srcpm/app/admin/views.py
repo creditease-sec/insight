@@ -1,7 +1,7 @@
 #coding:utf-8
 
 from flask import render_template, redirect, flash, url_for, request, jsonify
-from .forms import LoginForm, RoleForm, PermissionForm, UserForm, DepartForm, UserRoleForm, AssetForm, VulTypeForm
+from .forms import RoleForm, PermissionForm, UserForm, DepartForm, UserRoleForm, AssetForm, VulTypeForm
 from .models import Role, Permission, User, Depart, Asset, VulType
 from ..auth.models import LoginUser
 from ..src.models import VulReport
