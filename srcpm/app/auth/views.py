@@ -13,6 +13,8 @@ from ..LDAPLogin import ldap_login
 import json
 import requests
 
+
+''' LDAP登录代码样例'''
 """
 @auth.route('/login_ldap', methods=['GET','POST'])
 def login_ldap():
@@ -54,6 +56,7 @@ def login_ldap():
 """
 
 
+''' 登录页面 '''
 @auth.route('/login', methods=['GET','POST'])
 def login():
 	form = LoginForm()
@@ -70,7 +73,7 @@ def login():
 	return render_template('auth/login.html', form=form)
 
 
-
+''' 注销功能请求 '''
 @auth.route('/logout')
 @login_required
 def logout():
@@ -79,6 +82,7 @@ def logout():
 	return redirect(url_for('main.index'))
 
 
+''' 注册页面 '''
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
 	form = RegistrationForm()
@@ -93,6 +97,7 @@ def register():
 	return render_template('auth/register.html', form=form)
 
 
+''' 邮件验证链接功能请求 '''
 @auth.route('/confirm/<token>')
 @login_required
 def confirm(token):
@@ -115,6 +120,7 @@ def confirm(token):
 	return redirect(url_for('main.index'))
 
 
+''' 注册用户未验证邮箱前，只能访问auth模块和静态资源 '''
 @auth.before_app_request
 def before_request():
 	if current_user.is_authenticated and not current_user.confirmed \
@@ -127,6 +133,7 @@ def before_request():
 		return redirect(url_for('auth.unconfirmed'))
 
 
+''' 注册用户未进行邮箱验证提醒和重新发送确认邮件页面 '''
 @auth.route('/unconfirmed')
 def unconfirmed():
 	if current_user.is_anonymous or current_user.confirmed:
@@ -134,6 +141,7 @@ def unconfirmed():
 	return render_template('auth/unconfirmed.html')
 
 
+''' 发送确认邮件功能请求 '''
 @auth.route('/confirm')
 @login_required
 def resend_confirmation():
@@ -143,6 +151,8 @@ def resend_confirmation():
 	flash(u'确认邮件已发送至您的邮箱，请到邮箱确认.')
 	return redirect(url_for('main.index'))
 
+
+''' 修改密码页面 '''
 @auth.route('/change_password', methods=['GET', 'POST'])
 @login_required
 def change_password():
@@ -158,6 +168,7 @@ def change_password():
     return render_template("auth/change_password.html", form=form)
 
 
+''' 重置密码页面 '''
 @auth.route('/reset', methods=['GET', 'POST'])
 def password_reset_request():
     if not current_user.is_anonymous:
@@ -178,18 +189,25 @@ def password_reset_request():
     return render_template('auth/reset_password.html', form=form)
 
 
+''' 重置的新密码提交验证请求 '''
 @auth.route('/reset/<token>', methods=['GET', 'POST'])
 def password_reset(token):
-	if not current_user.is_anonymous:
+    ''' 如果是登录状态，则返回主页 '''
+    if not current_user.is_anonymous:
 		return redirect(url_for('main.index'))
-	form = PasswordResetForm()
-	if form.validate_on_submit():
-		lg_user = LoginUser.query.filter_by(email=form.email.data).first()
-		if lg_user is None:
-			return redirect(url_for('main.index'))
-		if lg_user.reset_password(token, form.password.data):
-			flash(u'您的密码已更新')
-			return redirect(url_for('auth.login'))
-		else:
-			return redirect(url_for('main.index'))
-	return render_template('auth/reset_password.html', form=form)
+
+    ''' 未登录状态下，进行重置密码验证 '''
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        lg_user = LoginUser.query.filter_by(email=form.email.data).first()
+        # 如果邮箱不存在，则返回主页
+        if lg_user is None:
+            return redirect(url_for('main.index'))
+        # 如果token和邮箱能对应上，则重置密码成功，返回登录页面。否则返回主页
+        if lg_user.reset_password(token, form.password.data):
+            flash(u'您的密码已更新')
+            return redirect(url_for('auth.login'))
+        else:
+            return redirect(url_for('main.index'))
+    return render_template('auth/reset_password.html', form=form)
+
