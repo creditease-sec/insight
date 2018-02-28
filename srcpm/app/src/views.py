@@ -2,7 +2,7 @@
 #-*- coding:utf-8 -*-
 
 from flask import render_template, flash, url_for, redirect, request, current_app, session, jsonify, abort
-from .forms import VulReportForm, UploadImgForm, VulReportReviewForm, VulReportAdminForm
+from .forms import VulReportForm, VulReportReviewForm, VulReportAdminForm
 from .forms import VulReportDevFinishForm, VulReportRetestResultForm, VulReportSendEmailForm
 from .forms import VulReportAttackForm, VulReportVulCataForm
 from .models import VulReport, VulLog

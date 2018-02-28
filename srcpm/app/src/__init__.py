@@ -1,3 +1,6 @@
+#-*- coding:utf-8 -*-
+''' src 蓝本文件 '''
+
 from flask import Blueprint
 
 

@@ -11,15 +11,17 @@ from flask import request
 from app.admin.models import Depart
 from flask_pagedown.fields import PageDownField
 
+# 实例化UploadSet类，创建一个图片set
+# images = UploadSet('images', IMAGES)
 
-images = UploadSet('images', IMAGES)
-
+''' 下拉选项 '''
 action_choices = [('',''), (u'录入',u'录入'), (u'提交',u'提交')]
 vul_type_level_choices = [('',''), (u'严重', u'严重'), (u'高危', u'高危'), (u'中危', u'中危'), (u'低危', u'低危')]
 source_choices = [('',''), (u'安全部', u'安全部'), (u'YISRC', u'YISRC'), (u'公众平台', u'公众平台'), (u'合作伙伴', u'合作伙伴')]
 vul_cata_choices = [('',''), (u'代码层面',u'代码层面'), (u'运维层面',u'运维层面')]
 
 
+''' 漏洞报告提交表单 '''
 class VulReportForm(Form):
 	title = StringField(u'漏洞标题')
 	related_asset = SelectField(u'关联资产')
@@ -33,9 +35,13 @@ class VulReportForm(Form):
 
 	def __init__(self, *args, **kwargs):
 		super(VulReportForm, self).__init__(*args, **kwargs)
+		# 初始化表单时，从后台数据库读取域名列表供选择
 		self.related_asset.choices = [('', '')] + [(ast.domain, ast.domain) for ast in Asset.query.all()]
+		# 初始化表单时，从后台数据库读取漏洞类型列表供选择
 		self.related_vul_type.choices = [('', '')] + [(vtp.vul_type, vtp.vul_type) for vtp in VulType.query.all()]
 
+
+''' 漏洞报告管理修改提交表单 '''
 class VulReportAdminForm(Form):
 	title = StringField(u'漏洞标题')
 	related_asset = StringField(u'关联资产')
@@ -64,7 +70,7 @@ class VulReportAdminForm(Form):
 	submit = SubmitField(u'提交')
 
 
-
+''' 上传图片提交表单 
 class UploadImgForm(Form):
     upload = FileField(u'上传图片', validators=[
     								FileRequired(),
@@ -72,7 +78,10 @@ class UploadImgForm(Form):
     								]
     					)
     submit = SubmitField('Submit')
+'''
 
+
+''' 漏洞报告审核提交表单 '''
 class VulReportReviewForm(Form):
 	related_vul_cata = SelectField(u'漏洞层面', choices=vul_cata_choices)
 	related_vul_type = SelectField(u'漏洞类型')
@@ -83,16 +92,23 @@ class VulReportReviewForm(Form):
 
 	def __init__(self, *args, **kwargs):
 		super(VulReportReviewForm, self).__init__(*args, **kwargs)
+		# 初始化表单时，从后台数据库读取漏洞类型列表供选择
 		self.related_vul_type.choices = [('', '')] + [(vtp.vul_type, vtp.vul_type) for vtp in VulType.query.all()]
 
+
+''' 漏洞报告申请复测提交表单 '''
 class VulReportDevFinishForm(Form):
 	dev_finish_solution = TextAreaField(u'修复方法')
 	submit = SubmitField(u'提交')
 
+
+''' 漏洞报告页面手动发送提醒邮件时，密码提交表单 '''
 class VulReportSendEmailForm(Form):
 	pwd = StringField(u'发送邮件密码')
 	submit = SubmitField(u'提交')
 
+
+''' 漏洞报告复测结果提交表单 '''
 class VulReportRetestResultForm(Form):
 	done_solution = TextAreaField(u'复测结果')
 	done_rank = SelectField(u'剩余Rank', choices=[(str(n),n) for n in range(0,21)])
@@ -100,10 +116,13 @@ class VulReportRetestResultForm(Form):
 	submit = SubmitField(u'提交')
 
 
+''' 攻击发现结果提交表单 '''
 class VulReportAttackForm(Form):
 	attack_check = SelectField(u'攻击发现', choices=[('',''), (u'是',u'是'), (u'否',u'否')])
 	submit = SubmitField(u'提交')
 
+
+''' 漏洞层面提交表单 '''
 class VulReportVulCataForm(Form):
 	related_vul_cata = SelectField(u'漏洞层面', choices=vul_cata_choices)
 	submit = SubmitField(u'提交')
