@@ -6,7 +6,7 @@ import bleach
 from .. import db
 
 
-
+''' 漏洞报告表 '''
 class VulReport(db.Model):
 	__tablename__ = 'vul_reports'
 	id = db.Column(db.Integer, primary_key = True)
@@ -38,7 +38,7 @@ class VulReport(db.Model):
 	attack_check = db.Column(db.String(64))
 
 
-
+	''' 漏洞报告允许的html标签和属性 '''
 	@staticmethod
 	def on_changed_vul_poc(target, value, oldvalue, initiator):
 		allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
@@ -54,6 +54,8 @@ class VulReport(db.Model):
 							tags=allowed_tags, attributes=attrs, strip=True)
 							)
 
+
+	''' 漏洞报告的解决办法允许的html标签和属性 '''
 	@staticmethod
 	def on_changed_vul_solution(target, value, oldvalue, initiator):
 		allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
@@ -69,6 +71,8 @@ class VulReport(db.Model):
 							tags=allowed_tags, attributes=attrs, strip=True)
 							)
 
+
+	''' 根据漏洞报告中的漏洞评定rank设置漏洞等级 '''
 	@staticmethod
 	def on_changed_vul_self_rank(target, value, oldvalue, initiator):
 		target.grant_rank = int(value)
@@ -84,21 +88,28 @@ class VulReport(db.Model):
 		else:
 			target.vul_type_level = '忽略'
 
+
+	''' 如果风险分被设置，则剩余风险风自动设置等于风险分，剩余rank自动设置等于评定rank '''
 	@staticmethod
 	def on_changed_risk_score(target, value, oldvalue, initiator):
+		# 如果漏洞类型是输出文档，剩余风险和剩余rank设置为0
 		if target.related_vul_type == u'输出文档':
 			target.residual_risk_score = float(0)
 			target.done_rank = 0
+		# 非输出文档，设置剩余风险和剩余rank值
 		else:
 			target.residual_risk_score = float(value)
 			target.done_rank = target.grant_rank
 
+
+''' 监听各字段数据变化，相应数据变化后触发函数功能 '''
 db.event.listen(VulReport.vul_poc, 'set', VulReport.on_changed_vul_poc)
 db.event.listen(VulReport.vul_solution, 'set', VulReport.on_changed_vul_solution)
 db.event.listen(VulReport.vul_self_rank, 'set', VulReport.on_changed_vul_self_rank)
 db.event.listen(VulReport.risk_score, 'set', VulReport.on_changed_risk_score)
 
 
+''' 漏洞报告更新日志表 '''
 class VulLog(db.Model):
 	__tablename__ = 'vul_logs'
 	id = db.Column(db.Integer, primary_key=True)
