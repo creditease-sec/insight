@@ -34,7 +34,6 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                                                                         ).group_by(
                                                                             Asset.department
                                                                             ).order_by(-db.func.count(Asset.department)).all()
-    #print depart_asset_stat
     count_asset = 0
     for i in depart_asset_stat:
         count_asset += i[1]
@@ -89,19 +88,16 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
 
     data_department_vul_count_all = {}
     for c in data_department_vul:
-        #print c[0],c[1]
         if data_department_vul_count_all.has_key(c[0]):
             data_department_vul_count_all[c[0]] += int(c[1])
         else:
             data_department_vul_count_all.update({c[0]:c[1]})
     for c in data_department_vul_unfinish:
-        #print c[0],c[1]
         if data_department_vul_count_all.has_key(c[0]):
             data_department_vul_count_all[c[0]] += int(c[1])
         else:
             data_department_vul_count_all.update({c[0]:c[1]})
     for c in data_department_vul_finished:
-        #print c[0],c[1]
         if data_department_vul_count_all.has_key(c[0]):
             data_department_vul_count_all[c[0]] += int(c[1])
         else:
@@ -165,7 +161,6 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                                                                             VulReport.related_vul_type != u'输出文档',
                                                                         ).all()
     count_vul_old_unfinish = len(data_department_vul_list_2)
-    #print count_vul_old_unfinish,u'个之前未修复漏洞'
 
     #统计时间段之前发现的漏洞，至今已修复的漏洞（包括在统计时间段内修复的，和统计时间段之后修复的）
     data_department_vul_list_3 = db.session.query( Asset.department, VulReport.id, VulReport.risk_score, VulReport.start_date, VulReport.fix_date).filter(
@@ -180,7 +175,6 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                                                                             VulReport.related_vul_type != u'输出文档',
                                                                         ).all()
     count_vul_old_finished = len(data_department_vul_list_3)
-    #print count_vul_old_finished,u'个之前漏洞当月修复'
 
     #统计时间段内新增漏洞产生的风险值计算
     data_department_risk_new = {}
@@ -207,21 +201,12 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
     data_department_vul_list_2_3 = data_department_vul_list_2 + data_department_vul_list_3
     for vul in data_department_vul_list_2_3:
         if (vul[4] is not None) and (startDate <= vul[4] <= endDate):
-            #print u'================之前漏洞当月修复=============='
-            #print vul[0]
-            #print vul[1]
             days = ((vul[4]-startDate).days + 1)
-            #print days,u'天'
         elif (vul[4] is None) or (vul[4] > endDate):
-            #print u'======================之前漏洞未修复，和之前漏洞在统计时间段后修复的================='
-            #print vul[0]
-            #print vul[1]
             days = (endDate - startDate).days + 1
-            #print days,u'天'
         else:
             continue
         risk = days * vul[2]
-        #print risk,u'分'
         risk_all += risk
         if data_department_risk_all.has_key(vul[0]):
             data_department_risk_all[vul[0]] += risk
@@ -273,7 +258,6 @@ def index(start_date=0, end_date=0):
                                                     VulReport.start_date <= endDate,
                                                     VulReport.related_vul_type != u'输出文档',
                                                 ).group_by( VulReport.related_vul_type )
-    print query
     list_count_vul_type = query.all()
     data_vul_type = {}
     #data = {'王昊': 150, '万杰': 200, '潘烁宇': 100}
@@ -524,7 +508,6 @@ def index_stats_time(start_date='20171101', end_date='20990101'):
         if vulreport.author not in author_list:
             author_list.append(vulreport.author)
 
-    #print author_list
 
     
     for author in author_list:
@@ -550,11 +533,8 @@ def index_stats_time(start_date='20171101', end_date='20990101'):
 
 
 def compute_take_time(author, vul_report_list_result):
-    #print 'author: ', author
     vul_known_take_time_list = []
     for vulreport, asset in vul_report_list_result:
-        #print vulreport.id
-        #print asset.id
         vul_logs = VulLog.query.filter_by(related_vul_id = vulreport.id)
         if vul_logs.first():
             vul_known_take_time = 0
@@ -565,31 +545,22 @@ def compute_take_time(author, vul_report_list_result):
                     vul_known_time_start = vul_log.time
                 if vul_log.action == u'已知悉':
                     vul_known_time_end = vul_log.time
-            #print 'vul_log_related_vul_id: ', vul_log.related_vul_id
-            #print 'vul_known_time_start: ', vul_known_time_start
-            #print 'vul_known_time_end: ', vul_known_time_end
             if vul_known_time_start != 0 and vul_known_time_end !=0:
                 #start_datetime = datetime.strptime(vul_known_time_start, "%Y-%m-%d %H:%M:%S")
                 #end_datetime = datetime.strptime(vul_known_time_end, "%Y-%m-%d %H:%M:%S")
                 vul_known_take_time = (vul_known_time_end - vul_known_time_start).seconds
-                #print 'known_datetime: ', known_datetime
                 vul_known_take_time_list.append(vul_known_take_time)
 
     count = len(vul_known_take_time_list)
-    #print '统计已知悉漏洞数量: %d 个' %count
     if count != 0:
         max_time = round(max(vul_known_take_time_list) / 60.0 / 60.0, 2)
         min_time = round(min(vul_known_take_time_list) / 60.0 / 60.0, 2)
-        #print '最大值: %s 小时' % str(max_time)
-        #print '最小值: %s 小时' % str(min_time)
 
         time_sum = 0
         for take_time in vul_known_take_time_list:
             time_sum += take_time
 
-        #print '总和: %d 秒' %time_sum
         averge_time = round((time_sum / count) / 60.0 / 60.0, 2)
-        #print '平均值: %s 小时' % str(averge_time)
     else:
         max_time = 0
         min_time = 0
@@ -600,11 +571,8 @@ def compute_take_time(author, vul_report_list_result):
 
 
 def compute_retest_time(author, vul_report_list_result):
-    #print 'author: ', author
     vul_retest_time_list = []
     for vulreport, asset in vul_report_list_result:
-        #print vulreport.id
-        #print asset.id
         vul_logs = VulLog.query.filter_by(related_vul_id = vulreport.id)
         if vul_logs.first():
             vul_retest_time = 0
@@ -625,20 +593,15 @@ def compute_retest_time(author, vul_report_list_result):
                     vul_retest_time_list.append(vul_retest_time)
 
     count = len(vul_retest_time_list)
-    #print '统计复测漏洞数量: %d 个' %count
     if count != 0:
         max_time = round(max(vul_retest_time_list) / 60.0 / 60.0, 2)
         min_time = round(min(vul_retest_time_list) / 60.0 / 60.0, 2)
-        #print '最大值: %s 小时' % str(max_time)
-        #print '最小值: %s 小时' % str(min_time)
 
         time_sum = 0
         for take_time in vul_retest_time_list:
             time_sum += take_time
 
-        #print '总和: %d 秒' %time_sum
         averge_time = round((time_sum / count) / 60.0 / 60.0, 2)
-        #print '平均值: %s 小时' % str(averge_time)
     else:
         max_time = 0
         min_time = 0

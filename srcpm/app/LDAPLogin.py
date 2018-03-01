@@ -4,7 +4,6 @@ import ldap
 
 
 def ldap_login(username, password):
-    print("开始执行")
     Server = "ldap://x.x.x.x:389"
     baseDN = "OU=XXXX,DC=XXXXXX,DC=XXXX"
     searchScope = ldap.SCOPE_SUBTREE
@@ -27,5 +26,4 @@ def ldap_login(username, password):
     except:
         return False
 
-    print 'ldap connect successfully'
     return True

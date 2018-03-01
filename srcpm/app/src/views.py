@@ -322,10 +322,8 @@ def vul_notify_list():
 				list_to_send_email = []
 				for vul_report in query.all():
 					email_dict = get_email_dict(vul_report[0].id)
-					print "email_dict = " , email_dict
 					email_list = []
 					email_list = email_dict['owner']
-					print "email_list", email_list
 					email_list.append(email_dict['department_manager'])
 					email_list.append(email_dict['author'])
 					if email_list not in list_to_send_email:
@@ -1071,7 +1069,6 @@ def rank_score_list(days):
 							dict_user['score'] += float(vul_report.risk_score)
 						else:
 							days_count = datetime.date.today() - vul_report.start_date
-							print 'days:', days
 							if days_count <= datetime.timedelta(days=days):
 								dict_user['rank'] += int(vul_report.grant_rank)
 								dict_user['score'] += float(vul_report.risk_score)
