@@ -24,6 +24,7 @@ from . import src
 
 #-------------漏洞报告模块------------------------------------------------------------------------------
 
+''' 漏洞报告管理编辑页面 '''
 @src.route('/vul_report_admin_edit/<id>', methods=['GET', 'POST'])
 @permission_required('src.vul_report_admin_edit')
 def vul_report_admin_edit(id):
@@ -91,13 +92,14 @@ def vul_report_admin_edit(id):
 	return render_template('src/vul_report_admin_edit.html', form=form)
 
 
+''' 漏洞报告提交页面 '''
 @src.route('/vul_report_add', methods=['GET', 'POST'])
 @login_required
 @permission_required('src.vul_report_add')
 def vul_report_add():
 	form = VulReportForm()
 	if form.validate_on_submit():
-		#获取关联资产的内外网、状态信息
+		# 漏洞报告提交时判断关联资产是否存在，若不存在则返回500
 		asset_get = Asset.query.filter_by(domain=form.related_asset.data).first()
 		if asset_get is None:
 			return abort(500)
@@ -139,25 +141,33 @@ def vul_report_add():
 		else:
 			flash(u'安全管理员未设置!')
 
+		# 漏洞报告提交成功后跳转到漏洞报告查看页面
 		return redirect(url_for('src.vul_report_list_read'))
 	return render_template('src/vul_report_add.html', form=form)
 
 #-----------------------上传图片----------------------------------------------------------
 
+''' 上传图片后缀白名单设置 '''
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'xlsx', 'xmind'])
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+
+''' 上传图片功能请求 '''
 @src.route('/upload_img', methods=['POST'])
 @permission_required('src.upload_img')
 def upload_img():
 	up_img_file = request.files['upload']
 	if up_img_file and allowed_file(up_img_file.filename):
+		# 获取上传图片的后缀类型
 		img_type = up_img_file.filename.rsplit('.', 1)[1]
+		# 重新格式化命名图片文件名
 		save_filename = datetime.datetime.now().strftime('%Y%m%d%H%M%s') + '.' + img_type
+		''' 根据文件后缀类型选择存储目录 '''
 		if img_type == 'xlsx':
 			up_img_file.save(current_app.config['UPLOAD_EXCEL_FOLDER'] + save_filename)
+			# 将文件存储后的路径和文件名保存在session中
 			session['filename'] = url_for('src.static', filename='upload/excel/'+save_filename)
 		elif img_type == 'xmind':
 			up_img_file.save(current_app.config['UPLOAD_XMIND_FOLDER'] + save_filename)
@@ -165,9 +175,13 @@ def upload_img():
 		else:
 			up_img_file.save(current_app.config['UPLOAD_IMG_FOLDER'] + save_filename)
 			session['filename'] = url_for('src.static', filename='upload/img/'+save_filename)
+		# 返回文件路径
 		return jsonify(result=session['filename'])
 
 
+''' 漏洞报告查看页面 '''
+''' 未登录的用户只允许查看状态为【完成】的漏洞报告列表，且不能查看输出文档 '''
+''' 登录状态下，管理员和安全人员角色可以查看全部的漏洞报告列表，其它角色权限和未登录用户查看漏洞报告列表权限相同 '''
 @src.route('/vul_report_list_read', methods=['GET', 'POST'])
 def vul_report_list_read():
 	opt = request.args.get('opt','all')
@@ -190,6 +204,7 @@ def vul_report_list_read():
 														VulReport.related_vul_type!=u'输出文档',
 														)
 
+	''' 逾期完成、逾期未完成为精确匹配搜索，其它搜索关键字为模糊搜索 '''
 	if opt=='all':
 		vul_report_list_result = query.order_by(-VulReport.start_date).all()
 	elif opt==u'逾期完成':
@@ -217,13 +232,14 @@ def vul_report_list_read():
 	return render_template('src/vul_report_list_read.html', vul_report_list_result=vul_report_list_result)
 
 
-
+''' 所有漏洞日志查看页面 '''
 @src.route('/vul_report_log_read', methods=['GET',])
 @login_required
 def vul_report_log_read():
 	opt = request.args.get('opt','all')
 	page = request.args.get('page', 1, type=int)
 
+	''' 分页，每页显示SRCPM_PER_PAGE=10条 '''
 	pagination = VulLog.query.order_by(-VulLog.time).paginate(
                         page, per_page=current_app.config['SRCPM_PER_PAGE'], error_out=False
                         )
@@ -243,10 +259,9 @@ def vul_report_log_read():
 							)
 
 
-
 #-----------------------------------分用户漏洞管理---------------------------------------
 
-#未审核漏洞列表
+''' 未审核漏洞列表页面 '''
 @src.route('/vul_review_list', methods=['GET', 'POST'])
 @permission_required('src.vul_review_list')
 def vul_review_list():
@@ -256,6 +271,8 @@ def vul_review_list():
 	opt_label = [u'查询', u'请输入关键字进行查询']
 	if request.method == 'POST':
 		opt = request.form.get('opt','all')
+		#输入send_email_password则忽略，不发送邮件提醒
+		#输入不是send_email_password则进行模糊查询
 		if opt != 'send_email_password':
 			query = query.filter(VulReport.author.like("%" + opt + "%")
 									| VulReport.title.like("%" + opt + "%")
@@ -277,7 +294,7 @@ def vul_review_list():
 	return render_template('src/vul_review_list.html', vul_report_list=vul_report_list, opt_label=opt_label)
 
 
-#已通告漏洞列表
+''' 已通告漏洞列表页面 '''
 @src.route('/vul_notify_list', methods=['GET', 'POST'])
 @login_required
 def vul_notify_list():
@@ -288,6 +305,7 @@ def vul_notify_list():
 	if request.method == 'POST':
 		opt = request.form.get('opt','all')
 		if opt != 'send_email_password':
+			# 输入不是send_email_password，则进行模糊查询
 			query = query.filter(VulReport.author.like("%" + opt + "%")
 									| VulReport.title.like("%" + opt + "%")
 									| VulReport.related_asset.like("%" + opt + "%")
@@ -298,8 +316,9 @@ def vul_notify_list():
 									| VulReport.vul_status.like("%" + opt + "%")
 								)
 		elif opt=='send_email_password':
+			# 输入send_email_password则发送提醒邮件，只有管理员有权限发送提醒邮件
 			if current_user.role_name==u'安全管理员' or current_user.role_name==u'超级管理员':
-				#设置发送邮件的列表
+				# 设置发送邮件的列表
 				list_to_send_email = []
 				for vul_report in query.all():
 					email_dict = get_email_dict(vul_report[0].id)
@@ -312,7 +331,7 @@ def vul_notify_list():
 					if email_list not in list_to_send_email:
 						list_to_send_email.append(email_list)
 
-				#遍历发送邮件列表，发送提醒邮件
+				# 遍历发送邮件列表，发送提醒邮件
 				for e_l in list_to_send_email:
 					send_email(u'新通告漏洞提醒',
 								'src/email/vul_notify_mail_alert',
@@ -328,7 +347,7 @@ def vul_notify_list():
 	elif current_user.role_name == u'安全人员':
 		vul_report_list = query.filter(VulReport.author==current_user.email).all()
 	elif current_user.role_name == u'普通用户':
-		#判断普通用户是否为部门经理，部门经理有权限查看部门所有漏洞
+		# 判断普通用户是否为部门经理，部门经理有权限查看部门所有漏洞
 		department_list = Depart.query.filter_by(email=current_user.email).all()
 		if department_list:
 			vul_report_list = []
@@ -339,7 +358,7 @@ def vul_notify_list():
 	return render_template('src/vul_notify_list.html', vul_report_list=vul_report_list, opt_label=opt_label)
 
 
-#修复中漏洞列表
+''' 修复中漏洞列表页面 '''
 @src.route('/vul_processing_list', methods=['GET', 'POST'])
 @login_required
 def vul_processing_list():
@@ -350,6 +369,7 @@ def vul_processing_list():
 	if request.method == 'POST':
 		opt = request.form.get('opt','all')
 		if opt != 'send_email_password':
+			# 输入不是send_email_password，则进行模糊查询
 			query = query.filter(VulReport.author.like("%" + opt + "%")
 									| VulReport.title.like("%" + opt + "%")
 									| VulReport.related_asset.like("%" + opt + "%")
@@ -360,6 +380,7 @@ def vul_processing_list():
 									| VulReport.vul_status.like("%" + opt + "%")
 								)
 		elif opt=='send_email_password':
+			# 输入send_email_password则发送提醒邮件，只有管理员有权限发送提醒邮件
 			if current_user.role_name==u'超级管理员' or current_user.role_name==u'安全管理员':
 				#设置发送邮件的列表
 				list_to_send_email = []
@@ -400,7 +421,7 @@ def vul_processing_list():
 	return render_template('src/vul_processing_list.html', vul_report_list=vul_report_list, opt_label=opt_label)
 
 
-#修复中暂不处理漏洞列表
+''' 修复中暂不处理漏洞列表页面 '''
 @src.route('/vul_processing_noalert_list', methods=['GET', 'POST'])
 @login_required
 def vul_processing_noalert_list():
@@ -421,6 +442,7 @@ def vul_processing_noalert_list():
 									| VulReport.vul_status.like("%" + opt + "%")
 								)
 		elif opt=='send_email_password':
+			# 输入send_email_password则发送提醒邮件，只有管理员有权限发送提醒邮件
 			if current_user.role_name==u'超级管理员' or current_user.role_name==u'安全管理员':
 				#设置发送邮件的列表
 				list_to_send_email = []
@@ -460,7 +482,8 @@ def vul_processing_noalert_list():
 
 	return render_template('src/vul_processing_noalert_list.html', vul_report_list=vul_report_list, opt_label=opt_label)
 
-#复测中漏洞列表
+
+''' 复测中漏洞列表页面 '''
 @src.route('/vul_retest_list', methods=['GET', 'POST'])
 @login_required
 def vul_retest_list():
@@ -500,7 +523,8 @@ def vul_retest_list():
 
 	return render_template('src/vul_retest_list.html', vul_report_list=vul_report_list, opt_label=opt_label)
 
-#已完成漏洞列表
+
+''' 已完成漏洞列表页面 '''
 @src.route('/vul_finished_list', methods=['GET', 'POST'])
 @login_required
 def vul_finished_list():
@@ -540,6 +564,7 @@ def vul_finished_list():
 	return render_template('src/vul_finished_list.html', vul_report_list=vul_report_list, opt_label=opt_label)
 
 
+''' 漏洞报告详情查看页面 '''
 @src.route('/vul_report_read/<id>')
 def vul_report_read(id):
 	vul_report = VulReport.query.get_or_404(id)
@@ -566,12 +591,14 @@ def vul_report_read(id):
 	return render_template('src/vul_report_read.html', vul_report=vul_report)
 
 
+''' 漏洞报告删除功能请求 '''
 @src.route('/vul_report_delete/<id>')
 @permission_required('src.vul_report_delete')
 def vul_report_delete(id):
 	vul_report_del = VulReport.query.get_or_404(id)
 	db.session.delete(vul_report_del)
 	flash(u'删除漏洞报告成功')
+	# 删除漏洞报告后，同时删除该漏洞报告的漏洞日志
 	query = VulLog.query.filter_by(related_vul_id=id)
 	if query.first():
 		for vul_log in query.all():
@@ -580,6 +607,7 @@ def vul_report_delete(id):
 	return redirect(url_for('src.vul_report_list_read'))
 
 
+''' 漏洞报告审核页面 '''
 @src.route('/vul_report_review/<id>', methods=['GET','POST'])
 @permission_required('src.vul_report_review')
 def vul_report_review(id):
@@ -615,7 +643,7 @@ def vul_report_review(id):
 		flash(u'资产%s状态不能为空!' %asset_get.domain)
 		asset_error_flag = 1
 
-	
+	# 如果资产部分属性没有填写，则跳转到资产查看页面，进行资产属性补充
 	if asset_error_flag == 1:
 		return redirect(url_for('src.assets_read',opt=asset_get.domain))
 
@@ -672,7 +700,7 @@ def vul_report_review(id):
 
 		return redirect(url_for('src.vul_report_list_read'))
 
-
+	# 自动计算风险和修复期限
 	risk_score, days = get_risk_score_and_end_date(int(vul_report_rv.grant_rank), asset_get)
 
 	#通告日期
@@ -691,6 +719,7 @@ def vul_report_review(id):
 							asset_get=asset_get, email_dict=email_dict, risk_score=risk_score)
 
 
+''' 漏洞报告审核页面ajax请求处理，根据评定rank自动计算风险值和截止修复期限'''
 @src.route('/vul_report_review_ajax/<id>', methods=['POST'])
 @permission_required('src.vul_report_review_ajax')
 def vul_report_review_ajax(id):
@@ -701,13 +730,14 @@ def vul_report_review_ajax(id):
 	return jsonify(risk_score=str(risk_score), end_date=end_date.strftime('%Y-%m-%d'))
 
 
-#新漏洞点击“已知悉”发送请求，状态变更为“修复中”
+''' “请确认已知悉”按钮功能请求，处理后漏洞状态变更为“修复中” '''
 @src.route('/vul_report_known/<id>')
 @permission_required('src.vul_report_known')
 def vul_report_known(id):
 	vul_report = VulReport.query.get_or_404(id)
 	if current_user.is_authenticated:
 		email_dict = get_email_dict(id)
+		# 判断用户是否拥有该漏洞报告权限
 		if (current_user.email in email_dict['owner']) or (current_user.email == email_dict['department_manager']):
 			if vul_report.vul_status != u'已通告':
 				return render_template('src/vul_report_read.html', vul_report=vul_report)
@@ -734,12 +764,14 @@ def vul_report_known(id):
 	return render_template('src/vul_report_read.html', vul_report=vul_report)
 
 
+''' 申请复测按钮功能请求 '''
 @src.route('/vul_report_dev_finish/<id>', methods=['GET','POST'])
 @permission_required('src.vul_report_dev_finish')
 def vul_report_dev_finish(id):
 	form = VulReportDevFinishForm()
 	vul_report_df = VulReport.query.get_or_404(id)
 	if current_user.is_authenticated:
+		# 只有修复中和暂不处理状态的漏洞，才可以提交申请复测
 		if vul_report_df.vul_status != u'修复中' and vul_report_df.vul_status != u'暂不处理':
 			abort(403)
 		else:
@@ -752,8 +784,6 @@ def vul_report_dev_finish(id):
 				abort(403)
 	else:
 		abort(403)
-
-
 
 	#Post提交复测申请
 	if form.validate_on_submit():
@@ -786,6 +816,7 @@ def vul_report_dev_finish(id):
 	return render_template('src/vul_report_dev_finish.html', form=form, vul_report_df=vul_report_df)
 
 
+'''  针对单个漏洞报告手动发送邮件提醒，只有管理员可以对漏洞状态为修复中和暂不处理的漏洞发送邮件提醒 '''
 @src.route('/vul_report_send_email/<id>', methods=['GET','POST'])
 @permission_required('src.vul_report_send_email')
 def vul_report_send_email(id):
@@ -826,7 +857,7 @@ def vul_report_send_email(id):
 							)
 
 
-
+''' “提交攻击发现结果”功能请求 '''
 @src.route('/vul_report_attack_check/<id>', methods=['GET','POST'])
 @permission_required('src.vul_report_attack_check')
 def vul_report_attack_check(id):
@@ -852,6 +883,7 @@ def vul_report_attack_check(id):
 							vul_report_attack=vul_report_attack, asset_get=asset_get)
 
 
+''' 漏洞层面提交功能请求 '''
 @src.route('/vul_report_vul_cata/<id>', methods=['GET','POST'])
 @permission_required('src.vul_report_vul_cata')
 def vul_report_vul_cata(id):
@@ -869,7 +901,7 @@ def vul_report_vul_cata(id):
 							vul_report_vul_cata=vul_report_vul_cata, asset_get=asset_get)
 
 
-
+''' 复测结果提交页面 '''
 @src.route('/vul_report_retest_result/<id>', methods=['GET','POST'])
 @permission_required('src.vul_report_retest_result')
 def vul_report_retest_result(id):
@@ -923,6 +955,7 @@ def vul_report_retest_result(id):
 							vul_report_retest=vul_report_retest, asset_get=asset_get)
 
 
+''' 复测结果提交ajax,根据重新评估的rank值计算剩余风险和修复期限 '''
 @src.route('/vul_report_retest_ajax/<id>', methods=['POST'])
 @permission_required('src.vul_report_retest_ajax')
 def vul_report_retest_ajax(id):
@@ -943,6 +976,7 @@ def vul_report_retest_ajax(id):
 	return jsonify(residual_risk_score=str(risk_score), end_date=end_date.strftime('%Y-%m-%d'))
 
 
+''' 根据资产的rank值计算风险值和修复天数 '''
 def get_risk_score_and_end_date(rank, asset):
 	#设置业务等级系数
 	asset_level_value = 0
@@ -990,6 +1024,7 @@ def get_risk_score_and_end_date(rank, asset):
 	return risk_score, days
 
 
+''' 根据漏洞ID获取相关负责人的邮箱账号 '''
 def get_email_dict(vul_report_id):
 	vul_report_get = VulReport.query.get_or_404(vul_report_id)
 	#author_get = User.query.filter_by(name=vul_report_get.author).first()
@@ -1013,6 +1048,7 @@ def get_email_dict(vul_report_id):
 
 #--------------------积分管理-----------------------------------------
 
+''' 积分查看页面，根据<int:days>参数查询最近days天数内的积分列表 '''
 @src.route('/rank_score_list/<int:days>')
 def rank_score_list(days):
 	query = LoginUser.query.filter(or_(LoginUser.role_name==u'安全人员',LoginUser.role_name==u'安全管理员'))
@@ -1024,7 +1060,7 @@ def rank_score_list(days):
 				'rank': 0,
 				'score': 0,
 			}
-			#查寻安全人员是否有提交漏洞
+			#查询安全人员是否有提交漏洞
 			vul_report_query = VulReport.query.filter_by(author=sec_user.email)
 			if vul_report_query.first():
 				#有提交漏洞则遍历漏洞报告，计算rank 和 积分
@@ -1044,6 +1080,7 @@ def rank_score_list(days):
 
 #----------------------------查看漏洞报告生命周期日志--------------------------
 
+''' 根据漏洞id查看漏洞日志 '''
 @src.route('/vul_report_log/<id>')
 @login_required
 def vul_report_log(id):
@@ -1053,13 +1090,9 @@ def vul_report_log(id):
 
 
 
-
-
-
-
 #------------资产模块-------------------------------------------------------------------------
 
-
+''' 前台资产查看页面 '''
 @src.route('/assets_read', methods=['GET', 'POST'])
 @permission_required('src.assets_read')
 def assets_read():
@@ -1095,7 +1128,7 @@ def assets_read():
 									opt=opt,)
 
 
-
+''' 前台资产增加页面 '''
 @src.route('/assets_add', methods=['GET', 'POST'])
 @permission_required('src.assets_add')
 def assets_add():
@@ -1128,6 +1161,7 @@ def assets_add():
 	return render_template('src/assets_add.html', form=form)
 
 
+''' 前台资产修改页面 '''
 @src.route('/assets_modify/<id>', methods=['GET', 'POST'])
 @permission_required('src.assets_modify')
 def assets_modify(id):
@@ -1191,6 +1225,8 @@ def assets_modify(id):
 	form.ps.data = asset_get.ps
 	return render_template('src/assets_modify.html', form=form, id = asset_get.id)
 
+
+''' 前台资产增加ajax请求，根据部门返回部门内用户邮箱列表 
 @src.route('/assets_add_ajax', methods=['GET','POST'])
 @permission_required('src.assets_add_ajax')
 def assets_add_ajax():
@@ -1200,5 +1236,5 @@ def assets_add_ajax():
 	for user in user_list:
 		opt_list.append({'name': user.name, 'email': user.email})
 	return jsonify(opt_list)
-
+'''
 
