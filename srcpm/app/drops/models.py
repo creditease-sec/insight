@@ -64,7 +64,7 @@ class Tag(db.Model):
     tags_name:标签字段，可变长度
 
 '''
-# 自定义drop查询方便，drop显示愉快素查找
+# 自定义drop查询方便，drop显示快速查找
 
 
 class PostQuery(BaseQuery):

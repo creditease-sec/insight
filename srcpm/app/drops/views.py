@@ -565,8 +565,3 @@ def deldrop(id):
     flash(u'删除成功')
     return redirect(url_for('drops.readdrops'))
 
-
-# @drops.route('/mgrdrops')
-# @permission_required('drops.manager')
-# def mgrdrops():
-#     return render_template('drops/mgrdrops.html')
