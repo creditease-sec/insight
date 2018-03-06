@@ -9,7 +9,6 @@ venv_srcpm/*
 config.txt
 migrations/*
 venv/*
-supervisor.conf
 log/*
 <<<<<<< HEAD
 .idea/

@@ -14,6 +14,8 @@ class Config:
     UPLOAD_IMG_FOLDER = os.path.join(basedir, 'app/static/upload/img/')
     UPLOAD_EXCEL_FOLDER = os.path.join(basedir, 'app/static/upload/excel/')
     UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
+    #公司邮箱后缀限制，只能使用公司邮箱注册账号。
+    CORP_MAIL = '@qq.com'
     #平台每次发送邮件的邮件抄送列表，默认设置发送给应用安全组邮箱列表，可自行修改
     CC_EMAIL = ['it.websec.list@creditease.cn',
                 'baoyingzhao@creditease.cn',
