@@ -29,8 +29,8 @@ class Config:
     UPLOAD_EXCEL_FOLDER = os.path.join(basedir, 'app/static/upload/excel/')
     UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
     #平台每次发送邮件的邮件抄送列表，默认设置发送给应用安全组邮箱列表，可自行修改
-    CC_EMAIL = ['it.websec.list@creditease.cn',
-                'baoyingzhao@creditease.cn',
+    CC_EMAIL = ['xxx1@creditease.cn',
+                'xxx2@creditease.cn',
             ]
     #PERMANENT_SESSION_LIFETIME = 10
     #登录时勾选记住，cookie路径和名称设置
@@ -43,7 +43,7 @@ class Config:
     #非drops模块分页设置，每页显示10行
     SRCPM_PER_PAGE = 10
     #主机名设置
-    SERVER_NAME = 'cesec.creditease.corp'
+    SERVER_NAME = 'xxx.creditease.corp'
 
 
 """ 发送新通告未知悉的漏洞提醒邮件，每周一到周五上午9点30分发送 """
@@ -74,8 +74,6 @@ def send_new_alert_mail():
 
 
     #遍历发送邮件列表，发送提醒邮件
-    #print list_to_send_email
-    #list_to_send_email = [['shengliu1@creditease.cn',],]
     for e_l in list_to_send_email:
         send_email(u'新通告漏洞提醒',
                     'src/email/vul_notify_mail_alert',
@@ -101,8 +99,6 @@ def send_unfinish_vul_mail():
 
 
     #遍历发送邮件列表，发送提醒邮件
-    #print list_to_send_email
-    #list_to_send_email = [['shengliu1@creditease.cn',],]
     for e_l in list_to_send_email:
         send_email(u'修复中漏洞提醒',
                     'src/email/vul_processing_mail_alert',
@@ -113,18 +109,18 @@ def send_unfinish_vul_mail():
 """ 自动发送邮件程序基本配置 """
 class MailConfig(Config):
     # 平台管理员邮箱设置
-    SRCPM_ADMIN = os.environ.get('SRCPM_ADMIN') or 'it.sec@creditease.cn'
+    # SRCPM_ADMIN = os.environ.get('SRCPM_ADMIN') or 'admin@admin.com'
     # 平台发邮件账号设置
-    SRCPM_MAIL_SENDER = '安全部 <it.sec@creditease.cn>'
+    SRCPM_MAIL_SENDER = '安全部 <xxx@creditease.cn>'
     # 连接 mysql URl 设置
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         ''
     # 发送邮件的服务器设置，账号密码由系统变量中读取
-    MAIL_SERVER = '10.160.192.8'
+    MAIL_SERVER = 'x.x.x.x'
     MAIL_PORT = 25
     MAIL_USE_TLS = False
     MAIL_USERNAME = os.environ.get(
-        'MAIL_USERNAME') or 'it.sec@creditease.cn'
+        'MAIL_USERNAME') or 'xxx@creditease.cn'
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or ''
 
     JOBS = [
