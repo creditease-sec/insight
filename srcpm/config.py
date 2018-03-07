@@ -16,7 +16,7 @@ class Config:
     UPLOAD_XMIND_FOLDER = os.path.join(basedir, 'app/static/upload/xmind/')
     #公司邮箱后缀限制，只能使用公司邮箱注册账号。
     CORP_MAIL = '@creditease.cn'
-    #平台每次发送邮件的邮件抄送列表，默认设置发送给应用安全组邮箱列表，可自行修改
+    #平台发送的每封邮件的邮件抄送列表，可以设置发送给安全部邮箱列表，可自行修改，也可以保持不变为空
     '''
     示例：
     CC_EMAIL = ['xxx1@creditease.cn',
@@ -44,13 +44,13 @@ class Config:
 # 以开发模式的配置运行，使用测试邮件服务器，并开启debug模式
 class DevelopmentConfig(Config):
     DEBUG = True
-    # 平台管理员邮箱设置
-    # SRCPM_ADMIN = os.environ.get('SRCPM_ADMIN') or 'admin@admin.com'
-    # 平台发邮件账号设置
-    SRCPM_MAIL_SENDER = '安全部 <sec_creditease@sina.com>'
     # 连接 mysql URl 设置
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         ''
+
+    # 平台发邮件账号设置
+    SRCPM_MAIL_SENDER = '安全部 <sec_creditease@sina.com>'
+    
     # 发送邮件的服务器设置，账号密码由系统变量中读取
     MAIL_SERVER = 'smtp.sina.com'
     MAIL_PORT = 587
@@ -63,13 +63,13 @@ class DevelopmentConfig(Config):
 # 以生产模式的配置运行，使用生产邮件服务器，并关闭debug模式
 class ProductionConfig(Config):
     DEBUG = False
-    # 平台管理员邮箱设置
-    # SRCPM_ADMIN = os.environ.get('SRCPM_ADMIN') or 'admin@admin.com'
-    # 平台发邮件账号设置
-    SRCPM_MAIL_SENDER = '安全部 <xxx@creditease.cn>'
     # 连接 mysql URl 设置
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         ''
+
+    # 平台发邮件账号设置
+    SRCPM_MAIL_SENDER = '安全部 <xxx@creditease.cn>'
+    
     # 发送邮件的服务器设置，账号密码由系统变量中读取
     MAIL_SERVER = 'x.x.x.x'
     MAIL_PORT = 25
