@@ -17,8 +17,13 @@ class Config:
     #公司邮箱后缀限制，只能使用公司邮箱注册账号。
     CORP_MAIL = '@creditease.cn'
     #平台每次发送邮件的邮件抄送列表，默认设置发送给应用安全组邮箱列表，可自行修改
+    '''
+    示例：
     CC_EMAIL = ['xxx1@creditease.cn',
                 'xxx2@creditease.cn',
+            ]
+    '''
+    CC_EMAIL = [
             ]
     #PERMANENT_SESSION_LIFETIME = 10
     #登录时勾选记住，cookie路径和名称设置
