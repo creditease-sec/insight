@@ -141,7 +141,7 @@ sh -c 'supervisord -c srcpm/supervisor.conf && supervisorctl -c srcpm/supervisor
 
 数据库初始化详细配置请见：
 
-[数据库初始化详细配置.md](数据库初始化详细配置.md)
+[数据库初始化详细配置.md](db_init.md)
 
 或者
 
