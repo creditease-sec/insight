@@ -1,5 +1,5 @@
 |路由端点|功能描述|具备访问权限的角色(admin具备所有权限)
-|-|-|-|
+|-----|-----|------|
 |admin.index|管理后台－首页|安全管理员，安全人员
 |admin.login_user_read|管理后台－用户查看|-
 |admin.login_user_related|管理后台－用户关联|-
