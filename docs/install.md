@@ -166,8 +166,8 @@ Enter password:root
 
 [http://127.0.0.1:9000/srcpm/auth/login](http://127.0.0.1:9000/srcpm/auth/login)
 
-|账号|密码|
-|-|-|
-|admin@admin.com|11|
+账号|密码
+------|------
+admin@admin.com|11
 
 ![登录页面](pics/登录页面.png)
