@@ -1,4 +1,4 @@
-# 漏洞管理平台
+# 漏洞管理平台 [![License](https://img.shields.io/aur/license/yaourt.svg)](https://gitee.com/null_451_3666/vulpm/tree/open-source/LICENSE)
 
 漏洞管理平台是安全人员用来对公司内部系统所出现的安全漏洞进行线上全生命周期管理的平台。
 
