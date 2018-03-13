@@ -88,4 +88,4 @@
 
 用户角色修改经常用于注册普通用户的权限提升，超级管理员通过【管理后台】-【认证和授权】-【用户查看】菜单，搜索用户名找到对应用户，点击该用户条目的【设置角色】超链接，进入用户角色修改页面。
 
-![](https://note.youdao.com/yws/api/personal/file/WEB390a5b7b7ed02b584cc5b690d3ec685a?method=download&shareKey=d47788f23265349d45b26a2b0a285948)
+![](pics/用户角色修改页面.png)
