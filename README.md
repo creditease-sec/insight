@@ -15,6 +15,11 @@
 
 ## 部署指南
 
+[![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)](https://www.python.org/)
+[![MySQL 5.6.27](https://img.shields.io/badge/mysql-5.6.27-orange.svg)](https://www.mysql.com)
+[![Flask 0.11.1](https://img.shields.io/badge/flask-0.11.1-yellow.svg)](https://github.com/pallets/flask)
+[![Docker 1.13.0](https://img.shields.io/badge/docker-1.13.0-blue.svg)](https://www.docker.com/)
+
 目前只编写了docker部署指南，建议docker部署，详细请见：
 
 [docker部署指南](docs/install.md)
