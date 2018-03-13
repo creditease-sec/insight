@@ -123,7 +123,10 @@ $ git clone -b open-source https://git.oschina.net/null_451_3666/vulpm.git
 
 ```
 # 拉取镜像
-docker pull pyshen/srcpm
+docker pull daocloud.io/liusheng/vulpm_docker:latest
+或
+自己构建镜像
+docker build -t='vulpm_docker' .
 
 # 启动容器，MAIL_PASSOWRD替换为自己邮箱服务器的密码。
 $ docker run -d -p 127.0.0.1:9000:5000 \
@@ -133,7 +136,7 @@ $ docker run -d -p 127.0.0.1:9000:5000 \
 -e DEV_DATABASE_URL='mysql://vuluser:vulpassword@db/vuldb' \
 -e SrcPM_CONFIG=development \
 -e MAIL_PASSWORD='xxxxxx' \
-pyshen/srcpm \
+daocloud.io/liusheng/vulpm_docker:latest \
 sh -c 'supervisord -c srcpm/supervisor.conf && supervisorctl -c srcpm/supervisor.conf start all && tail -f srcpm/log/gunicorn.err && tail -f srcpm/log/mail_sender.err'
 ```
 
