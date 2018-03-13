@@ -23,13 +23,13 @@ mysql> quit
 
 ## 部署和启动APP
 
-> 1.下载源码
+#### 1. 下载源码
 
 ```
 $ git clone -b open-source https://git.oschina.net/null_451_3666/vulpm.git
 ```
 
-> 2.修改vulpm/srcpm/config.py 配置文件
+#### 2. 修改vulpm/srcpm/config.py 配置文件
 
 * 修改公司邮箱后缀
 ```
@@ -82,7 +82,7 @@ $ git clone -b open-source https://git.oschina.net/null_451_3666/vulpm.git
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or ''
 ```
 
-> 3.修改定时周期邮件 mail_sender.py 的配置
+#### 3. 修改定时周期邮件 mail_sender.py 的配置
 
 ```
     #平台发送的每封邮件的邮件抄送列表，可以设置发送给安全部邮箱列表，可自行修改，也可以保持不变为空
@@ -112,14 +112,14 @@ $ git clone -b open-source https://git.oschina.net/null_451_3666/vulpm.git
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or ''
 ```
 
-> 4.修改vulpm/srcpm/app/src/forms.py 漏洞来源下拉列表
+#### 4. 修改vulpm/srcpm/app/src/forms.py 漏洞来源下拉列表
 
 ```
     ''' 下拉选项 '''
     source_choices = [('',''), (u'安全部', u'安全部'), (u'YISRC', u'YISRC'), (u'公众平台', u'公众平台'), (u'合作伙伴', u'合作伙伴')]
 ```
 
-> 5.在项目根目录下部署和启动APP
+#### 5. 在项目根目录下部署和启动APP
 
 ```
 # 拉取镜像
@@ -156,13 +156,13 @@ Enter password:root
 
 ## 访问漏洞管理平台
 
-> 1.主页
+#### 1. 主页
 
 [http://127.0.0.1:9000/srcpm/](http://127.0.0.1:9000/srcpm/)
 
 ![主页](pics/漏洞管理平台主页.png)
 
-> 2.登录页面
+#### 2. 登录页面
 
 [http://127.0.0.1:9000/srcpm/auth/login](http://127.0.0.1:9000/srcpm/auth/login)
 
