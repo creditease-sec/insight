@@ -131,7 +131,7 @@ docker build -t='vulpm_docker' .
 # 启动容器，MAIL_PASSOWRD替换为自己邮箱服务器的密码。
 $ docker run -d -p 127.0.0.1:9000:5000 \
 --link open_source_mysqldb:db \
---name open_source_srcpm \
+--name open_source_vulpm \
 -v $PWD/vulpm/srcpm:/opt/webapp/srcpm \
 -e DEV_DATABASE_URL='mysql://vuluser:vulpassword@db/vuldb' \
 -e SrcPM_CONFIG=development \
