@@ -51,7 +51,7 @@ http://127.0.0.1:9000/srcpm/admin/role_add
 
 不同角色的详细权限请见：
 
-[漏洞管理平台权限分配一览表.md](permissions.md)
+[漏洞管理平台权限分配一览表](permissions.md)
 
 角色权限修改方法为：选择角色对应的所有权限之后提交。
 
