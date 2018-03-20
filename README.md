@@ -13,6 +13,12 @@
 
 安全知识库管理：对安全知识、管理制度进行集中存放、线上学习、安全培训、知识传承等。
 
+平台截图：
+
+![](pics/登录后首页.png)
+
+![](pics/外网风险统计.png)
+
 ## 部署指南
 
 [![Python 2.7](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/)
