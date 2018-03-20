@@ -15,9 +15,9 @@
 
 平台截图：
 
-![](pics/登录后首页.png)
+![](docs/pics/登录后首页.png)
 
-![](pics/外网风险统计.png)
+![](docs/pics/外网风险统计.png)
 
 ## 部署指南
 
