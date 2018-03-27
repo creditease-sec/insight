@@ -23,7 +23,7 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     #邮件标题前缀
-    SRCPM_MAIL_SUBJECT_PREFIX = u'[漏洞管理平台]'
+    SRCPM_MAIL_SUBJECT_PREFIX = u'[洞察]'
     #上传图片、Excel、Xmind路径设置
     UPLOAD_IMG_FOLDER = os.path.join(basedir, 'app/static/upload/img/')
     UPLOAD_EXCEL_FOLDER = os.path.join(basedir, 'app/static/upload/excel/')

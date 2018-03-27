@@ -41,7 +41,7 @@
 
 [数据库初始化详细配置指南](db_init.md)
 
-[漏洞管理平台权限分配一览表](permissions.md)
+[洞察权限分配一览表](permissions.md)
 
 ## 部门增加
 

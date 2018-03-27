@@ -1,5 +1,5 @@
 <p>亲爱的 {{ lg_user.username }},</p>
-<p>欢迎来到 <b>漏洞管理平台</b>!</p>
+<p>欢迎来到 <b>洞察</b>!</p>
 <p>确认开通账户请 <a href="{{ url_for('auth.confirm', token=token, _external=True) }}">点击此处</a>。</p>
 <p>另外, 您也可以复制下面的链接到您的浏览器地址栏中:</p>
 <p>{{ url_for('auth.confirm', token=token, _external=True) }}</p>

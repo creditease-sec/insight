@@ -239,7 +239,7 @@ def depart_risk_stat(start_date='20170101',end_date=datetime.date.today):
                         )
 
 
-''' 漏洞管理平台首页，漏洞数据分析仪表盘 '''
+''' 洞察首页，漏洞数据分析仪表盘 '''
 '''
 包括 漏洞类型数量统计、
     漏洞状态统计、

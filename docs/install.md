@@ -157,7 +157,7 @@ $ mysql -h127.0.0.1 -P6606 -uroot -p vuldb < vulpm/srcpm/vuldb_init.sql
 Enter password:root
 ```
 
-## 访问漏洞管理平台
+## 访问洞察
 
 #### 1. 主页
 

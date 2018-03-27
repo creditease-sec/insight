@@ -1,4 +1,4 @@
-欢迎来到 漏洞管理平台!
+欢迎来到 洞察!
 
 人员: {{ vul_log.related_user_email }}
 操作: {{ vul_log.action }}
