@@ -1,4 +1,4 @@
-# 洞察 [![License](https://img.shields.io/aur/license/yaourt.svg)](https://gitee.com/null_451_3666/vulpm/tree/open-source/LICENSE)
+# 洞察 [![License](https://img.shields.io/aur/license/yaourt.svg)](https://github.com/creditease-sec/insight/blob/open-source/LICENSE)
 
 洞察是宜信安全部用来对公司内部系统所出现的安全漏洞进行线上全生命周期管理的漏洞管理平台。
 

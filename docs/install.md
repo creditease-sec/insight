@@ -29,7 +29,7 @@ mysql> quit
 $ git clone https://github.com/creditease-sec/insight.git
 ```
 
-#### 2. 修改vulpm/srcpm/config.py 配置文件
+#### 2. 修改srcpm/config.py 配置文件
 
 * 修改公司邮箱后缀
 ```
@@ -112,7 +112,7 @@ $ git clone https://github.com/creditease-sec/insight.git
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or ''
 ```
 
-#### 4. 修改vulpm/srcpm/app/src/forms.py 漏洞来源下拉列表
+#### 4. 修改srcpm/app/src/forms.py 漏洞来源下拉列表
 
 ```
     ''' 下拉选项 '''
@@ -132,7 +132,7 @@ docker build -t='vulpm_docker' .
 $ docker run -d -p 127.0.0.1:9000:5000 \
 --link open_source_mysqldb:db \
 --name open_source_srcpm \
--v $PWD/vulpm/srcpm:/opt/webapp/srcpm \
+-v $PWD/srcpm:/opt/webapp/srcpm \
 -e DEV_DATABASE_URL='mysql://vuluser:vulpassword@db/vuldb' \
 -e SrcPM_CONFIG=development \
 -e MAIL_PASSWORD='xxxxxx' \
@@ -153,7 +153,7 @@ sh -c 'supervisord -c srcpm/supervisor.conf && supervisorctl -c srcpm/supervisor
 > 导入sql
 
 ```
-$ mysql -h127.0.0.1 -P6606 -uroot -p vuldb < vulpm/srcpm/vuldb_init.sql
+$ mysql -h127.0.0.1 -P6606 -uroot -p vuldb < srcpm/vuldb_init.sql
 Enter password:root
 ```
 

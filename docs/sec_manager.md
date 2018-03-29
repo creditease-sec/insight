@@ -46,7 +46,7 @@
 * 相关系数硬编码在代码里，如需变更需修改相应代码，代码位置详情如下：
 
 ```
-# vulpm/srcpm/app/src/views.py 977-1022行
+# srcpm/app/src/views.py 977-1022行
 
 ''' 根据资产的rank值计算风险值和修复天数 '''
 def get_risk_score_and_end_date(rank, asset):
