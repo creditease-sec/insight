@@ -26,7 +26,7 @@ mysql> quit
 #### 1. 下载源码
 
 ```
-$ git clone -b open-source https://git.oschina.net/null_451_3666/vulpm.git
+$ git clone https://github.com/creditease-sec/insight.git
 ```
 
 #### 2. 修改vulpm/srcpm/config.py 配置文件
