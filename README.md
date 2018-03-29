@@ -1,6 +1,6 @@
 # 洞察 [![License](https://img.shields.io/aur/license/yaourt.svg)](https://gitee.com/null_451_3666/vulpm/tree/open-source/LICENSE)
 
-洞察是安全人员用来对公司内部系统所出现的安全漏洞进行线上全生命周期管理的漏洞管理平台。
+洞察是宜信安全部用来对公司内部系统所出现的安全漏洞进行线上全生命周期管理的漏洞管理平台。
 
 主要由3部分组成：
 * 应用系统资产管理
