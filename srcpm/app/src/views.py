@@ -1223,7 +1223,7 @@ def assets_modify(id):
 	return render_template('src/assets_modify.html', form=form, id = asset_get.id)
 
 
-''' 前台资产增加ajax请求，根据部门返回部门内用户邮箱列表 
+''' 前台资产增加ajax请求，根据部门返回部门内用户邮箱列表 '''
 @src.route('/assets_add_ajax', methods=['GET','POST'])
 @permission_required('src.assets_add_ajax')
 def assets_add_ajax():
@@ -1233,5 +1233,5 @@ def assets_add_ajax():
 	for user in user_list:
 		opt_list.append({'name': user.name, 'email': user.email})
 	return jsonify(opt_list)
-'''
+
 
