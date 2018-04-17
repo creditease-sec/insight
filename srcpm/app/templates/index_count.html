@@ -24,8 +24,8 @@
          <th>漏洞ID</th>
          <th>系统名称</th>
          <th>域名</th>
-         <th>资产状态<th>
-         <th>漏洞类型<th>
+         <th>资产状态</th>
+         <th>漏洞类型</th>
          <th>部门</th>
          <th>负责人</th>
          <th>Rank</th>
@@ -80,7 +80,7 @@
          {% endif %}
 
          {% if vul_report[0].residual_risk_score %}
-         <th>{{ vul_report[0].residual_risk_score }}</th>
+         <td>{{ vul_report[0].residual_risk_score }}</td>
          {% else %}
          <td>0</td>
          {% endif %}  
