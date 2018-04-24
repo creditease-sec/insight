@@ -112,7 +112,7 @@
 <div>
    <label>作者:</label> {{ vul_report.author }}<br>
    <label>时间:</label> {{ moment(vul_report.timestamp).format('YYYY年M月D日, H:mm:ss') }}<br>
-   <label>受影响域名:</label> <a href="http://120.27.137.170:5000/dirscan/asset/domain_result_list?opt={{ vul_report.related_asset }}" target="_blank">{{ vul_report.related_asset }}</a><br>
+   <label>受影响域名:</label> {{ vul_report.related_asset }}<br>
    <label>漏洞类型:</label> {{ vul_report.related_vul_type }}<br>
    <label>Rank:</label> {{ vul_report.grant_rank }}<br>
    {% if 0 < vul_report.risk_score <= 25 %}
