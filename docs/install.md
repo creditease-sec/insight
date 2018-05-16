@@ -1,12 +1,12 @@
 ## 部署和启动mysql
 
 ```
-docker pull mysql
+docker pull mysql:5.7.13
 
 docker run -d -p 127.0.0.1:6606:3306 \
 --name open_source_mysqldb \
 -e MYSQL_ROOT_PASSWORD=root \
-mysql
+mysql:5.7.13
 ```
 
 ## 创建数据库和账号权限配置

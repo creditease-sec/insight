@@ -22,7 +22,7 @@
 ## 部署指南
 
 [![Python 2.7](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/)
-[![MySQL 5.6.27](https://img.shields.io/badge/mysql-5.6.27-orange.svg)](https://www.mysql.com)
+[![MySQL 5.7.13](https://img.shields.io/badge/mysql-5.7.13-orange.svg)](https://www.mysql.com)
 [![Flask 0.11.1](https://img.shields.io/badge/flask-0.11.1-yellow.svg)](https://github.com/pallets/flask)
 [![Docker 1.13.0](https://img.shields.io/badge/docker-1.13.0-blue.svg)](https://www.docker.com/)
 
