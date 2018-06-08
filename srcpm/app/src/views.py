@@ -1234,4 +1234,3 @@ def assets_add_ajax():
 		opt_list.append({'name': user.name, 'email': user.email})
 	return jsonify(opt_list)
 
-

@@ -38,6 +38,9 @@ def create_app(config_name):
     moment.init_app(app)
 
     """ 按照功能模块来组织蓝图 """
+    from .index import index as index_blueprint
+    app.register_blueprint(index_blueprint, url_prefix='/')
+
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint, url_prefix='/srcpm')
 
