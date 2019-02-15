@@ -559,8 +559,6 @@ def editdrops(id):
 @permission_required('drops.manager')
 def deldrop(id):
     droppost_del = Postdrop.query.get_or_404(id)
-    dropcmt_del = Postdrop.query.filter_by(comt_id=id)
-    db.session.delete(dropcmt_del)
     db.session.delete(droppost_del)
     flash(u'删除成功')
     return redirect(url_for('drops.readdrops'))

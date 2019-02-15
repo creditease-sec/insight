@@ -8,8 +8,12 @@ from flask_login import LoginManager
 from flask_pagedown import PageDown
 from flask_moment import Moment
 import datetime
+from flask_wtf.csrf import CsrfProtect
+
+
 
 """ 各组件初始化 """
+csrf = CsrfProtect()
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 mail = Mail()
@@ -29,7 +33,7 @@ def create_app(config_name):
     app.jinja_env.add_extension("chartkick.ext.charts")
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
-
+    csrf.init_app(app)
     bootstrap.init_app(app)
     db.init_app(app)
     mail.init_app(app)

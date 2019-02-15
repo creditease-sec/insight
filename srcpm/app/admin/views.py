@@ -59,12 +59,13 @@ def login_user_modify(id):
 
 
 ''' 用户角色修改页面，用户删除功能请求 '''
-@admin.route('/login_user_delete/<id>')
+@admin.route('/login_user_delete', methods=['GET', 'POST'])
 @permission_required('admin.login_user_delete')
-def login_user_delete(id):
-	lg_user_del = LoginUser.query.get_or_404(id)
+def login_user_delete():
+	_id = request.form.get('id')
+	lg_user_del = LoginUser.query.get_or_404(_id)
 	db.session.delete(lg_user_del)
-	flash(u'删除用户 %s 成功' %lg_user_del.username)
+	flash(u'删除用户 %s 成功' % lg_user_del.username)
 	return redirect(url_for('admin.login_user_read'))
 
 
@@ -152,9 +153,10 @@ def perm_modify(role_name):
 
 #先删除角色权限、再删除角色
 ''' 删除权限和角色功能请求，在角色权限修改页面 '''
-@admin.route('/role_perm_delete/<role_name>')
+@admin.route('/role_perm_delete', methods=['GET', 'POST'])
 @permission_required('admin.role_perm_delete')
-def role_perm_delete(role_name):
+def role_perm_delete():
+	role_name = request.form.get('role_name')
 	role_perm_del = Permission.query.filter_by(role_name=role_name)
 	#删除权限
 	for r_p_d in role_perm_del:
@@ -166,7 +168,6 @@ def role_perm_delete(role_name):
 	flash(u'删除权限 %s 成功' %role_name)
 	return redirect(url_for('admin.role_read'))
 
-
 #---------------Deaprts and Users--------------
 
 ''' 部门增加页面 '''
@@ -175,7 +176,7 @@ def role_perm_delete(role_name):
 def depart_add():
 	form = DepartForm()
 	if form.validate_on_submit():
-		d = Depart(department=form.department.data, 
+		d = Depart(department=form.department.data,
 					leader=form.leader.data,
 					email=form.email.data)
 		db.session.add(d)
@@ -192,7 +193,7 @@ def depart_read():
 	if opt=='all':
 		depart_result = Depart.query.all()
 	else:
-		depart_result = Depart.query.filter(Depart.department.like("%" + opt + "%") 
+		depart_result = Depart.query.filter(Depart.department.like("%" + opt + "%")
 											| Depart.leader.like("%" + opt + "%")
 											| Depart.email.like("%" + opt + "%")
 											)
@@ -218,14 +219,14 @@ def depart_modify(id):
 	return render_template('admin/depart_modify.html', form=form, id = depart_get.id)
 
 ''' 部门删除功能请求，在部门修改页面 '''
-@admin.route('/depart_delete/<id>')
+@admin.route('/depart_delete', methods=['GET', 'POST'])
 @permission_required('admin.depart_delete')
-def depart_delete(id):
-	depart_del = Depart.query.get_or_404(id)
+def depart_delete():
+	_id = request.form.get('id')
+	depart_del = Depart.query.get_or_404(_id)
 	db.session.delete(depart_del)
 	flash(u'删除部门成功')
 	return redirect(url_for('admin.depart_read'))
-
 
 #－－－－－－－User模块－－－－－－－－－－－－－－－－－－－－－－
 ''' 此模块人员为手工录入人员信息，主要为了保证公司邮箱账号、真实姓名和部门的关联正确性，
@@ -238,7 +239,7 @@ def depart_delete(id):
 def user_add():
 	form = UserForm()
 	if form.validate_on_submit():
-		u = User(name=form.name.data, 
+		u = User(name=form.name.data,
 					email=form.email.data,
 					department=form.department.data)
 		db.session.add(u)
@@ -256,7 +257,7 @@ def user_read():
 	if opt=='all':
 		user_result = User.query.all()
 	else:
-		user_result = User.query.filter(User.name.like("%" + opt + "%") 
+		user_result = User.query.filter(User.name.like("%" + opt + "%")
 											| User.email.like("%" + opt + "%")
 											| User.department.like('%' + opt + "%")
 											)
@@ -290,14 +291,14 @@ def user_modify(id):
 
 
 ''' 人员删除页面 '''
-@admin.route('/user_delete/<id>')
+@admin.route('/user_delete',methods=['GET','POST'])
 @permission_required('admin.user_delete')
-def user_delete(id):
-	user_del = User.query.get_or_404(id)
+def user_delete():
+	_id = request.form.get('id')
+	user_del = User.query.get_or_404(_id)
 	db.session.delete(user_del)
 	flash(u'删除人员成功')
 	return redirect(url_for('admin.user_read'))
-
 
 #------------资产模块、漏洞类型模块--------------------------------------------------------------------------
 
@@ -307,11 +308,11 @@ def user_delete(id):
 def assets_add():
 	form = AssetForm()
 	if form.validate_on_submit():
-		a = Asset(sysname=form.sysname.data, 
-					domain=form.domain.data, 
-					back_domain=form.back_domain.data, 
-					web_or_int=form.web_or_int.data, 
-					is_http=form.is_http.data, 
+		a = Asset(sysname=form.sysname.data,
+					domain=form.domain.data,
+					back_domain=form.back_domain.data,
+					web_or_int=form.web_or_int.data,
+					is_http=form.is_http.data,
 					is_https=form.is_https.data,
 					in_or_out=form.in_or_out.data,
 					level=form.level.data,
@@ -354,7 +355,7 @@ def assets_read():
 	if opt=='all':
 		asset_result = Asset.query.order_by(-Asset.update_date).all()
 	else:
-		asset_result = Asset.query.filter(Asset.sysname.like("%" + opt + "%") 
+		asset_result = Asset.query.filter(Asset.sysname.like("%" + opt + "%")
 											| Asset.domain.like("%" + opt + "%")
 											| Asset.back_domain.like("%" + opt + "%")
 											| Asset.web_or_int.like("%" + opt + "%")
@@ -362,7 +363,7 @@ def assets_read():
 											| Asset.level.like("%" + opt + "%")
 											| Asset.secure_level.like("%" + opt + "%")
 											| Asset.business_cata.like("%" + opt + "%")
-											| Asset.department.like("%" + opt + "%") 
+											| Asset.department.like("%" + opt + "%")
 											| Asset.owner.like("%" + opt + "%")
 											| Asset.sec_owner.like("%" + opt + "%")
 											| Asset.status.like("%" + opt + "%")
@@ -436,10 +437,11 @@ def assets_modify(id):
 
 
 ''' 资产删除功能请求，在资产修改页面 '''
-@admin.route('/assets_delete/<id>')
+@admin.route('/assets_delete', methods=['GET', 'POST'])
 @permission_required('admin.assets_delete')
-def assets_delete(id):
-	asset_del = Asset.query.get_or_404(id)
+def assets_delete():
+	_id = request.form.get('id')
+	asset_del = Asset.query.get_or_404(_id)
 	db.session.delete(asset_del)
 	flash(u'删除资产成功')
 	return redirect(url_for('admin.assets_read'))
@@ -487,11 +489,11 @@ def vul_type_modify(id):
 	return render_template('admin/vul_type_modify.html', form=form, id = vul_type_get.id)
 
 ''' 漏洞类型删除功能请求，在漏洞类型修改页面 '''
-@admin.route('/vul_type_delete/<id>')
+@admin.route('/vul_type_delete', methods=['GET', 'POST'])
 @permission_required('admin.vul_type_delete')
-def vul_type_delete(id):
-	vul_type_del = VulType.query.get_or_404(id)
+def vul_type_delete():
+	_id = request.form.get('id')
+	vul_type_del = VulType.query.get_or_404(_id)
 	db.session.delete(vul_type_del)
 	flash(u'删除漏洞类型成功')
 	return redirect(url_for('admin.vul_type_read'))
-
