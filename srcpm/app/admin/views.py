@@ -9,6 +9,7 @@ from .. import db
 from . import admin
 from ..decorators import permission_required
 import datetime
+from .. import csrf
 
 ''' 管理后台首页 '''
 @admin.route('/')
@@ -19,6 +20,7 @@ def index():
 
 
 ''' 用户查看页面 '''
+@csrf.exempt
 @admin.route('/login_user_read', methods=['GET', 'POST'])
 @permission_required('admin.login_user_read')
 def login_user_read():
@@ -84,6 +86,7 @@ def role_add():
 
 
 ''' 角色查看页面 '''
+@csrf.exempt
 @admin.route('/role_read', methods=['GET', 'POST'])
 @permission_required('admin.role_read')
 def role_read():
@@ -186,6 +189,7 @@ def depart_add():
 
 
 ''' 部门查看页面 '''
+@csrf.exempt
 @admin.route('/depart_read', methods=['GET', 'POST'])
 @permission_required('admin.depart_read')
 def depart_read():
@@ -250,6 +254,7 @@ def user_add():
 
 
 ''' 人员查看页面 '''
+@csrf.exempt
 @admin.route('/user_read', methods=['GET', 'POST'])
 @permission_required('admin.user_read')
 def user_read():
@@ -348,6 +353,7 @@ def assets_add_ajax():
 
 
 ''' 资产查看页面 '''
+@csrf.exempt
 @admin.route('/assets_read', methods=['GET', 'POST'])
 @permission_required('admin.assets_read')
 def assets_read():
@@ -464,6 +470,7 @@ def vul_type_add():
 
 
 ''' 漏洞类型查看页面 '''
+@csrf.exempt
 @admin.route('/vul_type_read', methods=['GET', 'POST'])
 @permission_required('admin.vul_type_read')
 def vul_type_read():
