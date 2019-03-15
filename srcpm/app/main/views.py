@@ -433,7 +433,7 @@ def index(start_date=0, end_date=0):
     则显示2018年2月1日到2018年3月1日期间的数据统计。
     默认从2015年1月1日开始统计到当前日期
 '''
-@main.route('/index_count/')
+@main.route('/index_count/',methods=['GET', 'POST'])
 @main.route('/index_count/<start_date>/<end_date>')
 @permission_required('main.index_count')
 def index_count(start_date=0, end_date=0):
