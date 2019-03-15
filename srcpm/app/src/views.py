@@ -18,7 +18,7 @@ from ..decorators import permission_required
 from sqlalchemy import or_
 from ..auth.models import LoginUser
 from . import src
-
+from .. import csrf
 
 
 
@@ -155,6 +155,7 @@ def allowed_file(filename):
 
 
 ''' 上传图片功能请求 '''
+@csrf.exempt
 @src.route('/upload_img', methods=['POST'])
 @permission_required('src.upload_img')
 def upload_img():

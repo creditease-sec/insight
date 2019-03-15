@@ -10,6 +10,7 @@
 </div>
 
 <form role="form" method='POST'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 <div class="form-group">
    <label for="name"></label>
    <input type="text" class="form-control" name="opt" placeholder="{{ opt_label[1] }}">

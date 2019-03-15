@@ -7,6 +7,7 @@
     <h1>编辑分类</h1>
 </div>
 <form role="form" method='POST'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 <div class="form-group w90">
    <label for="name"></label>
    <input type="text" class="vertical-align: middle" name="opt" placeholder="请输入查询关键字">
