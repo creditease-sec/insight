@@ -1,5 +1,6 @@
 <br>
 <form role="form" action="{{url_for('drops.search')}}" method='POST'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <label for="name"></label>
     <input type="text" class="vertical-align: middle" name="keys" placeholder="请输入查询关键字">
     <button type="submit" class="btn btn-danger">提交</button>

@@ -14,6 +14,7 @@ from random import shuffle
 import re
 import sys
 import os
+from .. import csrf
 
 
 def cur_file_dir():
@@ -79,7 +80,7 @@ def login():
 
 # 最后返回文件名
 
-
+@csrf.exempt
 @drops.route('/upload_img', methods=['POST'])
 @permission_required('src.upload_img')
 # def upload_img():
