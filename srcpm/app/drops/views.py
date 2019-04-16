@@ -128,7 +128,7 @@ def search(pageid=1):
     searchword = searchword.strip()
     if not searchword:
         flash(u'没找到结果!')
-        redirect(url_for('drops.index'))
+        return redirect(url_for('drops.index'))
 
     searchresult = Postdrop.query.search(searchword)
 
