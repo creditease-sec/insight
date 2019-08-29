@@ -3,6 +3,7 @@
 
 {% block scripts %}
 {{ super() }}
+    <script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
 <script src="{{ url_for('src.static', filename='Markdown.Converter.min.js') }}"></script>
 <script src="{{ url_for('src.static', filename='Markdown.Sanitizer.min.js') }}"></script>
 <!-- {{ pagedown.include_pagedown() }} -->
@@ -87,7 +88,6 @@
 
 
 	<form action="" method="post" class="form" role="form">
-  	
   	<div style="display:none;">
   		{{ form.csrf_token(type="hidden") }}
   	</div>
@@ -119,7 +119,7 @@
 		{{ form.vul_poc.label(class="control-label") }}{{ form.vul_poc(rows = 10, cols = 100) }}
 	</div>
 	<div class=form-group>
-		{{ form.vul_solution.label(class="control-label") }}{{ form.vul_solution(rows = 10, cols = 100) }}
+		{{ form.vul_solution.label(class="control-label") }}{{ form.vul_solution(class="ckeditor",rows = 10, cols = 100) }}
 	</div>
 	<div class=form-group>
 		{{ form.submit(class="btn btn-default") }}
