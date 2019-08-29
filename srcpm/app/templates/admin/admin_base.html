@@ -68,11 +68,23 @@
                     	<ul class="dropdown-menu">
                         	<li><a href="{{ url_for('admin.assets_add') }}">资产增加</a></li>
                         	<li><a href="{{ url_for('admin.assets_read') }}">资产查看</a></li>
+
+                    	</ul>
+					</li>
+			</ul>
+        <ul class="nav navbar-nav navbar-left">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        	漏洞类型 <b class="caret"></b>
+                    	</a>
+                    	<ul class="dropdown-menu">
+
                         	<li><a href="{{ url_for('admin.vul_type_add') }}">漏洞类型增加</a></li>
                         	<li><a href="{{ url_for('admin.vul_type_read') }}">漏洞类型查看</a></li>
                     	</ul>
 					</li>
 			</ul>
+
 
 			<ul class="nav navbar-nav navbar-right">
 				{% if current_user.is_authenticated %}
