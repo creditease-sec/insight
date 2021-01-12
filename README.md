@@ -1,3 +1,7 @@
+洞察1已停止维护，请移步[洞察2](https://github.com/creditease-sec/insight2).
+
+---
+
 # 洞察 [![License](https://img.shields.io/aur/license/yaourt.svg)](https://github.com/creditease-sec/insight/blob/open-source/LICENSE)
 
 洞察是宜信安全部用来对公司内部系统所出现的安全漏洞进行线上全生命周期管理的漏洞管理平台。
